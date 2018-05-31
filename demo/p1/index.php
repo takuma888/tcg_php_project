@@ -8,5 +8,10 @@
 
 require __DIR__ . '/../include.php';
 
+// 设置当前环境
+env(ENV_DEMO_P1);
 
 
+c()->get('twig')->display('@demo_p1/test.html.twig', [
+    'a' => 'b',
+]);

@@ -10,7 +10,7 @@ class Environment
 {
 
     /**
-     * @var object
+     * @var object[]
      */
     protected static $containers = [];
 
@@ -69,10 +69,28 @@ class Environment
 
 
     /**
+     * @param $namespace
+     * @return object|null
+     */
+    public static function getContainer($namespace)
+    {
+        return isset(self::$containers[$namespace]) ? self::$containers[$namespace] : null;
+    }
+
+    /**
+     * @return object[]
+     */
+    public static function getContainers()
+    {
+        return self::$containers;
+    }
+
+
+    /**
      * @param $namespaceBitExpr
      * @return CompositeContainer
      */
-    public static function getContainer($namespaceBitExpr)
+    public static function container($namespaceBitExpr)
     {
         $bitString = decbin($namespaceBitExpr);
         if (!isset(self::$composites[$bitString])) {
@@ -91,16 +109,23 @@ class Environment
             $interfaces = [];
             foreach ($namespaces as $namespace) {
                 if (!isset(self::$interfaces[$namespace])) {
-                    $container = self::$containers[$namespace];
-                    $interface = self::getAcclimator()->acclimate($container);
-                    self::$interfaces[$namespace] = $interface;
+                    if (isset(self::$containers[$namespace])) {
+                        $container = self::$containers[$namespace];
+                        $interface = self::getAcclimator()->acclimate($container);
+                        self::$interfaces[$namespace] = $interface;
+                        $interfaces[] = $interface;
+                    }
+                } else {
+                    $interfaces[] = self::$interfaces[$namespace];
                 }
-                $interfaces[] = self::$interfaces[$namespace];
             }
-            $composite = new CompositeContainer($interfaces);
-            self::$composites[$bitString] = $composite;
+            if ($interfaces) {
+                $composite = new CompositeContainer($interfaces);
+                self::$composites[$bitString] = $composite;
+            }
+
         }
-        return self::$composites[$bitString];
+        return isset(self::$composites[$bitString]) ? self::$composites[$bitString] : null;
     }
 
 

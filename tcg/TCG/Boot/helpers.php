@@ -53,26 +53,61 @@ if (!function_exists('tick')) {
 
 
 
-if (!function_exists('env')) {
+if (!function_exists('c')) {
     /**
      * @param null $namespaceBitExpr
      * @param null $container
-     * @return \Acclimate\Container\CompositeContainer
+     * @return \Acclimate\Container\CompositeContainer|array
      */
-    function env($namespaceBitExpr = null, $container = null)
+    function c($namespaceBitExpr = null, $container = null)
     {
-        if ($namespaceBitExpr !== null) {
+        if ($namespaceBitExpr >= 0) {
             if ($container) {
                 // 指定了容器对象则为设置容器对象的名称空间
                 Environment::setContainer($container, $namespaceBitExpr);
             } else {
                 // 获取容器
-                return Environment::getContainer($namespaceBitExpr);
+                return Environment::container($namespaceBitExpr | Environment::getNamespace());
             }
+        }
+    }
+}
+
+
+if (!function_exists('containers')) {
+    /**
+     * @return object[]
+     */
+    function containers()
+    {
+        return Environment::getContainers();
+    }
+}
+
+
+if (!function_exists('container')) {
+    /**
+     * @param $namespace
+     * @return null|object
+     */
+    function container($namespace)
+    {
+        return Environment::getContainer($namespace);
+    }
+}
+
+
+if (!function_exists('env')) {
+    /**
+     * @param null $namespace
+     * @return string
+     */
+    function env($namespace = null)
+    {
+        if ($namespace) {
+            Environment::setNamespace($namespace);
         } else {
-            // 获取环境当前名称空间的容器对象
-            $namespace = Environment::getNamespace();
-            return Environment::getContainer($namespace);
+            return Environment::getNamespace();
         }
     }
 }

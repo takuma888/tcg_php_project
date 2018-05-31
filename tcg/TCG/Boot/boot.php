@@ -6,6 +6,10 @@
  * Time: 上午11:50
  */
 
+use Pimple\Container;
+
+!defined('ENV_DEFAULT') && define('ENV_DEFAULT', 0);
+
 /**
  * @param string $sRoot
  */
@@ -28,3 +32,11 @@ function bootRoute($sRoot)
     }
 }
 
+
+//$container = c(ENV_DEFAULT);
+//if (!$container) {
+//    $container = new Container();
+//    c(ENV_DEFAULT, $container);
+//}
+//
+//

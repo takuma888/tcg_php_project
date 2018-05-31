@@ -32,15 +32,26 @@ define('ENV_DEMO_P3', pow(2, 2)); // 0000 0100
  */
 $oAutoloader = require __DIR__ . '/../vendor/autoload.php';
 
+/**
+ * 启动大环境
+ */
 bootEnv(BOOT_ROOT);
 
-foreach (scandir(BOOT_ROOT) as $sAppDir) {
-    if ($sAppDir != '.' && $sAppDir != '..') {
-        $sAppDir = BOOT_ROOT . '/' . $sAppDir;
-        if (is_dir($sAppDir)) {
-            bootEnv($sAppDir);
-            bootRoute($sAppDir);
+/**
+ * 启动自环境
+ */
+foreach (scandir(BOOT_ROOT) as $appDir) {
+    if ($appDir != '.' && $appDir != '..') {
+        $appDir = BOOT_ROOT . '/' . $appDir;
+        if (is_dir($appDir)) {
+            bootEnv($appDir);
+//            bootRoute($appDir);
         }
     }
 }
+
+/**
+ * 最后合并一下路由
+ */
+//bootRoute(BOOT_ROOT);
 

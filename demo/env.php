@@ -8,16 +8,28 @@
 
 use Pimple\Container;
 
+$container = c(ENV_DEFAULT);
+if (!$container) {
+    $container = new Container();
+    c(ENV_DEFAULT, $container);
+}
 
-$container = new Container();
+// twig
+$container['twig.engine.config.cache'] = false;
+$container['twig.engine.config.debug'] = true;
+$container['twig.loader.filesystem_loader'] = function () {
+    return new \Twig_Loader_Filesystem();
+};
+$container['twig.extension.string_loader'] = function () {
+    return new \Twig_Extension_StringLoader();
+};
+$container['twig'] = function (Container $c) {
+    $engine = new \Twig_Environment($c['twig.loader.filesystem_loader'], [
+        'cache' => $c['twig.engine.config.cache'],
+        'debug' => $c['twig.engine.config.debug']
+    ]);
+    $engine->addExtension($c['twig.extension.string_loader']);
+    return $engine;
+};
 
 
-
-
-
-
-
-
-
-
-env(ENV_DEFAULT, $container);
