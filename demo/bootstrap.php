@@ -25,33 +25,21 @@ define('ENV_DEMO_P3', pow(2, 2)); // 0000 0100
 /**
  * 定义工程的根路径
  */
-!defined('BOOT_ROOT') && define('BOOT_ROOT', __DIR__);
+!defined('ROOT') && define('ROOT', __DIR__);
 
 /**
  * Composer 自动加载
  */
-$oAutoloader = require __DIR__ . '/../vendor/autoload.php';
+$autoloader = require ROOT . '/../vendor/autoload.php';
 
 /**
  * 启动大环境
  */
-bootEnv(BOOT_ROOT);
+require ROOT . '/env.php';
 
 /**
- * 启动自环境
+ * 启动子环境
  */
-foreach (scandir(BOOT_ROOT) as $appDir) {
-    if ($appDir != '.' && $appDir != '..') {
-        $appDir = BOOT_ROOT . '/' . $appDir;
-        if (is_dir($appDir)) {
-            bootEnv($appDir);
-//            bootRoute($appDir);
-        }
-    }
-}
-
-/**
- * 最后合并一下路由
- */
-//bootRoute(BOOT_ROOT);
-
+require ROOT . '/p1/env.php';
+require ROOT . '/p2/env.php';
+require ROOT . '/p3/env.php';
