@@ -21,7 +21,6 @@ if (!$container) {
 $container['http.environment'] = function () {
     return Environment::mock($_SERVER);
 };
-//
 // http request
 $container['http.request'] = function (Container $c) {
     return Request::createFromEnvironment($c['http.environment']);
