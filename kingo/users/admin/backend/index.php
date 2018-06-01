@@ -18,3 +18,4 @@ require __DIR__ . '/../../env.php';
 
 // 尝试使用 mfw php 的路由机制
 
+pre($_SERVER['PATH_INFO']);
