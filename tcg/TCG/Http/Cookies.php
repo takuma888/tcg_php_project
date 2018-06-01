@@ -6,7 +6,7 @@
  * Time: 下午2:14
  */
 
-namespace TCG\Http\Message;
+namespace TCG\Http;
 
 use InvalidArgumentException;
 

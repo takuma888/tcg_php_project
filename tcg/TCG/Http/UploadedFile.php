@@ -6,13 +6,14 @@
  * Time: 下午2:22
  */
 
-namespace TCG\Http\Message;
+namespace TCG\Http;
 
 
 use RuntimeException;
 use InvalidArgumentException;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileInterface;
+use TCG\Http\Environment;
 
 /**
  * Represents Uploaded Files.

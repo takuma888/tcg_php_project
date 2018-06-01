@@ -7,7 +7,7 @@
  */
 
 
-namespace TCG\Http\Message;
+namespace TCG\Http;
 
 use InvalidArgumentException;
 use Psr\Http\Message\StreamInterface;

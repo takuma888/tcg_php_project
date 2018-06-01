@@ -6,7 +6,7 @@
  * Time: 下午2:20
  */
 
-namespace TCG\Http\Message;
+namespace TCG\Http;
 
 
 class Body extends Stream

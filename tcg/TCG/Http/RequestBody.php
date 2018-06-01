@@ -6,7 +6,7 @@
  * Time: 下午2:40
  */
 
-namespace TCG\Http\Message;
+namespace TCG\Http;
 
 /**
  * Provides a PSR-7 implementation of a reusable raw request body

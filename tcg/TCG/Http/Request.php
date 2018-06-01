@@ -6,7 +6,7 @@
  * Time: 下午2:35
  */
 
-namespace TCG\Http\Message;
+namespace TCG\Http;
 
 use Closure;
 use InvalidArgumentException;
@@ -16,6 +16,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 use Psr\Http\Message\StreamInterface;
 use TCG\Http\Collection;
+use TCG\Http\Environment;
 use TCG\Http\InvalidMethodException;
 
 /**
@@ -456,6 +457,7 @@ class Request extends Message implements ServerRequestInterface
         $this->requestTarget = $path;
         return $this->requestTarget;
     }
+
     /**
      * Return an instance with the specific request-target.
      *

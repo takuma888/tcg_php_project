@@ -1,8 +1,7 @@
 <?php
 
-namespace TCG\Http\Message;
+namespace TCG\Http;
 
-use TCG\Http\Collection;
 
 class Environment extends Collection implements EnvironmentInterface
 {

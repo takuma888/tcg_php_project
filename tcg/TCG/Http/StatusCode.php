@@ -6,7 +6,7 @@
  * Time: 下午2:28
  */
 
-namespace TCG\Http\Message;
+namespace TCG\Http;
 
 class StatusCode
 {

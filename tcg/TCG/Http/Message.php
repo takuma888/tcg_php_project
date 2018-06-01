@@ -6,7 +6,7 @@
  * Time: 下午2:02
  */
 
-namespace TCG\Http\Message;
+namespace TCG\Http;
 
 use InvalidArgumentException;
 use Psr\Http\Message\MessageInterface;
@@ -14,7 +14,7 @@ use Psr\Http\Message\StreamInterface;
 
 /**
  * Class Message
- * @package TCG\Http\Message
+ * @package TCG\Http
  */
 abstract class Message implements MessageInterface
 {

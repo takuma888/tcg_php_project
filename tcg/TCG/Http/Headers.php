@@ -6,9 +6,10 @@
  * Time: 下午2:16
  */
 
-namespace TCG\Http\Message;
+namespace TCG\Http;
 
 use TCG\Http\Collection;
+use TCG\Http\Environment;
 
 class Headers extends Collection implements HeadersInterface
 {
@@ -90,7 +91,7 @@ class Headers extends Collection implements HeadersInterface
      * any values that may already exist for the header name.
      *
      * @param string $key   The case-insensitive header name
-     * @param string $value The header value
+     * @param string|array $value The header value
      */
     public function set($key, $value)
     {

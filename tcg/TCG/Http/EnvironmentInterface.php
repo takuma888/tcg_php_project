@@ -6,7 +6,7 @@
  * Time: 下午2:11
  */
 
-namespace TCG\Http\Message;
+namespace TCG\Http;
 
 
 interface EnvironmentInterface

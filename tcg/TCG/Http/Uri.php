@@ -6,10 +6,11 @@
  * Time: 下午2:21
  */
 
-namespace TCG\Http\Message;
+namespace TCG\Http;
 
 use InvalidArgumentException;
-use \Psr\Http\Message\UriInterface;
+use Psr\Http\Message\UriInterface;
+use TCG\Http\Environment;
 
 /**
  * Value object representing a URI.

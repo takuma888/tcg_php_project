@@ -8,7 +8,7 @@
 
 use Pimple\Container;
 
-$container = c(ENV_DEFAULT);
+$container = container(ENV_DEFAULT);
 if (!$container) {
     $container = new Container();
     c(ENV_DEFAULT, $container);

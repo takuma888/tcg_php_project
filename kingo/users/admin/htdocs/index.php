@@ -12,9 +12,9 @@ require __DIR__ . '/../../../bootstrap.php';
 env(ENV_USERS);
 
 // 加载配置
+require __DIR__ . '/../../env.php';
 
 // 启动 debug
 
 // 尝试使用 mfw php 的路由机制
-
 
