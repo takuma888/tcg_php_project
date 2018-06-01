@@ -21,7 +21,6 @@ $container['twig.loader.filesystem_loader.namespace'] = 'demo_p1';
 
 /** @var Container $defaultContainer */
 $defaultContainer = container(ENV_DEFAULT);
-
 /**
  * 添加路径
  */

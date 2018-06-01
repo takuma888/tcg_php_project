@@ -16,8 +16,7 @@
             "TCG\\": "tcg/"
         },
         "files": [
-            "tcg/TCG/Boot/helpers.php",
-            "tcg/TCG/Boot/boot.php"
+            "tcg/TCG/Boot/helpers.php"
         ]
     }
 }
