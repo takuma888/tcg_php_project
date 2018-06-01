@@ -3,7 +3,9 @@
         "acclimate/container": "2.0.0",
         "twig/twig": "2.4.8",
         "psr/http-server-handler": "1.0.0",
-        "psr/http-server-middleware": "1.0.0"
+        "psr/http-server-middleware": "1.0.0",
+        "middlewares/utils": "^1.0",
+        "middlewares/fast-route": "^1.0"
     },
     "require-dev": {
         "illuminate/container": "^4.0 || ^5.0",
