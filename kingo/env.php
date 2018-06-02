@@ -8,10 +8,10 @@
 
 use Pimple\Container;
 
-$container = c(ENV_DEFAULT);
+$container = app(ENV_DEFAULT);
 if (!$container) {
     $container = new Container();
-    c(ENV_DEFAULT, $container);
+    app(ENV_DEFAULT, $container);
 }
 
 // twig

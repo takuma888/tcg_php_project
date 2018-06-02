@@ -12,6 +12,6 @@ require __DIR__ . '/../bootstrap.php';
 env(ENV_DEMO_P1);
 
 
-c()->get('twig')->display('@demo_p1/test.html.twig', [
+app()->get('twig')->display('@demo_p1/test.html.twig', [
     'a' => 'b',
 ]);

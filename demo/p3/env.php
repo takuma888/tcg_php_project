@@ -9,4 +9,4 @@
 use Pimple\Container;
 
 $container = new Container();
-c(ENV_DEMO_P3, $container);
+app(ENV_DEMO_P3, $container);

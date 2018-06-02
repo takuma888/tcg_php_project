@@ -53,13 +53,13 @@ if (!function_exists('tick')) {
 
 
 
-if (!function_exists('c')) {
+if (!function_exists('app')) {
     /**
      * @param null $namespaceBitExpr
      * @param null $container
      * @return \Acclimate\Container\CompositeContainer|array
      */
-    function c($namespaceBitExpr = null, $container = null)
+    function app($namespaceBitExpr = null, $container = null)
     {
         if ($namespaceBitExpr >= 0) {
             if ($container) {

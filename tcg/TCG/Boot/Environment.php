@@ -111,7 +111,7 @@ class Environment
                 if (!isset(self::$interfaces[$namespace])) {
                     if (isset(self::$containers[$namespace])) {
                         $container = self::$containers[$namespace];
-                        $interface = self::getAcclimator()->acclimate($container);
+                        $interface = self::ContainerAcclimator()->acclimate($container);
                         self::$interfaces[$namespace] = $interface;
                         $interfaces[] = $interface;
                     }
@@ -132,7 +132,7 @@ class Environment
     /**
      * @return ContainerAcclimator
      */
-    protected static function getAcclimator()
+    protected static function ContainerAcclimator()
     {
         if (!isset(self::$acclimator)) {
             self::$acclimator = new ContainerAcclimator();

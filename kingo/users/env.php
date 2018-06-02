@@ -14,7 +14,7 @@ use TCG\Http\Response;
 $container = container(ENV_USERS);
 if (!$container) {
     $container = new Container();
-    c(ENV_USERS, $container);
+    app(ENV_USERS, $container);
 }
 
 // http environment

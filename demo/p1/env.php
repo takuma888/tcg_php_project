@@ -10,7 +10,7 @@
 use Pimple\Container;
 
 $container = new Container();
-c(ENV_DEMO_P1, $container);
+app(ENV_DEMO_P1, $container);
 
 
 $container['twig.loader.filesystem_loader.path'] = __DIR__ . '/twig_tpl';
