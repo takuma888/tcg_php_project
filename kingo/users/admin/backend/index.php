@@ -8,14 +8,19 @@
 
 require __DIR__ . '/../../../bootstrap.php';
 
-// 设置当前环境
-env(ENV_USERS);
+// 设置当前app
+app(ENV_USERS);
 
-// 加载配置
-require __DIR__ . '/../../env.php';
+/** @var \TCG\Middleware\Dispatcher $app */
+$dispatcher = env()->get('middleware.dispatcher');
+// 加载中间件
+$dispatcher->add(env()->get('middleware.error_handler'));
+// 加载路由配置
 
-// 启动 debug
 
-// 尝试使用 mfw php 的路由机制
 
-pre($_SERVER['PATH_INFO']);
+
+/** @var \TCG\Http\Response $response */
+$response = $dispatcher->dispatch(env()->get('http.request'), env()->get('http.response'));
+$response->send();
+//pre($_SERVER['PATH_INFO']);

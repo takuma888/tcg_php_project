@@ -481,4 +481,104 @@ class Response extends Message implements ResponseInterface
         $output .= (string)$this->getBody();
         return $output;
     }
+
+
+    public function send()
+    {
+        // stop PHP sending a Content-Type automatically
+        $this->finalize();
+
+        // Send response
+        $this->respond();
+    }
+
+    /**
+     * Send the response to the client
+     *
+     * @param ResponseInterface $this
+     */
+    public function respond()
+    {
+        // Send response
+        if (!headers_sent()) {
+            // Headers
+            foreach ($this->getHeaders() as $name => $values) {
+                foreach ($values as $value) {
+                    header(sprintf('%s: %s', $name, $value), false);
+                }
+            }
+            // Set the status _after_ the headers, because of PHP's "helpful" behavior with location headers.
+            // See https://github.com/slimphp/Slim/issues/1730
+            // Status
+            header(sprintf(
+                'HTTP/%s %s %s',
+                $this->getProtocolVersion(),
+                $this->getStatusCode(),
+                $this->getReasonPhrase()
+            ));
+        }
+        // Body
+        if (!$this->isEmptyResponse()) {
+            $body = $this->getBody();
+            if ($body->isSeekable()) {
+                $body->rewind();
+            }
+            $contentLength  = $this->getHeaderLine('Content-Length');
+            if (!$contentLength) {
+                $contentLength = $body->getSize();
+            }
+            $amountToRead = $contentLength;
+            while ($amountToRead > 0 && !$body->eof()) {
+                $data = $body->read($amountToRead);
+                echo $data;
+                $amountToRead -= strlen($data);
+                if (connection_status() != CONNECTION_NORMAL) {
+                    break;
+                }
+            }
+        }
+    }
+
+
+    /**
+     * Finalize response
+     *
+     */
+    protected function finalize()
+    {
+        // stop PHP sending a Content-Type automatically
+        ini_set('default_mimetype', '');
+        if ($this->isEmptyResponse()) {
+            return $this->withoutHeader('Content-Type')->withoutHeader('Content-Length');
+        }
+        // Add Content-Length header if `addContentLengthHeader` setting is set
+        $addContentLengthHeader = false;
+        if (isset($addContentLengthHeader) && $addContentLengthHeader == true) {
+            if (ob_get_length() > 0) {
+                throw new \RuntimeException("Unexpected data in output buffer. " .
+                    "Maybe you have characters before an opening <?php tag?");
+            }
+            $size = $this->getBody()->getSize();
+            if ($size !== null && !$this->hasHeader('Content-Length')) {
+                $this->withHeader('Content-Length', (string) $size);
+            }
+        }
+    }
+
+
+    /**
+     * Helper method, which returns true if the provided response must not output a body and false
+     * if the response could have a body.
+     *
+     * @see https://tools.ietf.org/html/rfc7231
+     *
+     * @return bool
+     */
+    protected function isEmptyResponse()
+    {
+        if (method_exists($this, 'isEmpty')) {
+            return $this->isEmpty();
+        }
+        return in_array($this->getStatusCode(), [204, 205, 304]);
+    }
 }

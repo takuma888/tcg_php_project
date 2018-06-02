@@ -4,6 +4,7 @@ namespace TCG\Boot;
 
 use Acclimate\Container\CompositeContainer;
 use Acclimate\Container\ContainerAcclimator;
+use Composer\Autoload\ClassLoader;
 use Psr\Container\ContainerInterface;
 
 class Environment
@@ -33,6 +34,27 @@ class Environment
      * @var string
      */
     protected static $namespace = '0';
+
+    /**
+     * @var ClassLoader
+     */
+    protected static $autoloader;
+
+    /**
+     * @param ClassLoader $loader
+     */
+    public static function setAutoloader(ClassLoader $loader)
+    {
+        self::$autoloader = $loader;
+    }
+
+    /**
+     * @return ClassLoader
+     */
+    public static function getAutoloader()
+    {
+        return self::$autoloader;
+    }
 
 
     /**

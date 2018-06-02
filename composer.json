@@ -4,7 +4,9 @@
         "twig/twig": "2.4.8",
         "psr/http-server-handler": "1.0.0",
         "psr/http-server-middleware": "1.0.0",
+        "slim/http": "^0.1",
         "middlewares/utils": "^1.0",
+        "middlewares/error-handler": "^1.0",
         "middlewares/fast-route": "^1.0"
     },
     "require-dev": {
@@ -22,5 +24,11 @@
         "files": [
             "tcg/TCG/Boot/helpers.php"
         ]
+    },
+    "repositories": {
+        "packagist": {
+            "type": "composer",
+            "url": "https://packagist.phpcomposer.com"
+        }
     }
 }

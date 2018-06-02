@@ -6,6 +6,7 @@
  * Time: 上午11:24
  */
 use TCG\Boot\Environment;
+use Composer\Autoload\ClassLoader;
 /**
  * 辅助函数
  */
@@ -53,13 +54,13 @@ if (!function_exists('tick')) {
 
 
 
-if (!function_exists('app')) {
+if (!function_exists('env')) {
     /**
      * @param null $namespaceBitExpr
      * @param null $container
      * @return \Acclimate\Container\CompositeContainer|array
      */
-    function app($namespaceBitExpr = null, $container = null)
+    function env($namespaceBitExpr = null, $container = null)
     {
         if ($namespaceBitExpr >= 0) {
             if ($container) {
@@ -97,17 +98,32 @@ if (!function_exists('container')) {
 }
 
 
-if (!function_exists('env')) {
+if (!function_exists('app')) {
     /**
      * @param null $namespace
      * @return string
      */
-    function env($namespace = null)
+    function app($namespace = null)
     {
         if ($namespace) {
             Environment::setNamespace($namespace);
         } else {
             return Environment::getNamespace();
         }
+    }
+}
+
+
+if (!function_exists('loader')) {
+    /**
+     * @param ClassLoader|null $loader
+     * @return ClassLoader
+     */
+    function loader(ClassLoader $loader = null)
+    {
+        if ($loader) {
+            Environment::setAutoloader($loader);
+        }
+        return Environment::getAutoloader();
     }
 }

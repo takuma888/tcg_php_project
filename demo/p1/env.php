@@ -9,8 +9,11 @@
 
 use Pimple\Container;
 
+/**
+ * 注册容器到环境中
+ */
 $container = new Container();
-app(ENV_DEMO_P1, $container);
+env(ENV_DEMO_P1, $container);
 
 
 $container['twig.loader.filesystem_loader.path'] = __DIR__ . '/twig_tpl';

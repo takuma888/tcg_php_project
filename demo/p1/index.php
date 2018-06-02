@@ -8,10 +8,10 @@
 
 require __DIR__ . '/../bootstrap.php';
 
-// 设置当前环境
-env(ENV_DEMO_P1);
+// 设置当前app
+app(ENV_DEMO_P1);
 
 
-app()->get('twig')->display('@demo_p1/test.html.twig', [
+env()->get('twig')->display('@demo_p1/test.html.twig', [
     'a' => 'b',
 ]);

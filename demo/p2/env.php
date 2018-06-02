@@ -9,6 +9,6 @@
 use Pimple\Container;
 
 $container = new Container();
-app(ENV_DEMO_P2, $container);
+env(ENV_DEMO_P2, $container);
 
 

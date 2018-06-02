@@ -25,10 +25,11 @@ define('ENV_OFFERS', pow(2, 1)); // offers
  * Composer 自动加载
  */
 $autoloader = require ROOT . '/../vendor/autoload.php';
+loader($autoloader);
 
 /**
  * 启动环境
  */
-require ROOT . '/env.php';
-require ROOT . '/users/env.php';
-require ROOT . '/offers/env.php';
+require ROOT . '/public.php';
+require ROOT . '/users/protect.php';
+require ROOT . '/offers/protect.php';

@@ -8,11 +8,11 @@
 
 use Pimple\Container;
 
-$container = app(ENV_DEFAULT);
-if (!$container) {
-    $container = new Container();
-    app(ENV_DEFAULT, $container);
-}
+/**
+ * 注册容器对象到环境中
+ */
+$container = new Container();
+env(ENV_DEFAULT, $container);
 
 // twig
 $container['twig.engine.config.cache'] = false;
