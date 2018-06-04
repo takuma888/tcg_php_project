@@ -9,6 +9,9 @@
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
+/**
+ * route /
+ */
 route()->get('/', function (ServerRequestInterface $request, ResponseInterface $response) {
     return redirect('http://admin.users.kingo.com', 301);
 });
