@@ -42,9 +42,3 @@ $container['middleware.dispatcher'] = $container->factory(function () {
     return new Dispatcher();
 });
 
-// error-handler
-$container['middleware.error_handler'] = $container->factory(function () {
-    return (new Middlewares\ErrorHandler());
-});
-
-

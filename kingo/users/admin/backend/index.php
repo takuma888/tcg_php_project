@@ -6,7 +6,10 @@
  * Time: 上午9:54
  */
 
+use Psr\Http\Message\ServerRequestInterface;
+
 require __DIR__ . '/../../../bootstrap.php';
+require __DIR__ . '/../private.php';
 
 // 设置当前app
 app(ENV_USERS);
@@ -14,10 +17,9 @@ app(ENV_USERS);
 /** @var \TCG\Middleware\Dispatcher $app */
 $dispatcher = env()->get('middleware.dispatcher');
 // 加载中间件
-$dispatcher->add(env()->get('middleware.error_handler'));
-// 加载路由配置
+$dispatcher->add(function (ServerRequestInterface $request, $next) {
 
-
+});
 
 
 /** @var \TCG\Http\Response $response */
