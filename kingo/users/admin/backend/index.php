@@ -2,27 +2,13 @@
 /**
  * Created by PhpStorm.
  * User: liuliwu
- * Date: 2018/6/1
- * Time: 上午9:54
+ * Date: 2018/6/4
+ * Time: 下午2:23
  */
 
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\ResponseInterface;
 
-require __DIR__ . '/../../../bootstrap.php';
-require __DIR__ . '/../private.php';
-
-// 设置当前app
-app(ENV_USERS);
-
-/** @var \TCG\Middleware\Dispatcher $app */
-$dispatcher = env()->get('middleware.dispatcher');
-// 加载中间件
-$dispatcher->add(function (ServerRequestInterface $request, $next) {
-
+route()->get('/', function (ServerRequestInterface $request, ResponseInterface $response) {
+    return redirect('http://admin.users.kingo.com', 301);
 });
-
-
-/** @var \TCG\Http\Response $response */
-$response = $dispatcher->dispatch(env()->get('http.request'), env()->get('http.response'));
-$response->send();
-//pre($_SERVER['PATH_INFO']);

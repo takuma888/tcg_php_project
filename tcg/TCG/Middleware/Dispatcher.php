@@ -8,6 +8,7 @@
 
 namespace TCG\Middleware;
 
+use Middlewares\Utils\CallableHandler;
 use Psr\Http\Server\MiddlewareInterface;
 use RuntimeException;
 use Middlewares\Utils\RequestHandler;
@@ -47,13 +48,12 @@ class Dispatcher
     /**
      * Dispatches the middleware stack and returns the resulting `ResponseInterface`.
      * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
      * @return ResponseInterface
      */
-    public function dispatch(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
+    public function dispatch(ServerRequestInterface $request): ResponseInterface
     {
         $this->middlewareLock = true;
-        $resolved = $this->resolve(count($this->middlewareStack) - 1, $response);
+        $resolved = $this->resolve(count($this->middlewareStack) - 1);
         $response = $resolved->handle($request);
         $this->middlewareLock = false;
         return $response;
@@ -62,18 +62,16 @@ class Dispatcher
     /**
      * @param int $index middleware stack index
      *
-     * @param ResponseInterface $response
-     *
      * @return RequestHandlerInterface
      */
-    private function resolve(int $index, ResponseInterface $response): RequestHandlerInterface
+    private function resolve(int $index): RequestHandlerInterface
     {
-        return new RequestHandler(function (ServerRequestInterface $request) use ($index, $response) {
+        return new RequestHandler(function (ServerRequestInterface $request) use ($index) {
             $middleware = isset($this->middlewareStack[$index]) ? $this->middlewareStack[$index] : new CallableHandler(function () {
-            }, $response);
+            });
 
             if ($middleware instanceof Closure) {
-                $middleware = new CallableHandler($middleware, $response);
+                $middleware = new CallableHandler($middleware);
             }
 
             if (!($middleware instanceof MiddlewareInterface)) {
@@ -82,7 +80,7 @@ class Dispatcher
                 );
             }
 
-            return $middleware->process($request, $this->resolve($index - 1, $response));
+            return $middleware->process($request, $this->resolve($index + 1));
         });
     }
 }

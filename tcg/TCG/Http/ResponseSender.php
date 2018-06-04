@@ -6,11 +6,11 @@
  * Time: 下午4:17
  */
 
-namespace TCG\Middleware;
+namespace TCG\Http;
 
 use Psr\Http\Message\ResponseInterface;
 
-class DisplayResponse
+class ResponseSender
 {
     public function send(ResponseInterface $response): ResponseInterface
     {

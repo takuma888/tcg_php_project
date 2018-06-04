@@ -10,6 +10,7 @@ use Pimple\Container;
 use TCG\Http\Environment;
 use TCG\Http\Request;
 use TCG\Http\Response;
+use TCG\Http\ResponseSender;
 use TCG\Middleware\Dispatcher;
 
 /**
@@ -21,7 +22,7 @@ if (!$container) {
     env(ENV_USERS, $container);
 }
 
-
+// http
 // tcg http environment
 $container['tcg.http.environment'] = function () {
     return Environment::mock($_SERVER);
@@ -36,9 +37,14 @@ $container['http.response'] = $container->factory(function () {
     return new Response();
 });
 
+$container['http.response_sender'] = function () {
+    return new ResponseSender();
+};
+
 // 中间件
 // dispatcher
 $container['middleware.dispatcher'] = $container->factory(function () {
     return new Dispatcher();
 });
+
 
