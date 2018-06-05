@@ -1,0 +1,5 @@
+[2018-06-05 03:30:15] default.CRITICAL: a critical log message logging/critical [] []
+[2018-06-05 03:31:28] default.CRITICAL: a critical log message aaaa [] []
+[2018-06-05 03:32:36] default.CRITICAL: a critical log message:  [] []
+[2018-06-05 03:32:58] default.ERROR: a error log message:  [] []
+[2018-06-05 03:33:08] default.ERROR: a error log message: babababab [] []

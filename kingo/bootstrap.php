@@ -31,5 +31,5 @@ loader($autoloader);
  * 启动环境
  */
 require ROOT . '/public.php';
-require ROOT . '/users/protect.php';
-require ROOT . '/offers/protect.php';
+require ROOT . '/users/service.php';
+require ROOT . '/offers/service.php';

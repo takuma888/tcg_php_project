@@ -14,6 +14,22 @@ use Pimple\Container;
 $container = new Container();
 env(ENV_DEFAULT, $container);
 
+// logger
+$container['logger.file_root'] = __DIR__ . '/_log';
+$container['logger'] = function (Container $c) {
+    $logger = new Monolog\Logger('default');
+    $logger->pushHandler(new Monolog\Handler\StreamHandler($c['logger.file_root'] . '/debug/' . date('Y-m-d') . '.log', \Monolog\Logger::DEBUG));
+    return $logger;
+};
+
+/**
+ * @return \Psr\Log\LoggerInterface
+ */
+function logger()
+{
+    return env()->get('logger');
+}
+
 // twig
 $container['twig.engine.config.cache'] = false;
 $container['twig.engine.config.debug'] = true;

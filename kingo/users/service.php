@@ -48,3 +48,15 @@ $container['middleware.dispatcher'] = $container->factory(function () {
 });
 
 
+
+require __DIR__ . '/config.php';
+
+// mysql 数据库
+$container['users.mysql.servers.master'] = function () {
+    return new \TCG\MySQL\Server(USERS_MYSQL_DSN_MASTER);
+};
+
+// mysql user_auth 表
+$container['users.mysql.tables.user_auth'] = function (Container $c) {
+    return new Users\MySQL\Table\UserAuthTable($c['users.mysql.servers.master'], $c['users.mysql.servers.master'], USERS_MYSQL_DB_USERS);
+};

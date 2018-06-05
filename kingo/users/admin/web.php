@@ -22,6 +22,8 @@ use FastRoute\RouteCollector;
 /**
  * 注册私有服务
  */
+require __DIR__ . '/../private.php';
+
 /**
  * 注册容器到环境中
  */
@@ -36,29 +38,7 @@ $container['route.collector'] = function () {
     return new RouteCollector(new Std(), new \FastRoute\DataGenerator\GroupCountBased());
 };
 
-/**
- * @return RouteCollector
- */
-function route()
-{
-    return env()->get('route.collector');
-}
 
-// 定义一些简便方法
-function response()
-{
-    return env()->get('http.response');
-}
-
-function json($data, $status = null, $encodingOptions = 0)
-{
-    return env()->get('http.response')->withJson($data, $status, $encodingOptions);
-}
-
-function redirect($url, $status = null)
-{
-    return env()->get('http.response')->withRedirect($url, $status);
-}
 
 // 路由分发器
 $container['route.dispatcher'] = $container->factory(function (Container $c) {
@@ -118,6 +98,41 @@ $dispatcher->add(function (ServerRequestInterface $request, RequestHandlerInterf
         }
         $count += 1;
     }
+    // 再分发一遍
+    $routeInfo = env()->get('route.dispatcher')
+        ->dispatch($request->getMethod(), $pathInfo);
+    switch ($routeInfo[0]) {
+        case FastRoute\Dispatcher::NOT_FOUND:
+            // ... 404 Not Found
+            break;
+        case FastRoute\Dispatcher::METHOD_NOT_ALLOWED:
+            $allowedMethods = $routeInfo[1];
+            // ... 405 Method Not Allowed
+            break;
+        case FastRoute\Dispatcher::FOUND:
+            $handler = $routeInfo[1];
+            $vars = $routeInfo[2];
+            $response = call_user_func_array($handler, [$request, env()->get('http.response')] + $vars);
+            return $response;
+            break;
+    }
+    return $response;
+});
+
+/**
+ * route /
+ */
+route()->get('/', function (ServerRequestInterface $request, ResponseInterface $response) {
+    return redirect($response, 'http://admin.users.kingo.com');
+});
+route()->get('/logging/{level}[/{message}]', function (ServerRequestInterface $request, ResponseInterface $response, $level, $message = null) {
+    logger()->log($level, 'a ' . $level . ' log message: ' . $message);
+    $response->getBody()
+        ->write('<h1>' . $level . '</h1>');
+    return $response;
+});
+route()->get('/test', function (ServerRequestInterface $request, ResponseInterface $response) {
+    table('user_auth')->recreate();
     return $response;
 });
 
