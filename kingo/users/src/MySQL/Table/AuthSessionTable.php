@@ -19,4 +19,10 @@ class AuthSessionTable extends Table
 
 SQL;
 
+    public function getTableFields()
+    {
+        return [
+
+        ];
+    }
 }

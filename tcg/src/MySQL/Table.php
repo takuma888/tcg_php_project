@@ -9,7 +9,7 @@
 namespace TCG\MySQL;
 
 
-class Table
+abstract class Table
 {
     /**
      * @var Server
@@ -295,7 +295,9 @@ class Table
         return $dbTables;
     }
 
-
+    /**
+     * @param bool $drop
+     */
     public function create($drop = false)
     {
         $sql = [];
@@ -328,9 +330,33 @@ class Table
         }
     }
 
-
+    /**
+     * re-create table
+     */
     public function recreate()
     {
         $this->create(true);
     }
+
+    /**
+     * @param Model $model
+     * @return array
+     */
+    public function getModelFields(Model $model)
+    {
+        $fields = $this->getTableFields();
+        $return = [];
+        foreach ($fields as $field => $defaultValue) {
+            if (($property = $model->hasProperty($field)) != false) {
+                $return[$field] = $model->{$property};
+            }
+        }
+        return $return;
+    }
+
+    /**
+     * field => default value
+     * @return array
+     */
+    abstract public function getTableFields();
 }
