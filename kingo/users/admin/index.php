@@ -56,7 +56,7 @@ $dispatcher = env()->get('middleware.dispatcher');
  * 加载session中间件
  */
 $dispatcher->add(function (ServerRequestInterface $request, RequestHandlerInterface $next) {
-    env()->get('auth.session')->start();
+    env()->get('session')->start();
     return $next->handle($request);
 });
 /**

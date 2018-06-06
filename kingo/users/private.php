@@ -79,7 +79,7 @@ function table($tableBaseName)
  */
 function session()
 {
-    return env()->get('auth.session_segment.main');
+    return env()->get('session.main');
 }
 
 /**
@@ -90,7 +90,7 @@ function session()
 function flash($key, $message = null)
 {
     /** @var \TCG\Auth\Session\Segment $segment */
-    $segment = env()->get('auth.session_segment.flash');
+    $segment = env()->get('session.flash');
     if ($message) {
         $segment->set($key, $message);
     } else {

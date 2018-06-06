@@ -102,7 +102,7 @@ $container['users.mysql.tables.session'] = function (Container $c) {
  * @param Container $c
  * @return \TCG\Auth\Session\Session
  */
-$container['auth.session'] = function (Container $c) {
+$container['session'] = function (Container $c) {
     ini_set('session.gc_maxlifetime', 24 * 60 * 60);
     $session = new TCG\Auth\Session\Session($_COOKIE);
     /** @var \Users\MySQL\Table\SessionTable $sessionTable */
@@ -136,13 +136,13 @@ $container['auth.session'] = function (Container $c) {
 /**
  * @return \TCG\Auth\Session\Segment
  */
-$container['auth.session_segment.main'] = function () {
+$container['session.main'] = function () {
     return new \TCG\Auth\Session\Segment('main');
 };
 /**
  * @return \TCG\Auth\Session\Segment
  */
-$container['auth.session_segment.flash'] = function () {
+$container['session.flash'] = function () {
     return new \TCG\Auth\Session\Segment('flash');
 };
 

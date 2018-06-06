@@ -45,15 +45,9 @@ class Factory
      * @param SegmentInterface $segment A session segment.
      *
      */
-    public function __construct(array $cookie, Session $session = null, SegmentInterface $segment = null) {
+    public function __construct(array $cookie, Session $session, SegmentInterface $segment) {
         $this->session = $session;
-        if (!$this->session) {
-            $this->session = new Session($cookie);
-        }
         $this->segment = $segment;
-        if (!$this->segment) {
-            $this->segment = new Segment('main');
-        }
     }
 
     /**
