@@ -13,12 +13,6 @@ use ReflectionClass;
 
 abstract class Model implements ArrayAccess
 {
-
-    /**
-     * @var array
-     */
-    private $_modified = [];
-
     /**
      * @param $key
      * @return string
@@ -74,7 +68,6 @@ abstract class Model implements ArrayAccess
      */
     public function set($key, $value)
     {
-        $old_value = $this->get($key);
         $setter = 'set' . $this->camelcase($key);
         if (method_exists($this, $setter)) {
             $this->$setter($value);
@@ -82,10 +75,6 @@ abstract class Model implements ArrayAccess
             if (($property = $this->hasProperty($key)) != false) {
                 $this->{$property} = $value;
             }
-        }
-        // 检查数据变化情况
-        if ($old_value != $value) {
-            $this->_modified[$key] = $value;
         }
     }
     /**
@@ -101,7 +90,7 @@ abstract class Model implements ArrayAccess
         } elseif (($property = $this->hasProperty($key)) != false) {
             return $this->{$property};
         } else {
-            throw new \Exception("field {$key} not exists in model field list: [" . implode(', ', $this->getFields()) . "]");
+            throw new \Exception("field {$key} not exists in model " . get_class($this));
         }
     }
 

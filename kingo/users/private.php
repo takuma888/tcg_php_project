@@ -57,58 +57,6 @@ function redirect(ResponseInterface $response, $url, $status = null)
     return $responseWithRedirect;
 }
 
-// query.select
-$container['users.mysql.query.select'] = $container->factory(function() {
-    return new TCG\MySQL\Select\Query();
-});
-
-// query.insert
-$container['users.mysql.query.insert'] = $container->factory(function() {
-    return new TCG\MySQL\Insert\Query();
-});
-
-// query.update
-$container['users.mysql.query.update'] = $container->factory(function () {
-    return new TCG\MySQL\Update\Query();
-});
-
-// query.delete
-$container['users.mysql.query.delete'] = $container->factory(function () {
-    return new TCG\MySQL\Delete\Query();
-});
-
-/**
- * @return \TCG\MySQL\Select\Query
- */
-function select()
-{
-    return env()->get('users.mysql.query.select');
-}
-
-/**
- * @return \TCG\MySQL\Insert\Query
- */
-function insert()
-{
-    return env()->get('users.mysql.query.insert');
-}
-
-/**
- * @return \TCG\MySQL\Update\Query
- */
-function update()
-{
-    return env()->get('users.mysql.query.update');
-}
-
-/**
- * @return TCG\MySQL\Delete\Query
- */
-function delete()
-{
-    return env()->get('users.mysql.query.update');
-}
-
 /**
  * @param $tableBaseName
  * @return \TCG\MySQL\Table
@@ -119,5 +67,40 @@ function table($tableBaseName)
         case 'user_auth':
             return env()->get('users.mysql.tables.user_auth');
             break;
+        case 'session':
+            return env()->get('users.mysql.tables.session');
+            break;
     }
+}
+
+
+/**
+ * @return \TCG\Auth\Session\Segment
+ */
+function session()
+{
+    return env()->get('auth.session_segment.main');
+}
+
+/**
+ * @param $key
+ * @param null $message
+ * @return mixed
+ */
+function flash($key, $message = null)
+{
+    /** @var \TCG\Auth\Session\Segment $segment */
+    $segment = env()->get('auth.session_segment.flash');
+    if ($message) {
+        $segment->set($key, $message);
+    } else {
+        $message = $segment->get($key);
+        $segment->set($key, null);
+        return $message;
+    }
+}
+
+function dao($name)
+{
+
 }

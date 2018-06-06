@@ -34,7 +34,17 @@ class Server
      * Server constructor.
      * @param string $dsn
      */
-    public function __construct($dsn)
+    public function __construct($dsn = '')
+    {
+        if ($dsn) {
+            $this->initDsn($dsn);
+        }
+    }
+
+    /**
+     * @param string $dsn
+     */
+    public function initDsn($dsn)
     {
         $this->dsn = $dsn;
         $dsn = parse_url($this->dsn);

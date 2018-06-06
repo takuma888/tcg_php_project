@@ -77,19 +77,17 @@ abstract class Table
      */
     protected $createSQL = '';
 
-    /**
-     * Table constructor.
-     * @param Server $writeServer
-     * @param Server $readServer
-     * @param string $dbBaseName
-     * @throws \Exception
-     */
-    public function __construct(Server $writeServer, Server $readServer, $dbBaseName = '')
+
+    public function __construct(Server $write, Server $read, $dbBaseName = '', $tableBaseName = '')
     {
-        $this->write = $writeServer;
-        $this->read = $readServer;
-        $this->dbBaseName = $dbBaseName;
-        $this->checkConfig();
+        $this->setWriteServer($write);
+        $this->setReadServer($read);
+        if ($dbBaseName) {
+            $this->setDbBaseName($dbBaseName);
+        }
+        if ($tableBaseName) {
+            $this->setTableBaseName($tableBaseName);
+        }
     }
 
     /**
@@ -106,6 +104,54 @@ abstract class Table
     }
 
     /**
+     * @param $tableBaseName
+     */
+    public function setTableBaseName($tableBaseName)
+    {
+        $this->tableBaseName = $tableBaseName;
+    }
+
+    /**
+     * @param $dbBaseName
+     */
+    public function setDbBaseName($dbBaseName)
+    {
+        $this->dbBaseName = $dbBaseName;
+    }
+
+    /**
+     * @param Server $server
+     */
+    public function setMasterServer(Server $server)
+    {
+        $this->write = $server;
+    }
+
+    /**
+     * @return Server
+     */
+    public function getMasterServer()
+    {
+        return $this->write;
+    }
+
+    /**
+     * @param Server $server
+     */
+    public function setReadServer(Server $server)
+    {
+        $this->read = $server;
+    }
+
+    /**
+     * @param Server $server
+     */
+    public function setWriteServer(Server $server)
+    {
+        $this->write = $server;
+    }
+
+    /**
      * @return Server
      */
     public function getWriteServer()
@@ -118,6 +164,9 @@ abstract class Table
      */
     public function getReadServer()
     {
+        if (!$this->read) {
+            return $this->getMasterServer();
+        }
         return $this->read;
     }
 
@@ -296,10 +345,14 @@ abstract class Table
     }
 
     /**
+     * create tables
      * @param bool $drop
      */
     public function create($drop = false)
     {
+        if (!$this->createSQL) {
+            return;
+        }
         $sql = [];
         $dbNames = $this->getDbNameRange();
         $tableNames = $this->getTableNameRange();

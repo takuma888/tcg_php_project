@@ -53,7 +53,7 @@ class Dispatcher
     public function dispatch(ServerRequestInterface $request): ResponseInterface
     {
         $this->middlewareLock = true;
-        $resolved = $this->resolve(count($this->middlewareStack) - 1);
+        $resolved = $this->resolve(0);
         $response = $resolved->handle($request);
         $this->middlewareLock = false;
         return $response;

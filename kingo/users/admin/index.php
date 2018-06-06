@@ -50,10 +50,18 @@ $container['route.dispatcher'] = $container->factory(function (Container $c) {
  */
 app(ENV_USERS);
 
-/** @var \TCG\Middleware\Dispatcher $app */
+/** @var \TCG\Middleware\Dispatcher $dispatcher */
 $dispatcher = env()->get('middleware.dispatcher');
-
-// 加载中间件
+/**
+ * 加载session中间件
+ */
+$dispatcher->add(function (ServerRequestInterface $request, RequestHandlerInterface $next) {
+    env()->get('auth.session')->start();
+    return $next->handle($request);
+});
+/**
+ * 加载路由中间件
+ */
 $dispatcher->add(function (ServerRequestInterface $request, RequestHandlerInterface $next) {
     $response = $next->handle($request);
     $pathInfo = $request->getServerParams()['PATH_INFO'];
@@ -125,6 +133,7 @@ $dispatcher->add(function (ServerRequestInterface $request, RequestHandlerInterf
 route()->get('/', function (ServerRequestInterface $request, ResponseInterface $response) {
     return redirect($response, 'http://admin.users.kingo.com');
 });
+// tests
 route()->get('/logging/{level}[/{message}]', function (ServerRequestInterface $request, ResponseInterface $response, $level, $message = null) {
     logger()->log($level, 'a ' . $level . ' log message: ' . $message);
     $response->getBody()
@@ -133,6 +142,14 @@ route()->get('/logging/{level}[/{message}]', function (ServerRequestInterface $r
 });
 route()->get('/test', function (ServerRequestInterface $request, ResponseInterface $response) {
     table('user_auth')->recreate();
+    table('session')->recreate();
+    return $response;
+});
+route()->get('/echo[/{content}]', function (ServerRequestInterface $request, ResponseInterface $response, $content = null) {
+    $last = session()->get('echo');
+    session()->set('echo', $content);
+    $response->getBody()
+        ->write("<h1>Echo!Last is {$last} but the new is {$content}</h1>");
     return $response;
 });
 
