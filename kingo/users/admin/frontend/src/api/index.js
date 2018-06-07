@@ -3,7 +3,9 @@ import axios from 'axios'
 let base = 'http://tcg.php.localhost.com/kingo/users/admin'
 
 let config = {
-  'X-Requested-With': 'XMLHttpRequest'
+  headers: {
+    'X-Requested-With': 'XMLHttpRequest'
+  }
 }
 
 export default {
