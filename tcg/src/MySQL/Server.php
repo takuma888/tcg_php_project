@@ -125,6 +125,9 @@ class Server
                 $pdo->exec('SET NAMES ' . $config['charset']);
             }
             if (isset($config['timezone'])) {
+                $config['timezone'] = strtr($config['timezone'], [
+                    ' ' => '+'
+                ]);
                 $pdo->exec("SET time_zone = '{$config['timezone']}'");
             }
 
