@@ -16,6 +16,12 @@ use FastRoute\RouteParser\Std;
 use FastRoute\RouteCollector;
 
 /**
+ * 跨域问题
+ */
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Headers: *");
+
+/**
  * 检查依赖的服务
  */
 
@@ -37,9 +43,6 @@ if (!$container) {
 $container['route.collector'] = function () {
     return new RouteCollector(new Std(), new \FastRoute\DataGenerator\GroupCountBased());
 };
-
-
-
 // 路由分发器
 $container['route.dispatcher'] = $container->factory(function (Container $c) {
     return new \FastRoute\Dispatcher\GroupCountBased($c['route.collector']->getData());
@@ -60,6 +63,55 @@ $dispatcher->add(function (ServerRequestInterface $request, RequestHandlerInterf
     return $next->handle($request);
 });
 /**
+ * 接口返回格式化中间件
+ */
+$dispatcher->add(function (ServerRequestInterface $request, RequestHandlerInterface $next) {
+    if ($request->getHeaderLine('X-Requested-With') === 'XMLHttpRequest') {
+        $json = [
+            'msg' => '',
+            'code' => 0,
+            'data' => [],
+        ];
+        // ajax 需要返回json
+        try {
+            $response = $next->handle($request);
+            $string = strval($response->getBody());
+            $arr = json_decode($string, true);
+            $json['data'] = $arr;
+        } catch (\Exception $e) {
+            $json['msg'] = $e->getMessage();
+            $json['code'] = $e->getCode() ? : \TCG\Http\StatusCode::HTTP_INTERNAL_SERVER_ERROR;
+        }
+        $response = env()->get('http.response');
+        return json($response, $json, \TCG\Http\StatusCode::HTTP_OK);
+    } else {
+        return $next->handle($request);
+    }
+});
+/**
+ * 登录检测中间件
+ */
+$dispatcher->add(function (ServerRequestInterface $request, RequestHandlerInterface $next) {
+    $pathInfo = $request->getServerParams()['PATH_INFO'];
+    $pathInfo = '/' . trim($pathInfo, '/');
+    // path_info 白名单
+    $noCheckPathInfo = [
+        '/', // 首页
+        '/login', // 登录
+    ];
+    if ($noCheckPathInfo) {
+        if (!in_array($pathInfo, $noCheckPathInfo)) {
+            // 不在白名单中
+            if (!session()->get('uid')) {
+                // 没有登录
+                throw new \Exception("请登录");
+            }
+        }
+    }
+    return $next->handle($request);
+
+});
+/**
  * 加载路由中间件
  */
 $dispatcher->add(function (ServerRequestInterface $request, RequestHandlerInterface $next) {
@@ -71,7 +123,7 @@ $dispatcher->add(function (ServerRequestInterface $request, RequestHandlerInterf
     $itemCount = count($items);
     $count = 0;
     while ($count <= $itemCount) {
-        $path = '/' . implode('/', array_slice($items, $count, $itemCount - $count));
+//        $path = '/' . implode('/', array_slice($items, $count, $itemCount - $count));
         $base = implode('/', array_slice($items, 0, $count));
         $pattern = $root . '/' . $base;
         $file = null;
@@ -87,7 +139,7 @@ $dispatcher->add(function (ServerRequestInterface $request, RequestHandlerInterf
             chdir($cwd);
             // 进行路由分发
             $routeInfo = env()->get('route.dispatcher')
-                ->dispatch($request->getMethod(), $path);
+                ->dispatch($request->getMethod(), $pathInfo);
             switch ($routeInfo[0]) {
                 case FastRoute\Dispatcher::NOT_FOUND:
                     // ... 404 Not Found
@@ -133,26 +185,6 @@ $dispatcher->add(function (ServerRequestInterface $request, RequestHandlerInterf
 route()->get('/', function (ServerRequestInterface $request, ResponseInterface $response) {
     return redirect($response, 'http://admin.users.kingo.com');
 });
-// tests
-route()->get('/logging/{level}[/{message}]', function (ServerRequestInterface $request, ResponseInterface $response, $level, $message = null) {
-    logger()->log($level, 'a ' . $level . ' log message: ' . $message);
-    $response->getBody()
-        ->write('<h1>' . $level . '</h1>');
-    return $response;
-});
-route()->get('/test', function (ServerRequestInterface $request, ResponseInterface $response) {
-    table('user_auth')->recreate();
-    table('session')->recreate();
-    return $response;
-});
-route()->get('/echo[/{content}]', function (ServerRequestInterface $request, ResponseInterface $response, $content = null) {
-    $last = session()->get('echo');
-    session()->set('echo', $content);
-    $response->getBody()
-        ->write("<h1>Echo!Last is {$last} but the new is {$content}</h1>");
-    return $response;
-});
-
 
 /** @var ResponseInterface $response */
 $response = $dispatcher->dispatch(env()->get('http.request'));

@@ -29,7 +29,10 @@ SQL;
     public function getTableFields()
     {
         return [
-
+            'session_id' => '',
+            'session_data' => '',
+            'session_lifetime' => 0,
+            'session_time' => 0,
         ];
     }
 
@@ -105,7 +108,9 @@ SQL;
                 ->table('{@table}', $this)
                 ->setParameter(':id', $sessionId);
             $selectStmt = $pdo->prepare($query->getSQLForWrite([
-                'session_id' => $sessionId,
+                '{@table}' => [
+                    'session_id' => $sessionId,
+                ],
             ]));
             $selectStmt->execute($query->getParameters());
             $sessionRows = $selectStmt->fetchAll(\PDO::FETCH_NUM);
@@ -131,7 +136,9 @@ SQL;
                             ':time' => time(),
                         ]);
                     $sql = $query->getSQLForWrite([
-                        'session_id' => $sessionId,
+                        '{@table}' => [
+                            'session_id' => $sessionId,
+                        ],
                     ]);
                     $parameters = $query->getParameters();
                     $pdo = $this->getWriteServer()->connect();
@@ -190,7 +197,9 @@ SQL;
                 ':time' => time(),
             ]);
             $stmt = $pdo->prepare($query->getSQLForWrite([
-                'session_id' => $sessionId,
+                '{@table}' => [
+                    'session_id' => $sessionId,
+                ],
             ]));
             $stmt->execute($query->getParameters());
         } catch (\PDOException $e) {
@@ -216,7 +225,9 @@ SQL;
             $query->sql("DELETE FROM {@table} WHERE `session_lifetime` + `session_time` < :time")
                 ->table('{@table}', $this)
                 ->setParameter(':time', time());
-            $sql = $query->getSQLForWrite();
+            $sql = $query->getSQLForWrite([
+                '{@table}' => [],
+            ]);
             $parameters = $query->getParameters();
             $pdo = $this->getWriteServer()->connect();
             $stmt = $pdo->prepare($sql);
@@ -235,7 +246,11 @@ SQL;
         $query->sql("DELETE FROM {@table} WHERE `session_id` = :id")
             ->table('{@table}', $this)
             ->setParameter(':id', $sessionId);
-        $sql = $query->getSQLForWrite();
+        $sql = $query->getSQLForWrite([
+            '{@table}' => [
+                'session_id' => $sessionId,
+            ],
+        ]);
         $parameters = $query->getParameters();
         try {
             $pdo = $this->getWriteServer()->connect();
@@ -269,19 +284,25 @@ SQL;
         // should we handle the return value? 0 on timeout, null on error
         // we use a timeout of 50 seconds which is also the default for innodb_lock_wait_timeout
         $query = new Query();
-        $query->sql('SELECT GET_LOCK(:key, 50)')
+        $query->sql('SELECT GET_LOCK(:key, 50) FROM {@table}')
+            ->table('{@table}', $this)
             ->setParameter(':key', $sessionId);
         $sql = $query->getSQLForWrite([
-            'session_id' => $sessionId,
+            '{@table}' => [
+                'session_id' => $sessionId,
+            ],
         ]);
         $parameters = $query->getParameters();
         $stmt = $pdo->prepare($sql);
         $stmt->execute($parameters);
 
         $query = new Query();
-        $query->sql('DO RELEASE_LOCK(:key)');
+        $query->sql('SELECT RELEASE_LOCK(:key) FROM {@table}')
+            ->table('{@table}', $this);
         $sql = $query->getSQLForWrite([
-            'session_id' => $sessionId,
+            '{@table}' => [
+                'session_id' => $sessionId,
+            ],
         ]);
         $releaseStmt = $pdo->prepare($sql);
         $releaseStmt->bindValue(':key', $sessionId, \PDO::PARAM_STR);

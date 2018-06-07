@@ -21,9 +21,15 @@ CREATE TABLE IF NOT EXISTS {@table} (
   `email` VARCHAR(128) DEFAULT '' COMMENT '邮箱',
   `mobile` VARCHAR(16) DEFAULT '' COMMENT '手机',
   `password` VARCHAR(32) NOT NULL DEFAULT '' COMMENT '密码',
+  `session_id` VARBINARY(128) NOT NULL DEFAULT '' COMMENT 'SESSION ID',
+  `create_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间戳',
+  `register_at` TIMESTAMP NULL COMMENT '注册时间戳',
+  `login_at` TIMESTAMP NULL COMMENT '登录时间戳',
+  `update_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间戳',
   UNIQUE KEY `username` (`username`),
   UNIQUE KEY `email` (`email`),
   UNIQUE KEY `mobile` (`mobile`),
+  KEY `session_id` (`session_id`),
   PRIMARY KEY (`id`)
 ) ENGINE InnoDB DEFAULT CHARSET utf8mb4 COLLATE utf8mb4_general_ci;
 SQL;

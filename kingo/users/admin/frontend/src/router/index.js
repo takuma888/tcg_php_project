@@ -1,16 +1,22 @@
-import Vue from 'vue'
-import Router from 'vue-router'
-import HelloWorld from '@/components/HelloWorld'
-import TestElementUILayout from '@/router/test/element-ui'
+import LoginComponent from '@/components/LoginComponent'
+import NotFoundComponent from '@/components/NotFoundComponent'
+import HomeComponent from '@/components/HomeComponent'
 
-Vue.use(Router)
-
-export default new Router({
-  routes: [
-    {
-      path: '/',
-      name: 'HelloWorld',
-      component: HelloWorld
-    }
-  ].concat(TestElementUILayout)
-})
+export default [
+  {
+    path: '/login',
+    component: LoginComponent
+  },
+  {
+    path: '/404',
+    component: NotFoundComponent
+  },
+  {
+    path: '/',
+    component: HomeComponent
+  },
+  {
+    path: '*',
+    redirect: { path: '/404' }
+  }
+]

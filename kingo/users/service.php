@@ -54,12 +54,12 @@ require __DIR__ . '/config.php';
 /**
  * mysql数据库连接dsn
  */
-$container['users.mysql.servers.master_dsn'] = $container->factory(function () {
+$container['users.mysql.servers.master_dsn'] = function () {
     return USERS_MYSQL_DSN_MASTER;
-});
-$container['users.mysql.servers.slave_dsn'] = $container->factory(function(Container $c) {
+};
+$container['users.mysql.servers.slave_dsn'] = function(Container $c) {
     return $c['users.mysql.servers.master_dsn'];
-});
+};
 /**
  * 库名称
  */
@@ -89,6 +89,30 @@ $container['users.mysql.servers.slave'] = function (Container $c) {
  */
 $container['users.mysql.tables.user_auth'] = function (Container $c) {
     return new Users\MySQL\Table\UserAuthTable($c['users.mysql.servers.master'], $c['users.mysql.servers.slave'], $c['users.mysql.database.users']);
+};
+/**
+ * 用户资料表
+ * @param Container $c
+ * @return \Users\MySQL\Table\UserProfileTable
+ */
+$container['users.mysql.tables.user_profile'] = function (Container $c) {
+    return new \Users\MySQL\Table\UserProfileTable($c['users.mysql.servers.master'], $c['users.mysql.servers.slave'], $c['users.mysql.database.users']);
+};
+/**
+ * 角色权限表
+ * @param Container $c
+ * @return \Users\MySQL\Table\RolePermissionTable
+ */
+$container['users.mysql.tables.role_permission'] = function (Container $c) {
+    return new \Users\MySQL\Table\RolePermissionTable($c['users.mysql.servers.master'], $c['users.mysql.servers.slave'], $c['users.mysql.database.users']);
+};
+/**
+ * 用户角色关联表
+ * @param Container $c
+ * @return \Users\MySQL\Table\UserRoleTable
+ */
+$container['users.mysql.tables.user_role'] = function (Container $c) {
+    return new \Users\MySQL\Table\UserRoleTable($c['users.mysql.servers.master'], $c['users.mysql.servers.slave'], $c['users.mysql.database.users']);
 };
 /**
  * 用户session表
@@ -126,7 +150,7 @@ $container['session'] = function (Container $c) {
             $sessionTable->destroySession($sessionId);
             return true;
         },
-        $gc = function ($maxlifetime) use ($sessionTable) {
+        $gc = function () use ($sessionTable) {
             $sessionTable->gcSession();
             return true;
         }
@@ -140,9 +164,9 @@ $container['session.main'] = function () {
     return new \TCG\Auth\Session\Segment('main');
 };
 /**
- * @return \TCG\Auth\Session\Segment
+ * @return \TCG\Auth\Session\FlashSegment
  */
 $container['session.flash'] = function () {
-    return new \TCG\Auth\Session\Segment('flash');
+    return new \TCG\Auth\Session\FlashSegment('flash');
 };
 

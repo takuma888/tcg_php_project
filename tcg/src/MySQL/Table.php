@@ -16,9 +16,9 @@ abstract class Table
      */
     private $write;
     /**
-     * @var Server
+     * @var Server[]
      */
-    private $read;
+    private $reads = [];
 
     /**
      * Table base name
@@ -77,11 +77,17 @@ abstract class Table
      */
     protected $createSQL = '';
 
-
-    public function __construct(Server $write, Server $read, $dbBaseName = '', $tableBaseName = '')
+    /**
+     * Table constructor.
+     * @param Server $write
+     * @param Server[] $reads
+     * @param string $dbBaseName
+     * @param string $tableBaseName
+     */
+    public function __construct(Server $write, array $reads, $dbBaseName = '', $tableBaseName = '')
     {
         $this->setWriteServer($write);
-        $this->setReadServer($read);
+        $this->addReadServers($reads);
         if ($dbBaseName) {
             $this->setDbBaseName($dbBaseName);
         }
@@ -138,9 +144,44 @@ abstract class Table
     /**
      * @param Server $server
      */
-    public function setReadServer(Server $server)
+    public function addReadServer(Server $server)
     {
-        $this->read = $server;
+        $this->reads[] = $server;
+    }
+
+    /**
+     * @param Server[] $servers
+     */
+    public function addReadServers(array $servers)
+    {
+        foreach ($servers as $server) {
+            $this->addReadServer($server);
+        }
+    }
+
+    /**
+     * @return Server[]
+     */
+    public function getReadServers()
+    {
+        if ($this->reads) {
+            return $this->reads;
+        } else {
+            return [
+                $this->write
+            ];
+        }
+    }
+
+    /**
+     * @return Server
+     */
+    public function getReadServer()
+    {
+        if ($this->reads) {
+            return $this->reads[mt_rand(0, count($this->reads))];
+        }
+        return $this->write;
     }
 
     /**
@@ -157,17 +198,6 @@ abstract class Table
     public function getWriteServer()
     {
         return $this->write;
-    }
-
-    /**
-     * @return Server
-     */
-    public function getReadServer()
-    {
-        if (!$this->read) {
-            return $this->getMasterServer();
-        }
-        return $this->read;
     }
 
     /**

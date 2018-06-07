@@ -1,24 +1,36 @@
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
-import 'normalize.css/normalize.css'
+import Vuex from 'vuex'
 import ElementUI from 'element-ui'
+import VueRouter from 'vue-router'
+import 'normalize.css/normalize.css'
 import 'element-ui/lib/theme-chalk/index.css'
-// import locale from 'element-ui/lib/locale/lang/zh-CN'
 import App from './App'
-import router from './router'
+import routes from './router'
+import 'font-awesome/css/font-awesome.min.css'
 
 Vue.use(ElementUI)
-Vue.config.productionTip = false
+Vue.use(VueRouter)
+Vue.use(Vuex)
 
-// Vue.config.lang = 'zh-cn'
-// Vue.locale('zh-cn', locale)
-
-/* eslint-disable no-new */
-new Vue({
-  el: '#app',
-  router,
-  components: { App },
-  template: '<App/>',
-  render: h => h(App)
+const router = new VueRouter({
+  routes
 })
+
+router.beforeEach((to, from, next) => {
+  if (to.path === '/login') {
+    sessionStorage.removeItem('user')
+  }
+  let user = JSON.parse(sessionStorage.getItem('user'))
+  if (!user && to.path !== '/login') {
+    next({ path: '/login' })
+  } else {
+    next()
+  }
+})
+
+new Vue({
+  router,
+  render: h => h(App)
+}).$mount('#app')

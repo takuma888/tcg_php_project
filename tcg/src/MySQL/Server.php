@@ -119,11 +119,15 @@ class Server
 
             $pdo->setAttribute(PDO::ATTR_STATEMENT_CLASS, ['TCG\MySQL\Statement', [$pdo]]);
             $pdo->exec("set @@sql_mode='STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION'");
-            if (!empty($config['collate'])) {
+            if (!isset($config['collate'])) {
                 $pdo->exec('SET NAMES ' . $config['charset'] . ' COLLATE ' . $config['collate']);
             } else {
                 $pdo->exec('SET NAMES ' . $config['charset']);
             }
+            if (isset($config['timezone'])) {
+                $pdo->exec("SET time_zone = '{$config['timezone']}'");
+            }
+
             self::$connections[$id] = $pdo;
         }
         return self::$connections[$id];

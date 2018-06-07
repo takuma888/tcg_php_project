@@ -63,14 +63,22 @@ function redirect(ResponseInterface $response, $url, $status = null)
  */
 function table($tableBaseName)
 {
-    switch ($tableBaseName) {
-        case 'user_auth':
-            return env()->get('users.mysql.tables.user_auth');
-            break;
-        case 'session':
-            return env()->get('users.mysql.tables.session');
-            break;
+    $idPrefix = 'users.mysql.tables';
+    $id = "{$idPrefix}.{$tableBaseName}";
+    if (env()->has($id)) {
+        return env()->get($id);
     }
+    throw new \RuntimeException("Table service {$id} not found");
+}
+
+/**
+ * @param string $sql
+ * @return \TCG\MySQL\Query
+ */
+function query($sql = '')
+{
+    $query = new \TCG\MySQL\Query($sql);
+    return $query;
 }
 
 
@@ -83,21 +91,11 @@ function session()
 }
 
 /**
- * @param $key
- * @param null $message
- * @return mixed
+ * @return \TCG\Auth\Session\FlashSegment
  */
-function flash($key, $message = null)
+function flash()
 {
-    /** @var \TCG\Auth\Session\Segment $segment */
-    $segment = env()->get('session.flash');
-    if ($message) {
-        $segment->set($key, $message);
-    } else {
-        $message = $segment->get($key);
-        $segment->set($key, null);
-        return $message;
-    }
+    return env()->get('session.flash');
 }
 
 function dao($name)

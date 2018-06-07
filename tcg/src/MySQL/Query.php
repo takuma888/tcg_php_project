@@ -10,6 +10,11 @@ namespace TCG\MySQL;
 
 class Query
 {
+
+    const PARSE_READ = 'read';
+
+    const PARSE_WRITE = 'write';
+
     /**
      * @var string
      */
@@ -35,10 +40,6 @@ class Query
      * @var bool
      */
     private $parsed = false;
-
-    const PARSE_READ = 'read';
-
-    const PARSE_WRITE = 'write';
 
     /**
      * Query constructor.
@@ -148,7 +149,7 @@ class Query
      * @return string
      * @throws \Exception
      */
-    public function getSQLForRead($partitions = [])
+    public function getSQLForRead(array $partitions = [])
     {
         $serverId = null;
         $dbTableNames = [];
@@ -176,7 +177,7 @@ class Query
      * @return string
      * @throws \Exception
      */
-    public function getSQLForWrite($partitions = [])
+    public function getSQLForWrite(array $partitions = [])
     {
         $serverId = null;
         $dbTableNames = [];
@@ -197,5 +198,106 @@ class Query
         }
         $this->parsed = self::PARSE_WRITE;
         return $this->sql;
+    }
+
+    /**
+     * @return Connection
+     * @throws \Exception
+     */
+    public function getConnectionForWrite()
+    {
+        /** @var Server[] $servers */
+        $servers = [];
+        $connections = [];
+        foreach ($this->tables as $placeholder => $table) {
+            $server = $table->getWriteServer();
+            if (!isset($connections[$placeholder])) {
+                $connections[$placeholder] = [];
+            }
+            $servers[$server->getId()] = $server;
+            $connections[$placeholder][] = $server->getId();
+        }
+        $connections = array_values($connections);
+        $connections = call_user_func_array('array_intersect', $connections);
+        if ($connections) {
+            $connections = array_values($connections);
+            $serverId = $connections[0];
+            return $servers[$serverId]->connect();
+        } else {
+            throw new \Exception("Can not found mysql connection");
+        }
+    }
+
+    /**
+     * @return Connection
+     * @throws \Exception
+     */
+    public function getConnectionForRead()
+    {
+        /** @var Server[] $servers */
+        $servers = [];
+        $connections = [];
+        foreach ($this->tables as $placeholder => $table) {
+            if (!isset($connections[$placeholder])) {
+                $connections[$placeholder] = [];
+            }
+            foreach ($table->getReadServers() as $server) {
+                $servers[$server->getId()] = $server;
+                $connections[$placeholder][] = $server->getId();
+            }
+        }
+        $connections = array_values($connections);
+        $connections = call_user_func_array('array_intersect', $connections);
+        if ($connections) {
+            $connections = array_values($connections);
+            $serverId = $connections[0];
+            return $servers[$serverId]->connect();
+        } else {
+            throw new \Exception("Can not found mysql connection");
+        }
+    }
+
+
+
+    /**
+     * fetch*()
+     */
+
+
+    /**
+     * @param array $partitions
+     * @return int
+     * @throws \Exception
+     */
+    public function fetchAffected(array $partitions = [])
+    {
+        $sql = $this->getSQLForWrite($partitions);
+        $params = $this->getParameters();
+        $connection = $this->getConnectionForWrite();
+        $stmt = $connection->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->rowCount();
+    }
+
+    /**
+     * @param array $partitions
+     * @return array
+     * @throws \Exception
+     */
+    public function fetchAll(array $partitions = [])
+    {
+        $sql = $this->getSQLForRead($partitions);
+        $params = $this->getParameters();
+        $connection = $this->getConnectionForRead();
+        $stmt = $connection->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll(Connection::FETCH_ASSOC);
+    }
+
+
+
+    public function fetchAssoc(array $partitions = [])
+    {
+        
     }
 }
