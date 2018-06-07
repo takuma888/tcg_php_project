@@ -299,7 +299,7 @@ SQL;
         $query = new Query();
         $query->sql('SELECT RELEASE_LOCK(:key) FROM {@table}')
             ->table('{@table}', $this);
-        $sql = $query->getSQLForWrite([
+        $sql = $query->getSQLForRead([
             '{@table}' => [
                 'session_id' => $sessionId,
             ],

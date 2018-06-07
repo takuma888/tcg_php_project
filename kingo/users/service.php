@@ -88,7 +88,7 @@ $container['users.mysql.servers.slave'] = function (Container $c) {
  * @return \Users\MySQL\Table\UserAuthTable
  */
 $container['users.mysql.tables.user_auth'] = function (Container $c) {
-    return new Users\MySQL\Table\UserAuthTable($c['users.mysql.servers.master'], $c['users.mysql.servers.slave'], $c['users.mysql.database.users']);
+    return new Users\MySQL\Table\UserAuthTable($c['users.mysql.servers.master'], [], $c['users.mysql.database.users']);
 };
 /**
  * 用户资料表
@@ -96,7 +96,7 @@ $container['users.mysql.tables.user_auth'] = function (Container $c) {
  * @return \Users\MySQL\Table\UserProfileTable
  */
 $container['users.mysql.tables.user_profile'] = function (Container $c) {
-    return new \Users\MySQL\Table\UserProfileTable($c['users.mysql.servers.master'], $c['users.mysql.servers.slave'], $c['users.mysql.database.users']);
+    return new \Users\MySQL\Table\UserProfileTable($c['users.mysql.servers.master'], [], $c['users.mysql.database.users']);
 };
 /**
  * 角色权限表
@@ -104,7 +104,7 @@ $container['users.mysql.tables.user_profile'] = function (Container $c) {
  * @return \Users\MySQL\Table\RolePermissionTable
  */
 $container['users.mysql.tables.role_permission'] = function (Container $c) {
-    return new \Users\MySQL\Table\RolePermissionTable($c['users.mysql.servers.master'], $c['users.mysql.servers.slave'], $c['users.mysql.database.users']);
+    return new \Users\MySQL\Table\RolePermissionTable($c['users.mysql.servers.master'], [], $c['users.mysql.database.users']);
 };
 /**
  * 用户角色关联表
@@ -112,7 +112,7 @@ $container['users.mysql.tables.role_permission'] = function (Container $c) {
  * @return \Users\MySQL\Table\UserRoleTable
  */
 $container['users.mysql.tables.user_role'] = function (Container $c) {
-    return new \Users\MySQL\Table\UserRoleTable($c['users.mysql.servers.master'], $c['users.mysql.servers.slave'], $c['users.mysql.database.users']);
+    return new \Users\MySQL\Table\UserRoleTable($c['users.mysql.servers.master'], [], $c['users.mysql.database.users']);
 };
 /**
  * 用户session表
@@ -120,7 +120,7 @@ $container['users.mysql.tables.user_role'] = function (Container $c) {
  * @return \Users\MySQL\Table\SessionTable
  */
 $container['users.mysql.tables.session'] = function (Container $c) {
-    return new \Users\MySQL\Table\SessionTable($c['users.mysql.servers.master'], $c['users.mysql.servers.slave'], $c['users.mysql.database.users']);
+    return new \Users\MySQL\Table\SessionTable($c['users.mysql.servers.master'], [], $c['users.mysql.database.users']);
 };
 /**
  * @param Container $c

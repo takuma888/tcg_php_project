@@ -151,19 +151,23 @@ class Query
      */
     public function getSQLForRead(array $partitions = [])
     {
-        $serverId = null;
+        $serverIds = [];
         $dbTableNames = [];
         foreach ($this->tables as $placeholder => $table) {
-            $server = $table->getReadServer();
-            if (!$serverId) {
-                $serverId = $server->getId();
+            if (!isset($serverIds[$placeholder])) {
+                $serverIds[$placeholder] = [];
             }
-            if ($serverId != $server->getId()) {
-                throw new \Exception("一条SQL语句中不能进行跨服务器的查询");
+            foreach ($table->getReadServers() as $server) {
+                $serverIds[$placeholder][] = $server->getId();
             }
             $tablePartition = isset($partitions[$placeholder]) ? $partitions[$placeholder] : [];
             $dbTableName = $table->getDbTableName($tablePartition, '`');
             $dbTableNames[$placeholder] = $dbTableName;
+        }
+        $serverIds = array_values($serverIds);
+        $intersectServerIds = call_user_func_array('array_intersect', $serverIds);
+        if (!$intersectServerIds) {
+            throw new \Exception("一条SQL语句中不能进行跨服务器的读取");
         }
         if ($dbTableNames) {
             $this->sql = strtr($this->sql, $dbTableNames);
@@ -298,6 +302,6 @@ class Query
 
     public function fetchAssoc(array $partitions = [])
     {
-        
+
     }
 }
