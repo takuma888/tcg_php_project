@@ -38,3 +38,22 @@ route()->get('/logout', function (ServerRequestInterface $request, ResponseInter
     session()->set('uid', null);
     return json($response, []);
 });
+
+
+/**
+ * get /session
+ * 获取session
+ */
+route()->get('/session', function (ServerRequestInterface $request, ResponseInterface $response) {
+    $uid = session()->get('uid', null);
+    if ($uid) {
+        return json($response, [
+            'user' => [
+                'uid' => 1,
+                'username' => 'test_user',
+                'avatar' => '',
+            ],
+        ]);
+    }
+    return json($response, []);
+});

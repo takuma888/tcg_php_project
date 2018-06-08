@@ -9,22 +9,41 @@ import 'element-ui/lib/theme-chalk/index.css'
 import App from './App'
 import routes from './router'
 import 'font-awesome/css/font-awesome.min.css'
+import Api from './api'
 
 Vue.use(ElementUI)
 Vue.use(VueRouter)
 Vue.use(Vuex)
 
 const router = new VueRouter({
-  routes
+  // mode: 'history',
+  routes: routes
 })
 
 router.beforeEach((to, from, next) => {
-  if (to.path === '/login') {
-    sessionStorage.removeItem('user')
-  }
   let user = JSON.parse(sessionStorage.getItem('user'))
   if (!user && to.path !== '/login') {
-    next({ path: '/login' })
+    Api.session().then((response) => {
+      let res = response.data
+      let { msg, code, data } = res
+      if (code !== 0) {
+        next('/login')
+        ElementUI.Message({
+          message: msg,
+          type: 'error'
+        })
+      } else if (!data.user) {
+        next('/login')
+        ElementUI.Message({
+          message: '请重新登录',
+          type: 'warning'
+        })
+      } else {
+        sessionStorage.setItem('user', JSON.stringify(data.user))
+        user = data.user
+        next()
+      }
+    })
   } else {
     next()
   }

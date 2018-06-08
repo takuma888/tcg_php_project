@@ -9,6 +9,10 @@ let config = {
 }
 
 export default {
+  // session
+  session: () => {
+    return axios.get(`${base}/session`, config)
+  },
   // 登录
   login: (username, password) => {
     return axios.post(`${base}/login`, {

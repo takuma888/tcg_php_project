@@ -1,19 +1,32 @@
-import LoginComponent from '@/components/LoginComponent'
-import NotFoundComponent from '@/components/NotFoundComponent'
-import HomeComponent from '@/components/HomeComponent'
+import Loginview from '@/views/LoginView'
+import NotFoundview from '@/views/NotFoundView'
+import Homeview from '@/views/Homeview'
+import UsersListview from '@/views/users/UsersListview'
 
 export default [
   {
     path: '/login',
-    component: LoginComponent
+    component: Loginview
   },
   {
     path: '/404',
-    component: NotFoundComponent
+    component: NotFoundview
   },
   {
     path: '/',
-    component: HomeComponent
+    component: Homeview,
+    children: [
+      {
+        path: '/users',
+        component: UsersListview,
+        children: [
+          {
+            path: '/users',
+            component: UsersListview
+          }
+        ]
+      }
+    ]
   },
   {
     path: '*',

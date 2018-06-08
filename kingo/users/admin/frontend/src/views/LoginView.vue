@@ -51,9 +51,11 @@ export default {
               })
             } else {
               sessionStorage.setItem('user', JSON.stringify(data.user))
-              this.$router.push({
-                path: '/'
+              this.$message({
+                message: '欢迎回来！' + data.user.username,
+                type: 'success'
               })
+              this.$router.push('/')
             }
           })
         } else {
