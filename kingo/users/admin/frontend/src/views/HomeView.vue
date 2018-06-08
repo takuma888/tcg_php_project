@@ -33,11 +33,7 @@
     </el-header>
     <el-container class="container-inner">
       <div class="aside" v-if="$route.path !== '/'">
-        <el-menu :default-active="$route.path"
-                 @select="handleAsideMenuSelect"
-                 unique-opened
-                 class="aside-menu">
-        </el-menu>
+        <router-view name="aside" v-bind:collapsed="collapsed"></router-view>
       </div>
       <el-main class="main">
         <router-view></router-view>
@@ -59,10 +55,6 @@ export default {
   methods: {
     // 处理顶部导航select
     handleTopMenuSelect (key, keyPath) {
-      this.$router.push(key)
-    },
-    // 处理侧边栏导航select
-    handleAsideMenuSelect (key, keyPath) {
       this.$router.push(key)
     },
     // 折叠导航栏
@@ -95,14 +87,13 @@ export default {
 
 <style lang="scss" scoped>
   $aside-width: 200px !default;
-  $aside-collapse-width: 60px !default;
+  $aside-collapse-width: 64px !default;
   .container {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    width: 100%;
   }
   .header {
+    position: fixed;
+    left: 0;
+    right: 0;
     .fa {
       color: white;
     }
@@ -130,7 +121,7 @@ export default {
         height: 60px;
         line-height: 60px;
         float: right;
-        margin-right: 20px;
+        margin-right: 23px;
       }
       .top-menu {
         height: 60px;
@@ -158,11 +149,20 @@ export default {
     }
   }
   .container-inner {
-    margin: 0 20px;
+    margin: 60px 20px 0;
     bottom: 0;
     .aside {
+      position: fixed;
       width: $aside-width;
-      margin-right: 20px;
+      top: 60px;
+      bottom: 0;
+      .el-menu {
+        height: 100%;
+      }
+
+      & + .main {
+        margin-left: 220px;
+      }
     }
     .main {
       margin-top: 20px;
@@ -175,8 +175,13 @@ export default {
       .logo {
         width: $aside-collapse-width;
       }
-      .aside {
-        width: $aside-collapse-width;
+      .container-inner {
+        .aside {
+          width: $aside-collapse-width;
+          & + .main {
+            margin-left: 84px;
+          }
+        }
       }
     }
   }

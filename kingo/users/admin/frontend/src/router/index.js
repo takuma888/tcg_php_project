@@ -1,7 +1,8 @@
 import Loginview from '@/views/LoginView'
 import NotFoundview from '@/views/NotFoundView'
 import Homeview from '@/views/Homeview'
-import UsersListview from '@/views/users/UsersListview'
+import UsersListview from '@/views/users/UsersListView'
+import UsersAsideView from '@/views/users/UsersAsideView'
 
 export default [
   {
@@ -18,13 +19,10 @@ export default [
     children: [
       {
         path: '/users',
-        component: UsersListview,
-        children: [
-          {
-            path: '/users',
-            component: UsersListview
-          }
-        ]
+        components: {
+          default: UsersListview,
+          aside: UsersAsideView
+        }
       }
     ]
   },

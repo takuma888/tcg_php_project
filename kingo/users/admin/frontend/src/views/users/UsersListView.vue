@@ -1,5 +1,5 @@
 <template>
-  <div></div>
+  <div style="height: 1500px;"></div>
 </template>
 
 <script>
@@ -12,4 +12,5 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+</style>

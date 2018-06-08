@@ -11,11 +11,11 @@ export default {
 </script>
 
 <style>
-  #app {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    width: 100%;
+  html,body {
     background-color: #efefef;
+    height: 100%;
+  }
+  #app {
+    height: 100%;
   }
 </style>
