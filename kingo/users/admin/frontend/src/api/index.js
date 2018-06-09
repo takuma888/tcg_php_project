@@ -1,4 +1,6 @@
 import axios from 'axios'
+import UsersApi from '@/api/users'
+import UserApi from '@/api/user'
 
 let base = 'http://tcg.php.localhost.com/kingo/users/admin'
 
@@ -23,5 +25,9 @@ export default {
   // 退出
   logout: () => {
     return axios.get(`${base}/logout`, config)
-  }
+  },
+  // users相关API
+  users: UsersApi,
+  // user 相关API
+  user: UserApi
 }

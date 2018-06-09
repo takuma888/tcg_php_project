@@ -377,6 +377,7 @@ abstract class Table
     /**
      * create tables
      * @param bool $drop
+     * @return string
      */
     public function create($drop = false)
     {
@@ -411,6 +412,7 @@ abstract class Table
                 ->connect()
                 ->exec($stmt);
         }
+        return implode(PHP_EOL, $sql);
     }
 
     /**

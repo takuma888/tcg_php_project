@@ -22,7 +22,7 @@ route()->get('/user[/{id:\d+}]', function (ServerRequestInterface $request, Resp
  * post /user/add
  * 添加用户
  */
-route()->post('/user/add[/{id:\d+}]', function (ServerRequestInterface $request, ResponseInterface $response, $id = null) {
+route()->post('/user/add', function (ServerRequestInterface $request, ResponseInterface $response) {
 
 });
 

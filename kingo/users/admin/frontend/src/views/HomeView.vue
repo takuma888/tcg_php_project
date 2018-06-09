@@ -4,17 +4,18 @@
       <el-row type="flex" class="row">
         <el-col :span="24">
           <el-col class="logo">
-            <router-link class="logo-link" to="/">{{ collapsed ? '': homeName }}</router-link>
+            <router-link class="logo-link" to="/">{{ collapsed ? '': '用户管理系统' }}</router-link>
             <i class="fa fa-align-justify aside-toggler" @click.prevent="collapse"></i>
           </el-col>
           <el-col :span="16">
-            <el-menu :default-active="$route.path"
+            <el-menu :default-active="path"
                      class="top-menu"
                      mode="horizontal"
-                     @select="handleTopMenuSelect"
+                     @select="handleSelect"
                      active-text-color="#ffd04b" background-color="#20a0ff">
               <el-menu-item class="top-menu-item" index="/">首页</el-menu-item>
               <el-menu-item class="top-menu-item" index="/users">用户管理</el-menu-item>
+              <el-menu-item class="top-menu-item" index="/test">测试</el-menu-item>
             </el-menu>
           </el-col>
           <el-col :span="4" class="userinfo">
@@ -32,34 +33,44 @@
       </el-row>
     </el-header>
     <el-container class="container-inner">
-      <div class="aside" v-if="$route.path !== '/'">
-        <router-view name="aside" v-bind:collapsed="collapsed"></router-view>
-      </div>
-      <el-main class="main">
-        <router-view></router-view>
-      </el-main>
+      <router-view v-if="$store.state.static.path !== '/'"></router-view>
+      <template v-if="$store.state.static.path === '/'">
+        <div class="home-view">
+          <el-main class="main">
+            <h1>欢迎来到 "用户管理系统" {{ user.username }}</h1>
+          </el-main>
+        </div>
+      </template>
     </el-container>
   </el-container>
 </template>
 
 <script>
-import Api from '../api'
+import Api from '@/api'
 export default {
   data () {
+    this.$store.commit('path', this.$route.path)
+    let path = this.$store.state.static.path.split('/')
     return {
-      homeName: '用户管理系统',
-      collapsed: false,
-      user: {}
+      path: '/' + path[1],
+      user: {},
+      collapsed: false
     }
   },
   methods: {
-    // 处理顶部导航select
-    handleTopMenuSelect (key, keyPath) {
-      this.$router.push(key)
-    },
     // 折叠导航栏
     collapse () {
       this.collapsed = !this.collapsed
+      if (this.collapsed) {
+        this.$store.commit('collapseAside')
+      } else {
+        this.$store.commit('expandAside')
+      }
+    },
+    // 处理顶部导航select
+    handleSelect (key, keyPath) {
+      this.$store.commit('path', key)
+      this.$router.push(key)
     },
     // 退出登录
     logout () {
@@ -85,11 +96,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-  $aside-width: 200px !default;
-  $aside-collapse-width: 64px !default;
-  .container {
-  }
+<style lang="scss">
   .header {
     position: fixed;
     left: 0;
@@ -103,8 +110,8 @@ export default {
       height: 60px;
       line-height: 60px;
       .logo {
-        width: $aside-width;
         border-right: 1px solid hsla(62,77%,76%,.3);
+        width: 200px;
         .logo-link {
           text-decoration: none;
           color: white;
@@ -148,41 +155,51 @@ export default {
       }
     }
   }
+  .container {
+    height: 100%;
+  }
   .container-inner {
-    margin: 60px 20px 0;
-    bottom: 0;
-    .aside {
-      position: fixed;
-      width: $aside-width;
-      top: 60px;
-      bottom: 0;
-      .el-menu {
-        height: 100%;
-      }
-
-      & + .main {
-        margin-left: 220px;
-      }
-    }
-    .main {
-      margin-top: 20px;
-      padding: 0;
-      background-color: white;
+    margin: 60px 20px 0 20px;
+  }
+  .main {
+    background-color: white;
+    margin-top: 20px;
+  }
+  .aside {
+    background-color: white;
+    position: fixed;
+    width: 200px;
+    height: 100%;
+    margin-right: 20px;
+    & + .main {
+      margin-left: 220px;
     }
   }
-  .container {
-    &.container-collapsed {
-      .logo {
-        width: $aside-collapse-width;
-      }
-      .container-inner {
-        .aside {
-          width: $aside-collapse-width;
-          & + .main {
-            margin-left: 84px;
-          }
+  .container-collapsed {
+    .header {
+      .row {
+        .logo {
+          width: 64px;
         }
       }
     }
+    .aside {
+      width: 64px;
+      & + .main {
+        margin-left: 84px;
+      }
+    }
+  }
+  .fade-enter-active, .fade-leave-active {
+    transition: opacity .5s;
+  }
+  .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+    opacity: 0;
+  }
+</style>
+
+<style lang="scss" scoped>
+  .home-view {
+    width: 100%;
   }
 </style>

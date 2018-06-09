@@ -6,16 +6,8 @@
  * Time: 下午2:12
  */
 
-use Pimple\Container;
 use Psr\Http\Message\ResponseInterface;
-/**
- * 注册容器到环境中
- */
-$container = container(ENV_USERS);
-if (!$container) {
-    $container = new Container();
-    env(ENV_USERS, $container);
-}
+
 /**
  * 定义一些辅助方法
  */

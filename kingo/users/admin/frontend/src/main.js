@@ -10,6 +10,7 @@ import App from './App'
 import routes from './router'
 import 'font-awesome/css/font-awesome.min.css'
 import Api from './api'
+import store from './vuex'
 
 Vue.use(ElementUI)
 Vue.use(VueRouter)
@@ -51,5 +52,6 @@ router.beforeEach((to, from, next) => {
 
 new Vue({
   router,
+  store,
   render: h => h(App)
 }).$mount('#app')

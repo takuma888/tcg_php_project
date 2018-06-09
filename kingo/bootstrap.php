@@ -16,6 +16,11 @@ define('ENV_DEFAULT', 0);
 define('ENV_USERS', pow(2, 0)); // users
 define('ENV_OFFERS', pow(2, 1)); // offers
 
+$apps = [
+    'users',
+    'offers',
+];
+
 /**
  * 定义工程的根路径
  */
@@ -31,5 +36,6 @@ loader($autoloader);
  * 启动环境
  */
 require ROOT . '/public.php';
-require ROOT . '/users/service.php';
-require ROOT . '/offers/service.php';
+foreach ($apps as $app) {
+    require ROOT . "/{$app}/service.php";
+}
