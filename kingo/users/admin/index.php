@@ -98,6 +98,8 @@ $dispatcher->add(function (ServerRequestInterface $request, RequestHandlerInterf
     $noCheckPathInfo = [
         '/', // 首页
         '/login', // 登录
+        '/logout', // 退出
+        '/session', // 获取session
     ];
     if ($noCheckPathInfo) {
         if (!in_array($pathInfo, $noCheckPathInfo)) {

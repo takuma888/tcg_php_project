@@ -1,31 +1,23 @@
-import axios from 'axios'
-
-let base = 'http://tcg.php.localhost.com/kingo/users/admin'
-
-let config = {
-  headers: {
-    'X-Requested-With': 'XMLHttpRequest'
-  }
-}
+import axios from '@/api/axios'
 
 export default {
   // 用户数据
   get: (id) => {
-    return axios.get(`${base}/user/${id}`, config)
+    return axios.get(`/user/${id}`)
   },
   // 添加用户
   add: (auth, extra) => {
-    return axios.post(`${base}/user/add`, {
+    return axios.post('/user/add', {
       auth: auth,
       extra: extra || {}
-    }, config)
+    })
   },
   // 更新用户
   edit: (id, params) => {
-    return axios.post(`${base}/user/edit/${id}`, params, config)
+    return axios.post(`/user/edit/${id}`, params)
   },
   // 删除用户
   delete: (id) => {
-    return axios.post(`${base}/user/delete/${id}`, {}, config)
+    return axios.post(`/user/delete/${id}`)
   }
 }

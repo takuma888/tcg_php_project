@@ -4,7 +4,7 @@
       <el-row type="flex" class="row">
         <el-col :span="24">
           <el-col class="logo">
-            <router-link class="logo-link" to="/">{{ collapsed ? '': '用户管理系统' }}</router-link>
+            <a class="logo-link" href="/">{{ collapsed ? '': '用户管理系统' }}</a>
             <i class="fa fa-align-justify aside-toggler" @click.prevent="collapse"></i>
           </el-col>
           <el-col :span="16">
@@ -101,6 +101,7 @@ export default {
     position: fixed;
     left: 0;
     right: 0;
+    z-index: 1020;
     .fa {
       color: white;
     }

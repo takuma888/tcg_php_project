@@ -24,16 +24,8 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
   let user = JSON.parse(sessionStorage.getItem('user'))
   if (!user && to.path !== '/login') {
-    Api.session().then((response) => {
-      let res = response.data
-      let { msg, code, data } = res
-      if (code !== 0) {
-        next('/login')
-        ElementUI.Message({
-          message: msg,
-          type: 'error'
-        })
-      } else if (!data.user) {
+    Api.session().then((data) => {
+      if (!data.user) {
         next('/login')
         ElementUI.Message({
           message: '请重新登录',
@@ -41,7 +33,6 @@ router.beforeEach((to, from, next) => {
         })
       } else {
         sessionStorage.setItem('user', JSON.stringify(data.user))
-        user = data.user
         next()
       }
     })

@@ -4,7 +4,7 @@
       <el-input type="text" v-model="form.username" placeholder="登录用户名"></el-input>
     </el-form-item>
     <el-form-item label="手机">
-      <el-input type="text" v-modal="form.mobile" placeholder="登录手机号"></el-input>
+      <el-input type="text" v-model="form.mobile" placeholder="登录手机号"></el-input>
     </el-form-item>
     <el-form-item label="邮箱">
       <el-input type="text" v-model="form.email" placeholder="登录邮箱地址"></el-input>

@@ -42,23 +42,14 @@ export default {
       this.$refs.loginForm.validate((valid) => {
         if (valid) {
           this.logining = true
-          Api.login(this.loginForm.username, this.loginForm.password).then((response) => {
+          Api.login(this.loginForm.username, this.loginForm.password).then((data) => {
             this.logining = false
-            let res = response.data
-            let { msg, code, data } = res
-            if (code !== 0) {
-              this.$message({
-                message: msg,
-                type: 'error'
-              })
-            } else {
-              sessionStorage.setItem('user', JSON.stringify(data.user))
-              this.$message({
-                message: '欢迎回来！' + data.user.username,
-                type: 'success'
-              })
-              this.$router.push('/')
-            }
+            sessionStorage.setItem('user', JSON.stringify(data.user))
+            this.$message({
+              message: '欢迎回来！' + data.user.username,
+              type: 'success'
+            })
+            this.$router.push('/')
           })
         } else {
           console.log('error submit!!')

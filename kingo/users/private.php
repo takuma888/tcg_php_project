@@ -60,7 +60,7 @@ function table($tableBaseName)
     if (env()->has($id)) {
         return env()->get($id);
     }
-    throw new \RuntimeException("Table service {$id} not found");
+    throw new \RuntimeException("Table {$id} not found");
 }
 
 /**
@@ -90,7 +90,16 @@ function flash()
     return env()->get('session.flash');
 }
 
-function dao($name)
+/**
+ * @param $serviceName
+ * @return \Users\MySQL\Service\UserService
+ */
+function service($serviceName)
 {
-
+    $idPrefix = 'users.service.';
+    $id = "{$idPrefix}.{$serviceName}";
+    if (env()->has($id)) {
+        return env()->get($id);
+    }
+    throw new \RuntimeException("Service {$id} not found");
 }

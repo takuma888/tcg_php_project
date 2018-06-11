@@ -25,6 +25,7 @@ route()->post('/login', function (ServerRequestInterface $request, ResponseInter
             'uid' => 1,
             'username' => 'test_user',
             'avatar' => '',
+            'permissions' => [],
         ],
     ]);
 });
@@ -52,8 +53,16 @@ route()->get('/session', function (ServerRequestInterface $request, ResponseInte
                 'uid' => 1,
                 'username' => 'test_user',
                 'avatar' => '',
+                'permissions' => [],
             ],
         ]);
     }
-    return json($response, []);
+    return json($response, [
+        'user' => [
+            'uid' => 1,
+            'username' => 'test_user',
+            'avatar' => '',
+            'permissions' => [],
+        ],
+    ]);
 });

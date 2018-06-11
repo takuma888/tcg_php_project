@@ -44,4 +44,7 @@ SQL;
             'password' => '',
         ];
     }
+
+
+    protected $engine = 'innodb';
 }

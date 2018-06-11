@@ -11,6 +11,7 @@ namespace TCG\MySQL;
 
 abstract class Table
 {
+
     /**
      * @var Server
      */
@@ -48,9 +49,9 @@ abstract class Table
     protected $tablePartitionField = '';
 
     /**
-     * @var array
+     * @var int
      */
-    protected $tablePartitionTypes = [];
+    protected $tablePartitionType = 0;
 
     /**
      * @var int
@@ -68,14 +69,19 @@ abstract class Table
     protected $dbPartitionField = '';
 
     /**
-     * @var array
+     * @var int
      */
-    protected $dbPartitionTypes = [];
+    protected $dbPartitionType = 0;
 
     /**
      * @var string
      */
     protected $createSQL = '';
+
+    /**
+     * @var string
+     */
+    protected $engine = '';
 
     /**
      * Table constructor.
@@ -94,6 +100,15 @@ abstract class Table
         if ($tableBaseName) {
             $this->setTableBaseName($tableBaseName);
         }
+    }
+
+    /**
+     * @param mixed $partitionValue
+     * @return string
+     */
+    public function __invoke($partitionValue = false)
+    {
+        return $this->getDbTableName($partitionValue, '`');
     }
 
     /**
@@ -201,19 +216,14 @@ abstract class Table
     }
 
     /**
-     * @param array $partition
+     * @param mixed $partitionValue
      * @return string
      */
-    public function getTableName(array $partition = [])
+    public function getTableName($partitionValue = false)
     {
         $realTableName = $this->tableBaseName;
         if ($this->tableMaxNum > 1) {
-            if (in_array(2, $this->tablePartitionTypes) || in_array(3, $this->tablePartitionTypes)) {
-                // 只分表或者分库分表
-                $partitionValue = false;
-                if (isset($partition[$this->tablePartitionField])) {
-                    $partitionValue = $partition[$this->tablePartitionField];
-                }
+            if ($this->tablePartitionType == 2 || $this->tablePartitionType == 3) {
                 if ($partitionValue !== false) {
                     $tmp = false;
                     if (is_int($partitionValue)) {
@@ -228,21 +238,21 @@ abstract class Table
                 }
             }
         }
-        if (in_array(4, $this->tablePartitionTypes)) {
-            if (!isset($partition['timestamp'])) {
-                $partition['timestamp'] = time();
+        if ($this->tablePartitionType == 4) {
+            if ($partitionValue === false) {
+                $partitionValue = time();
             }
-            $realTableName = $this->tableBaseName . '_' . date('Y_m_d', $partition['timestamp']);
-        } elseif (in_array(5, $this->tablePartitionTypes)) {
-            if (!isset($partition['timestamp'])) {
-                $partition['timestamp'] = time();
+            $realTableName = $this->tableBaseName . '_' . date('Y_m_d', $partitionValue);
+        } elseif ($this->tablePartitionType == 5) {
+            if ($partitionValue === false) {
+                $partitionValue = time();
             }
-            $realTableName = $this->tableBaseName . '_' . date('Y_W', $partition['timestamp']);
-        } elseif (in_array(6, $this->tablePartitionTypes)) {
-            if (!isset($partition['timestamp'])) {
-                $partition['timestamp'] = time();
+            $realTableName = $this->tableBaseName . '_' . date('Y_W', $partitionValue);
+        } elseif ($this->tablePartitionType == 6) {
+            if ($partitionValue === false) {
+                $partitionValue = time();
             }
-            $realTableName = $this->tableBaseName . '_' . date('Y_m', $partition['timestamp']);
+            $realTableName = $this->tableBaseName . '_' . date('Y_m', $partitionValue);
         }
         if ($this->tablePrefix) {
             $realTableName = $this->tablePrefix . $realTableName;
@@ -257,7 +267,7 @@ abstract class Table
     {
         $tableNames = [];
         if ($this->tableMaxNum > 1) {
-            if (in_array(2, $this->tablePartitionTypes) || in_array(3, $this->tablePartitionTypes)) {
+            if ($this->tablePartitionType == 2 || $this->tablePartitionType == 3) {
                 $range = range(1, $this->tableMaxNum);
                 foreach ($range as $idx) {
                     $realTableName = $this->tableBaseName . '_' . $idx;
@@ -269,11 +279,11 @@ abstract class Table
             }
         } else {
             $realTableName = $this->tableBaseName;
-            if (in_array(4, $this->tablePartitionTypes)) {
-                $realTableName = $this->tablePartitionTypes . '_' . date('Y_m_d');
-            } elseif (in_array(5, $this->tablePartitionTypes)) {
+            if ($this->tablePartitionType == 4) {
+                $realTableName = $this->tableBaseName . '_' . date('Y_m_d');
+            } elseif ($this->tablePartitionType == 5) {
                 $realTableName = $this->tableBaseName . '_' . date('Y_W');
-            } elseif (in_array(6, $this->tablePartitionTypes)) {
+            } elseif ($this->tablePartitionType == 6) {
                 $realTableName = $this->tableBaseName . '_' . date('Y_m');
             }
             if ($this->tablePrefix) {
@@ -285,19 +295,15 @@ abstract class Table
     }
 
     /**
-     * @param array $partition
+     * @param mixed $partitionValue
      * @return string
      */
-    public function getDbName(array $partition = [])
+    public function getDbName($partitionValue = false)
     {
         $dbName = $this->dbBaseName;
         if ($this->dbMaxNum > 1) {
-            if (in_array(1, $this->dbPartitionTypes) || in_array(3, $this->dbPartitionTypes)) {
+            if ($this->dbPartitionType == 1 || $this->dbPartitionType == 3) {
                 // 只分库或者分库分表
-                $partitionValue = false;
-                if (isset($partition[$this->dbPartitionField])) {
-                    $partitionValue = $partition[$this->dbPartitionField];
-                }
                 if ($partitionValue !== false) {
                     $tmp = false;
                     if (is_int($partitionValue)) {
@@ -325,7 +331,7 @@ abstract class Table
     {
         $dbNames = [];
         if ($this->dbMaxNum > 1) {
-            if (in_array(1, $this->dbPartitionTypes) || in_array(3, $this->dbPartitionTypes)) {
+            if ($this->dbPartitionType == 1 || $this->dbPartitionType == 3) {
                 $range = range(1, $this->dbMaxNum);
                 foreach ($range as $idx) {
                     $realDbName = $this->dbBaseName . '_' . $idx;
@@ -346,14 +352,14 @@ abstract class Table
     }
 
     /**
-     * @param array $partition
+     * @param mixed $partitionValue
      * @param string $quote
      * @return string
      */
-    public function getDbTableName(array $partition = [], $quote = '')
+    public function getDbTableName($partitionValue = false, $quote = '')
     {
-        $dbName = $this->getDbName($partition);
-        $tableName = $this->getTableName($partition);
+        $dbName = $this->getDbName($partitionValue);
+        $tableName = $this->getTableName($partitionValue);
         return $quote . $dbName . $quote . '.' . $quote . $tableName . $quote;
     }
 
@@ -424,6 +430,21 @@ abstract class Table
     }
 
     /**
+     * @return bool
+     * @throws \Exception
+     */
+    public function supportTransaction()
+    {
+        if (!$this->engine) {
+            throw new \Exception("Table " . get_class($this) . " should specify the \$engine property");
+        }
+        $engine = strtolower($this->engine);
+        return in_array($engine, [
+            'innodb',
+        ]);
+    }
+
+    /**
      * @param Model $model
      * @return array
      */
@@ -437,6 +458,38 @@ abstract class Table
             }
         }
         return $return;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDbPartitionField()
+    {
+        return $this->dbPartitionField;
+    }
+
+    /**
+     * @return int
+     */
+    public function getDbPartitionType()
+    {
+        return $this->dbPartitionType;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTablePartitionField()
+    {
+        return $this->tablePartitionField;
+    }
+
+    /**
+     * @return int
+     */
+    public function getTablePartitionType()
+    {
+        return $this->tablePartitionType;
     }
 
     /**

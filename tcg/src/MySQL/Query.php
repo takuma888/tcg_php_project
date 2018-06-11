@@ -144,6 +144,7 @@ class Query
         return isset($this->paramTypes[$key]) ? $this->paramTypes[$key] : null;
     }
 
+
     /**
      * @param array $partitions
      * @return string
@@ -160,7 +161,7 @@ class Query
             foreach ($table->getReadServers() as $server) {
                 $serverIds[$placeholder][] = $server->getId();
             }
-            $tablePartition = isset($partitions[$placeholder]) ? $partitions[$placeholder] : [];
+            $tablePartition = isset($partitions[$placeholder]) ? $partitions[$placeholder] : false;
             $dbTableName = $table->getDbTableName($tablePartition, '`');
             $dbTableNames[$placeholder] = $dbTableName;
         }
@@ -193,7 +194,7 @@ class Query
             if ($serverId != $server->getId()) {
                 throw new \Exception("一条SQL语句中不能进行跨服务器的写入");
             }
-            $tablePartition = isset($partitions[$placeholder]) ? $partitions[$placeholder] : [];
+            $tablePartition = isset($partitions[$placeholder]) ? $partitions[$placeholder] : false;
             $dbTableName = $table->getDbTableName($tablePartition, '`');
             $dbTableNames[$placeholder] = $dbTableName;
         }
@@ -259,49 +260,5 @@ class Query
         } else {
             throw new \Exception("Can not found mysql connection");
         }
-    }
-
-
-
-    /**
-     * fetch*()
-     */
-
-
-    /**
-     * @param array $partitions
-     * @return int
-     * @throws \Exception
-     */
-    public function fetchAffected(array $partitions = [])
-    {
-        $sql = $this->getSQLForWrite($partitions);
-        $params = $this->getParameters();
-        $connection = $this->getConnectionForWrite();
-        $stmt = $connection->prepare($sql);
-        $stmt->execute($params);
-        return $stmt->rowCount();
-    }
-
-    /**
-     * @param array $partitions
-     * @return array
-     * @throws \Exception
-     */
-    public function fetchAll(array $partitions = [])
-    {
-        $sql = $this->getSQLForRead($partitions);
-        $params = $this->getParameters();
-        $connection = $this->getConnectionForRead();
-        $stmt = $connection->prepare($sql);
-        $stmt->execute($params);
-        return $stmt->fetchAll(Connection::FETCH_ASSOC);
-    }
-
-
-
-    public function fetchAssoc(array $partitions = [])
-    {
-
     }
 }

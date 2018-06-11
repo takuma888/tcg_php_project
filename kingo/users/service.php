@@ -170,3 +170,16 @@ $container['session.flash'] = function () {
     return new \TCG\Auth\Session\FlashSegment('flash');
 };
 
+
+/**
+ * 各种服务
+ */
+
+/**
+ * 用户服务
+ * @return \Users\MySQL\Service\UserService
+ */
+$container['users.service.user'] = function () {
+    return new \Users\MySQL\Service\UserService();
+};
+
