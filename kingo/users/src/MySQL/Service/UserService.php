@@ -17,17 +17,19 @@ class UserService
     /**
      * @param $conditionExpr
      * @param array $params
-     * @param array $partitions
      * @return array
      * @throws \Exception
      */
-    public function authSelectMany($conditionExpr, array $params = [], array $partitions = [])
+    public function authSelectMany($conditionExpr, array $params = [])
     {
+        if (!$conditionExpr) {
+            $conditionExpr = '1';
+        }
         $query = query("SELECT SQL_CALC_FOUND_ROWS * FROM {@table} WHERE " . $conditionExpr);
         $query->table('{@table}', $this->getAuthTable())
             ->setParameters($params);
         $connection = $query->getConnectionForRead();
-        $sql = $query->getSQLForRead($partitions);
+        $sql = $query->getSQLForRead();
 
         $stmt = $connection->prepare($sql);
         $stmt->execute($params);
@@ -46,17 +48,16 @@ class UserService
     /**
      * @param $conditionExpr
      * @param array $params
-     * @param array $partitions
      * @return array
      * @throws \Exception
      */
-    public function authSelectOne($conditionExpr, array $params = [], array $partitions = [])
+    public function authSelectOne($conditionExpr, array $params = [])
     {
         $query = query("SELECT * FROM {@table} WHERE " . $conditionExpr);
         $query->table('{@table}', $this->getAuthTable())
             ->setParameters($params);
         $connection = $query->getConnectionForRead();
-        $sql = $query->getSQLForRead($partitions);
+        $sql = $query->getSQLForRead();
 
         $stmt = $connection->prepare($sql);
         $stmt->execute($params);
@@ -68,11 +69,10 @@ class UserService
 
     /**
      * @param array $fields
-     * @param array $partitions
      * @return int
      * @throws \Exception
      */
-    public function authInsertOne(array $fields, array $partitions = [])
+    public function authInsertOne(array $fields)
     {
         $f = [];
         $v = [];
@@ -88,9 +88,7 @@ class UserService
             ->setParameters($p);
 
         $connection = $query->getConnectionForWrite();
-        $sql = $query->getSQLForWrite($partitions);
-
-        $stmt = $connection->prepare($sql);
+        $stmt = $connection->prepare($query->getSQLForWrite());
         $stmt->execute($query->getParameters());
 
         return $connection->lastInsertId();
@@ -98,7 +96,7 @@ class UserService
 
 
 
-    public function authInsertMany(array $data, array $partitions = [])
+    public function authInsertMany(array $data)
     {
 
     }

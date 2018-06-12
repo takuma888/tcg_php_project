@@ -224,6 +224,7 @@ abstract class Table
         $realTableName = $this->tableBaseName;
         if ($this->tableMaxNum > 1) {
             if ($this->tablePartitionType == 2 || $this->tablePartitionType == 3) {
+                $partitionValue = false;
                 if ($partitionValue !== false) {
                     $tmp = false;
                     if (is_int($partitionValue)) {
@@ -352,14 +353,16 @@ abstract class Table
     }
 
     /**
-     * @param mixed $partitionValue
+     * @param array $partition
      * @param string $quote
      * @return string
      */
-    public function getDbTableName($partitionValue = false, $quote = '')
+    public function getDbTableName($partition = [], $quote = '')
     {
-        $dbName = $this->getDbName($partitionValue);
-        $tableName = $this->getTableName($partitionValue);
+        $dbPartitionValue = $partition[$this->dbPartitionField] ?? false;
+        $dbName = $this->getDbName($dbPartitionValue);
+        $tablePartitionValue = $partition[$this->tablePartitionField] ?? false;
+        $tableName = $this->getTableName($tablePartitionValue);
         return $quote . $dbName . $quote . '.' . $quote . $tableName . $quote;
     }
 
