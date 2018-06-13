@@ -14,7 +14,7 @@ use Psr\Http\Message\ResponseInterface;
  * get /user
  * 用户数据
  */
-route()->get('/user[/{id:\d+}]', function (ServerRequestInterface $request, ResponseInterface $response, $id = null) {
+route()->get('/user/{id:\d+}', function (ServerRequestInterface $request, ResponseInterface $response, $id) {
 
 });
 
@@ -30,7 +30,7 @@ route()->post('/user/add', function (ServerRequestInterface $request, ResponseIn
  * post /user/edit
  * 修改用户
  */
-route()->post('/user/edit[/{id:\d+}]', function (ServerRequestInterface $request, ResponseInterface $response, $id = null) {
+route()->post('/user/edit/{id:\d+}', function (ServerRequestInterface $request, ResponseInterface $response, $id) {
 
 });
 
@@ -38,7 +38,7 @@ route()->post('/user/edit[/{id:\d+}]', function (ServerRequestInterface $request
  * post /user/delete
  * 删除用户
  */
-route()->post('/user/delete[/{id:\d+}]', function (ServerRequestInterface $request, ResponseInterface $response, $id = null) {
+route()->post('/user/delete/{id:\d+}', function (ServerRequestInterface $request, ResponseInterface $response, $id) {
 
 });
 

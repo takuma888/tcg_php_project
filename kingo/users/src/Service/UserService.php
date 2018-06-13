@@ -6,7 +6,7 @@
  * Time: 下午4:44
  */
 
-namespace Users\MySQL\Service;
+namespace Users\Service;
 
 
 use Users\MySQL\Table\UserAuthTable;
@@ -14,18 +14,23 @@ use Users\MySQL\Table\UserAuthTable;
 class UserService
 {
 
+
     /**
-     * @param $conditionExpr
+     * @param $clauseExpr
      * @param array $params
      * @return array
      * @throws \Exception
      */
-    public function authSelectMany($conditionExpr, array $params = [])
+    public function authSelectMany($clauseExpr, array $params = [])
     {
-        if (!$conditionExpr) {
-            $conditionExpr = '1';
+        $clauseExpr = trim($clauseExpr);
+        if (!$clauseExpr) {
+            $clauseExpr = 'WHERE 1';
         }
-        $query = query("SELECT SQL_CALC_FOUND_ROWS * FROM {@table} WHERE " . $conditionExpr);
+        if (strtoupper(substr($clauseExpr, 0, 6)) !== 'WHERE') {
+            $clauseExpr = 'WHERE ' . $clauseExpr;
+        }
+        $query = query("SELECT SQL_CALC_FOUND_ROWS * FROM {@table} " . $clauseExpr);
         $query->table('{@table}', $this->getAuthTable())
             ->setParameters($params);
         $connection = $query->getConnectionForRead();
@@ -46,14 +51,21 @@ class UserService
     }
 
     /**
-     * @param $conditionExpr
+     * @param $clauseExpr
      * @param array $params
      * @return array
      * @throws \Exception
      */
-    public function authSelectOne($conditionExpr, array $params = [])
+    public function authSelectOne($clauseExpr, array $params = [])
     {
-        $query = query("SELECT * FROM {@table} WHERE " . $conditionExpr);
+        $clauseExpr = trim($clauseExpr);
+        if (!$clauseExpr) {
+            $clauseExpr = 'WHERE 1';
+        }
+        if (strtoupper(substr($clauseExpr, 0, 6)) !== 'WHERE') {
+            $clauseExpr = 'WHERE ' . $clauseExpr;
+        }
+        $query = query("SELECT * FROM {@table} " . $clauseExpr);
         $query->table('{@table}', $this->getAuthTable())
             ->setParameters($params);
         $connection = $query->getConnectionForRead();
@@ -66,41 +78,6 @@ class UserService
             'data' => $data,
         ];
     }
-
-    /**
-     * @param array $fields
-     * @return int
-     * @throws \Exception
-     */
-    public function authInsertOne(array $fields)
-    {
-        $f = [];
-        $v = [];
-        $p = [];
-        foreach ($fields as $field => $value) {
-            $field = trim($field, '`');
-            $f[] = "`{$field}`";
-            $v[] = ":{$field}";
-            $p[":{$field}"] = $value;
-        }
-        $query = query("INSERT INTO {@table} (" . implode(', ', $f) . ") VALUES (" . implode(', ', $v) . ")");
-        $query->table('{@table}', $this->getAuthTable())
-            ->setParameters($p);
-
-        $connection = $query->getConnectionForWrite();
-        $stmt = $connection->prepare($query->getSQLForWrite());
-        $stmt->execute($query->getParameters());
-
-        return $connection->lastInsertId();
-    }
-
-
-
-    public function authInsertMany(array $data)
-    {
-
-    }
-
 
     /**
      * @return UserAuthTable

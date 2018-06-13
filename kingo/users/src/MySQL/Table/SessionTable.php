@@ -110,7 +110,7 @@ SQL;
                 ->table('{@table}', $this)
                 ->setParameter(':id', $sessionId);
             $selectStmt = $pdo->prepare($query->getSQLForWrite([
-                '{@table}' => $sessionId
+                '{@table}' => ['session_id' => $sessionId]
             ]));
             $selectStmt->execute($query->getParameters());
             $sessionRows = $selectStmt->fetchAll(\PDO::FETCH_NUM);
@@ -136,7 +136,7 @@ SQL;
                             ':time' => time(),
                         ]);
                     $sql = $query->getSQLForWrite([
-                        '{@table}' => $sessionId,
+                        '{@table}' => ['session_id' => $sessionId],
                     ]);
                     $parameters = $query->getParameters();
                     $pdo = $this->getWriteServer()->connect();
@@ -195,7 +195,7 @@ SQL;
                 ':time' => time(),
             ]);
             $stmt = $pdo->prepare($query->getSQLForWrite([
-                '{@table}' => $sessionId,
+                '{@table}' => ['session_id' => $sessionId],
             ]));
             $stmt->execute($query->getParameters());
         } catch (\PDOException $e) {
@@ -243,7 +243,7 @@ SQL;
             ->table('{@table}', $this)
             ->setParameter(':id', $sessionId);
         $sql = $query->getSQLForWrite([
-            '{@table}' => $sessionId,
+            '{@table}' => ['session_id' => $sessionId],
         ]);
         $parameters = $query->getParameters();
         try {
@@ -282,7 +282,7 @@ SQL;
             ->table('{@table}', $this)
             ->setParameter(':key', $sessionId);
         $sql = $query->getSQLForWrite([
-            '{@table}' => $sessionId,
+            '{@table}' => ['session_id' => $sessionId],
         ]);
         $parameters = $query->getParameters();
         $stmt = $pdo->prepare($sql);
@@ -292,7 +292,7 @@ SQL;
         $query->sql('SELECT RELEASE_LOCK(:key) FROM {@table}')
             ->table('{@table}', $this);
         $sql = $query->getSQLForRead([
-            '{@table}' => $sessionId,
+            '{@table}' => ['session_id' => $sessionId],
         ]);
         $releaseStmt = $pdo->prepare($sql);
         $releaseStmt->bindValue(':key', $sessionId, \PDO::PARAM_STR);

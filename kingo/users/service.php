@@ -177,9 +177,9 @@ $container['session.flash'] = function () {
 
 /**
  * 用户服务
- * @return \Users\MySQL\Service\UserService
+ * @return \Users\Service\UserService
  */
-$container['users.service.user'] = function () {
-    return new \Users\MySQL\Service\UserService();
+$container[\Users\Service\UserService::class] = function () {
+    return new \Users\Service\UserService();
 };
 

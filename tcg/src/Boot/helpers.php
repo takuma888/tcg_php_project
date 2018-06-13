@@ -127,3 +127,18 @@ if (!function_exists('loader')) {
         return Environment::getAutoloader();
     }
 }
+
+
+if (!function_exists('service')) {
+    /**
+     * @param $serviceClass
+     * @return mixed
+     */
+    function service($serviceClass)
+    {
+        if (env()->has($serviceClass)) {
+            return env()->get($serviceClass);
+        }
+        throw new \RuntimeException("Service " . $serviceClass . ' not found');
+    }
+}

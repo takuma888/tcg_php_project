@@ -89,17 +89,3 @@ function flash()
 {
     return env()->get('session.flash');
 }
-
-/**
- * @param $serviceName
- * @return \Users\MySQL\Service\UserService
- */
-function service($serviceName)
-{
-    $idPrefix = 'users.service.';
-    $id = "{$idPrefix}.{$serviceName}";
-    if (env()->has($id)) {
-        return env()->get($id);
-    }
-    throw new \RuntimeException("Service {$id} not found");
-}

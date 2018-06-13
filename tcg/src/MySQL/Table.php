@@ -103,12 +103,18 @@ abstract class Table
     }
 
     /**
-     * @param mixed $partitionValue
-     * @return string
+     * @param array $partition
+     * @return array
      */
-    public function __invoke($partitionValue = false)
+    public function __invoke(array $partition = [])
     {
-        return $this->getDbTableName($partitionValue, '`');
+        return [
+            'table' => $this,
+            'partition' => $partition,
+            'db_table_name' => $this->getDbTableName($partition, '`'),
+            'db_name' => $this->getDbName($partition[$this->dbPartitionField] ?? false),
+            'table_name' => $this->getTableName($partition[$this->tablePartitionField] ?? false),
+        ];
     }
 
     /**
@@ -297,9 +303,10 @@ abstract class Table
 
     /**
      * @param mixed $partitionValue
+     * @param string $quote
      * @return string
      */
-    public function getDbName($partitionValue = false)
+    public function getDbName($partitionValue = false, $quote = '')
     {
         $dbName = $this->dbBaseName;
         if ($this->dbMaxNum > 1) {
@@ -322,13 +329,14 @@ abstract class Table
         if ($this->dbPrefix) {
             $dbName = $this->dbPrefix . $dbName;
         }
-        return $dbName;
+        return $quote . $dbName . $quote;
     }
 
     /**
+     * @param string $quote
      * @return array
      */
-    public function getDbNameRange()
+    public function getDbNameRange($quote = '')
     {
         $dbNames = [];
         if ($this->dbMaxNum > 1) {
@@ -339,7 +347,7 @@ abstract class Table
                     if ($this->dbPrefix) {
                         $realDbName = $this->dbPrefix . $realDbName;
                     }
-                    $dbNames[] = $realDbName;
+                    $dbNames[] = $quote . $realDbName . $quote;
                 }
             }
         } else {
@@ -347,7 +355,7 @@ abstract class Table
             if ($this->dbPrefix) {
                 $realDbName = $this->dbPrefix . $realDbName;
             }
-            $dbNames[] = $realDbName;
+            $dbNames[] = $quote . $realDbName . $quote;
         }
         return $dbNames;
     }
@@ -360,10 +368,10 @@ abstract class Table
     public function getDbTableName($partition = [], $quote = '')
     {
         $dbPartitionValue = $partition[$this->dbPartitionField] ?? false;
-        $dbName = $this->getDbName($dbPartitionValue);
+        $dbName = $this->getDbName($dbPartitionValue, $quote);
         $tablePartitionValue = $partition[$this->tablePartitionField] ?? false;
-        $tableName = $this->getTableName($tablePartitionValue);
-        return $quote . $dbName . $quote . '.' . $quote . $tableName . $quote;
+        $tableName = $this->getTableName($tablePartitionValue, $quote);
+        return $dbName . '.' . $tableName;
     }
 
     /**

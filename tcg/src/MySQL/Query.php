@@ -15,6 +15,7 @@ class Query
 
     const PARSE_WRITE = 'write';
 
+
     /**
      * @var string
      */
@@ -112,6 +113,7 @@ class Query
     {
         return $this->params;
     }
+
     /**
      * Gets a (previously set) query parameter of the query being constructed.
      *
@@ -123,6 +125,7 @@ class Query
     {
         return isset($this->params[$key]) ? $this->params[$key] : null;
     }
+
     /**
      * Gets all defined query parameter types for the query being constructed indexed by parameter index or name.
      *
@@ -132,6 +135,7 @@ class Query
     {
         return $this->paramTypes;
     }
+
     /**
      * Gets a (previously set) query parameter type of the query being constructed.
      *
@@ -161,7 +165,7 @@ class Query
             foreach ($table->getReadServers() as $server) {
                 $serverIds[$placeholder][] = $server->getId();
             }
-            $tablePartition = isset($partitions[$placeholder]) ? $partitions[$placeholder] : false;
+            $tablePartition = isset($partitions[$placeholder]) ? $partitions[$placeholder] : [];
             $dbTableName = $table->getDbTableName($tablePartition, '`');
             $dbTableNames[$placeholder] = $dbTableName;
         }
@@ -194,7 +198,7 @@ class Query
             if ($serverId != $server->getId()) {
                 throw new \Exception("一条SQL语句中不能进行跨服务器的写入");
             }
-            $tablePartition = isset($partitions[$placeholder]) ? $partitions[$placeholder] : false;
+            $tablePartition = isset($partitions[$placeholder]) ? $partitions[$placeholder] : [];
             $dbTableName = $table->getDbTableName($tablePartition, '`');
             $dbTableNames[$placeholder] = $dbTableName;
         }
@@ -261,4 +265,5 @@ class Query
             throw new \Exception("Can not found mysql connection");
         }
     }
+
 }

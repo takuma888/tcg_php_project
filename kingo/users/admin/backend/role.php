@@ -13,7 +13,7 @@ use Psr\Http\Message\ResponseInterface;
  * get /role
  * 获取角色数据
  */
-route()->get('/role[/{id:\s+}]', function (ServerRequestInterface $request, ResponseInterface $response, $id = null) {
+route()->get('/role/{id:\s+}', function (ServerRequestInterface $request, ResponseInterface $response, $id) {
 
 });
 
@@ -30,7 +30,7 @@ route()->post('/role/add', function (ServerRequestInterface $request, ResponseIn
  * post /role/edit
  * 修改角色数据
  */
-route()->post('/role/edit[/{id:\s+}]', function (ServerRequestInterface $request, ResponseInterface $response, $id = null) {
+route()->post('/role/edit/{id:\s+}', function (ServerRequestInterface $request, ResponseInterface $response, $id) {
 
 });
 
@@ -38,7 +38,7 @@ route()->post('/role/edit[/{id:\s+}]', function (ServerRequestInterface $request
  * post /role/delete
  * 删除角色数据
  */
-route()->post('/role/delete[/{id:\s+}]', function (ServerRequestInterface $request, ResponseInterface $response, $id = null) {
+route()->post('/role/delete/{id:\s+}', function (ServerRequestInterface $request, ResponseInterface $response, $id) {
 
 });
 
