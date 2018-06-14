@@ -92,21 +92,24 @@ $dispatcher->add(function (ServerRequestInterface $request, RequestHandlerInterf
  * 登录检测中间件
  */
 $dispatcher->add(function (ServerRequestInterface $request, RequestHandlerInterface $next) {
-    $pathInfo = $request->getServerParams()['PATH_INFO'];
-    $pathInfo = '/' . trim($pathInfo, '/');
-    // path_info 白名单
-    $noCheckPathInfo = [
-        '/', // 首页
-        '/login', // 登录
-        '/logout', // 退出
-        '/session', // 获取session
-    ];
-    if ($noCheckPathInfo) {
-        if (!in_array($pathInfo, $noCheckPathInfo)) {
-            // 不在白名单中
-            if (!session()->get('uid')) {
-                // 没有登录
-                throw new \Exception("请登录");
+    $noAuth = $request->getHeaderLine('No-Auth');
+    if ($noAuth != '1') {
+        $pathInfo = $request->getServerParams()['PATH_INFO'];
+        $pathInfo = '/' . trim($pathInfo, '/');
+        // path_info 白名单
+        $noCheckPathInfo = [
+            '/', // 首页
+            '/login', // 登录
+            '/logout', // 退出
+            '/session', // 获取session
+        ];
+        if ($noCheckPathInfo) {
+            if (!in_array($pathInfo, $noCheckPathInfo)) {
+                // 不在白名单中
+                if (!session()->get('uid')) {
+                    // 没有登录
+                    throw new \Exception("请登录");
+                }
             }
         }
     }

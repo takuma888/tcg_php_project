@@ -170,7 +170,12 @@ class Query
             $dbTableNames[$placeholder] = $dbTableName;
         }
         $serverIds = array_values($serverIds);
-        $intersectServerIds = call_user_func_array('array_intersect', $serverIds);
+        $intersectServerIds = [];
+        if (count($serverIds) > 1) {
+            $intersectServerIds = call_user_func_array('array_intersect', $serverIds);
+        } else if (count($serverIds) == 1) {
+            $intersectServerIds = $serverIds[0];
+        }
         if (!$intersectServerIds) {
             throw new \Exception("一条SQL语句中不能进行跨服务器的读取");
         }
@@ -215,26 +220,7 @@ class Query
      */
     public function getConnectionForWrite()
     {
-        /** @var Server[] $servers */
-        $servers = [];
-        $connections = [];
-        foreach ($this->tables as $placeholder => $table) {
-            $server = $table->getWriteServer();
-            if (!isset($connections[$placeholder])) {
-                $connections[$placeholder] = [];
-            }
-            $servers[$server->getId()] = $server;
-            $connections[$placeholder][] = $server->getId();
-        }
-        $connections = array_values($connections);
-        $connections = call_user_func_array('array_intersect', $connections);
-        if ($connections) {
-            $connections = array_values($connections);
-            $serverId = $connections[0];
-            return $servers[$serverId]->connect();
-        } else {
-            throw new \Exception("Can not found mysql connection");
-        }
+        return self::connectionForWrite($this->tables);
     }
 
     /**
@@ -243,10 +229,20 @@ class Query
      */
     public function getConnectionForRead()
     {
-        /** @var Server[] $servers */
+        return self::connectionForRead($this->tables);
+    }
+
+
+    /**
+     * @param Table[] $tables
+     * @return Connection
+     * @throws \Exception
+     */
+    public static function connectionForRead(array $tables)
+    {
         $servers = [];
         $connections = [];
-        foreach ($this->tables as $placeholder => $table) {
+        foreach ($tables as $placeholder => $table) {
             if (!isset($connections[$placeholder])) {
                 $connections[$placeholder] = [];
             }
@@ -256,7 +252,11 @@ class Query
             }
         }
         $connections = array_values($connections);
-        $connections = call_user_func_array('array_intersect', $connections);
+        if (count($connections) > 1) {
+            $connections = call_user_func_array('array_intersect', $connections);
+        } else if (count($connections) == 1) {
+            $connections = $connections[0];
+        }
         if ($connections) {
             $connections = array_values($connections);
             $serverId = $connections[0];
@@ -265,5 +265,55 @@ class Query
             throw new \Exception("Can not found mysql connection");
         }
     }
+
+
+    /**
+     * @param Table[] $tables
+     * @return Connection
+     * @throws \Exception
+     */
+    public static function connectionForWrite(array $tables)
+    {
+        /** @var Server[] $servers */
+        $servers = [];
+        $connections = [];
+        foreach ($tables as $placeholder => $table) {
+            $server = $table->getWriteServer();
+            if (!isset($connections[$placeholder])) {
+                $connections[$placeholder] = [];
+            }
+            $servers[$server->getId()] = $server;
+            $connections[$placeholder][] = $server->getId();
+        }
+        $connections = array_values($connections);
+        if (count($connections) > 1) {
+            $connections = call_user_func_array('array_intersect', $connections);
+        } else if (count($connections) == 1) {
+            $connections = $connections[0];
+        }
+        if ($connections) {
+            $connections = array_values($connections);
+            $serverId = $connections[0];
+            return $servers[$serverId]->connect();
+        } else {
+            throw new \Exception("Can not found mysql connection");
+        }
+    }
+
+
+    /**
+     * @param Table[] $tables
+     * @throws \Exception
+     * @return bool
+     */
+    public static function supportTransaction(array $tables)
+    {
+        $support = true;
+        foreach ($tables as $table) {
+            $support = $support && $table->supportTransaction();
+        }
+        return $support;
+    }
+
 
 }

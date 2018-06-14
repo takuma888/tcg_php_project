@@ -40,7 +40,7 @@ function json(ResponseInterface $response, array $data, $status = null, $encodin
 function redirect(ResponseInterface $response, $url, $status = null)
 {
     $responseWithRedirect = $response->withHeader('Location', (string)$url);
-    if (is_null($status) && $this->getStatusCode() === \TCG\Http\StatusCode::HTTP_OK) {
+    if (is_null($status) && $response->getStatusCode() === \TCG\Http\StatusCode::HTTP_OK) {
         $status = \TCG\Http\StatusCode::HTTP_FOUND;
     }
     if (!is_null($status)) {

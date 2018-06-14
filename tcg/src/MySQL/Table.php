@@ -223,9 +223,10 @@ abstract class Table
 
     /**
      * @param mixed $partitionValue
+     * @param string $quote
      * @return string
      */
-    public function getTableName($partitionValue = false)
+    public function getTableName($partitionValue = false, $quote = '')
     {
         $realTableName = $this->tableBaseName;
         if ($this->tableMaxNum > 1) {
@@ -264,13 +265,14 @@ abstract class Table
         if ($this->tablePrefix) {
             $realTableName = $this->tablePrefix . $realTableName;
         }
-        return $realTableName;
+        return $quote . $realTableName . $quote;
     }
 
     /**
+     * @param string $quote
      * @return array
      */
-    public function getTableNameRange()
+    public function getTableNameRange($quote = '')
     {
         $tableNames = [];
         if ($this->tableMaxNum > 1) {
@@ -281,7 +283,7 @@ abstract class Table
                     if ($this->tablePrefix) {
                         $realTableName = $this->tablePrefix . $realTableName;
                     }
-                    $tableNames[] = $realTableName;
+                    $tableNames[] = $quote . $realTableName . $quote;
                 }
             }
         } else {
@@ -296,7 +298,7 @@ abstract class Table
             if ($this->tablePrefix) {
                 $realTableName = $this->tablePrefix . $realTableName;
             }
-            $tableNames[] = $realTableName;
+            $tableNames[] = $quote . $realTableName . $quote;
         }
         return $tableNames;
     }
