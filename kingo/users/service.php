@@ -7,11 +7,6 @@
  */
 
 use Pimple\Container;
-use TCG\Http\Environment;
-use TCG\Http\Request;
-use TCG\Http\Response;
-use TCG\Http\ResponseSender;
-use TCG\Middleware\Dispatcher;
 
 /**
  * 注册容器到环境中
@@ -21,31 +16,6 @@ if (!$container) {
     $container = new Container();
     env(ENV_USERS, $container);
 }
-
-// http
-// tcg http environment
-$container['tcg.http.environment'] = function () {
-    return Environment::mock($_SERVER);
-};
-// tcg http request
-$container['http.request'] = function (Container $c) {
-    return Request::createFromEnvironment($c['tcg.http.environment']);
-};
-
-// tcg http response
-$container['http.response'] = $container->factory(function () {
-    return new Response();
-});
-
-$container['http.response_sender'] = function () {
-    return new ResponseSender();
-};
-
-// 中间件
-// dispatcher
-$container['middleware.dispatcher'] = $container->factory(function () {
-    return new Dispatcher();
-});
 
 /**
  * 加载配置
@@ -182,4 +152,71 @@ $container['session.flash'] = function () {
 $container[\Users\Service\UserService::class] = function () {
     return new \Users\Service\UserService();
 };
+/**
+ * 角色服务
+ * @return \Users\Service\RoleService
+ */
+$container[\Users\Service\RoleService::class] = function () {
+    return new \Users\Service\RoleService();
+};
+/**
+ * 权限服务
+ * @return \Users\Service\PermissionService
+ */
+$container[\Users\Service\PermissionService::class] = function () {
+    return new \Users\Service\PermissionService();
+};
+
+
+
+/**
+ * 辅助方法
+ */
+
+/**
+ * 主SESSION
+ * @return \TCG\Auth\Session\Segment
+ */
+function session()
+{
+    return env()->get('session.main');
+}
+
+/**
+ * Flash型的SESSION
+ * @return \TCG\Auth\Session\FlashSegment
+ */
+function flash()
+{
+    return env()->get('session.flash');
+}
+
+/**
+ * 判断uid是否有哪些权限
+ * @param $uid
+ * @param $permissionExpr
+ * @return int
+ * @throws Exception
+ */
+function can($uid, $permissionExpr)
+{
+    /** @var \Users\Service\PermissionService $permissionService */
+    $permissionService = env()->get(\Users\Service\PermissionService::class);
+    return $permissionService->hasPermission($uid, $permissionExpr);
+}
+
+/**
+ * 注册权限
+ * @param string $permissionValue
+ * @param string $permissionName
+ * @param string $permissionDesc
+ */
+function permission($permissionValue, $permissionName, $permissionDesc)
+{
+    /** @var \Users\Service\PermissionService $permissionService */
+    $permissionService = env()->get(\Users\Service\PermissionService::class);
+    $permissionService->registerPermission($permissionValue, $permissionName, $permissionDesc);
+}
+
+
 

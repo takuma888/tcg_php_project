@@ -71,6 +71,7 @@ $dispatcher->add(function (ServerRequestInterface $request, RequestHandlerInterf
             'msg' => '',
             'code' => 0,
             'data' => [],
+            'flash' => [],
         ];
         // ajax 需要返回json
         try {
@@ -81,6 +82,16 @@ $dispatcher->add(function (ServerRequestInterface $request, RequestHandlerInterf
         } catch (\Exception $e) {
             $json['msg'] = $e->getMessage();
             $json['code'] = $e->getCode() ? : \TCG\Http\StatusCode::HTTP_INTERNAL_SERVER_ERROR;
+        }
+        $flashTypes = [
+            'error', 'warning', 'info', 'success'
+        ];
+        foreach ($flashTypes as $flashType) {
+            if (!isset($json['flash'][$flashType])) {
+                $json['flash'][$flashType] = [];
+            }
+            $flashMessages = flash()->get($flashType);
+            $json['flash'][$flashType] = $flashMessages;
         }
         $response = env()->get('http.response');
         return json($response, $json, \TCG\Http\StatusCode::HTTP_OK);

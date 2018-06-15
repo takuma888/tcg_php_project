@@ -11,6 +11,7 @@ namespace Users\Service;
 
 use Users\MySQL\Table\UserAuthTable;
 use Users\MySQL\Table\UserProfileTable;
+use Users\MySQL\Table\UserRoleTable;
 
 class UserService
 {
@@ -401,6 +402,13 @@ class UserService
             $sql = $query->getSQLForWrite();
             $stmt = $connection->prepare($sql);
             $stmt->execute();
+            // 删除 user_role
+            $query = query('DELETE FROM {@table} WHERE `uid` = :id');
+            $query->table('{@table}', $this->getUserRoleTable())
+                ->setParameter(':id', $id);
+            $sql = $query->getSQLForWrite();
+            $stmt = $connection->prepare($sql);
+            $stmt->execute();
             if ($supportTransaction) {
                 $connection->commit();
             }
@@ -447,6 +455,12 @@ class UserService
             $sql = $query->getSQLForWrite();
             $stmt = $connection->prepare($sql);
             $stmt->execute();
+            // 删除 user_role
+            $query = query('DELETE FROM {@table} WHERE `uid` IN (' . implode(', ', $ids) . ')');
+            $query->table('{@table}', $this->getUserRoleTable());
+            $sql = $query->getSQLForWrite();
+            $stmt = $connection->prepare($sql);
+            $stmt->execute();
             if ($supportTransaction) {
                 $connection->commit();
             }
@@ -472,7 +486,7 @@ class UserService
         if (!$clauseExpr) {
             $clauseExpr = 'WHERE 1';
         }
-        if (strtoupper(substr($clauseExpr, 0, 6)) !== 'WHERE') {
+        if (strtoupper(substr($clauseExpr, 0, 6)) !== 'WHERE ') {
             $clauseExpr = 'WHERE ' . $clauseExpr;
         }
         $query = query("SELECT * FROM {@table} " . $clauseExpr);
@@ -505,4 +519,11 @@ class UserService
         return table('user_profile');
     }
 
+    /**
+     * @return UserRoleTable
+     */
+    private function getUserRoleTable()
+    {
+        return table('user_role');
+    }
 }

@@ -72,20 +72,3 @@ function query($sql = '')
     $query = new \TCG\MySQL\Query($sql);
     return $query;
 }
-
-
-/**
- * @return \TCG\Auth\Session\Segment
- */
-function session()
-{
-    return env()->get('session.main');
-}
-
-/**
- * @return \TCG\Auth\Session\FlashSegment
- */
-function flash()
-{
-    return env()->get('session.flash');
-}

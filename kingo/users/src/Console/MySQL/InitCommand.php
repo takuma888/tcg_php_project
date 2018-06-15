@@ -31,7 +31,10 @@ class InitCommand extends Command
 
         $tableNames = [
             'user_auth',
+            'user_profile',
             'session',
+            'user_role',
+            'role_permission'
         ];
 
         foreach ($tableNames as $tableBaseName) {

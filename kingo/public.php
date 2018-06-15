@@ -14,6 +14,31 @@ use Pimple\Container;
 $container = new Container();
 env(ENV_DEFAULT, $container);
 
+// http
+// tcg http environment
+$container['tcg.http.environment'] = function () {
+    return \TCG\Http\Environment::mock($_SERVER);
+};
+// tcg http request
+$container['http.request'] = function (Container $c) {
+    return \TCG\Http\Request::createFromEnvironment($c['tcg.http.environment']);
+};
+
+// tcg http response
+$container['http.response'] = $container->factory(function () {
+    return new \TCG\Http\Response();
+});
+
+$container['http.response_sender'] = function () {
+    return new \TCG\Http\ResponseSender();
+};
+
+// 中间件
+// dispatcher
+$container['middleware.dispatcher'] = $container->factory(function () {
+    return new \TCG\Middleware\Dispatcher();
+});
+
 // logger
 $container['logger.file_root'] = __DIR__ . '/_log';
 $container['logger'] = function (Container $c) {

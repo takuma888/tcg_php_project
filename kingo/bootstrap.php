@@ -17,7 +17,7 @@ define('ENV_USERS', pow(2, 0)); // users
 define('ENV_OFFERS', pow(2, 1)); // offers
 
 $apps = [
-    'users',
+    'users', // 必须优先加载 users app
     'offers',
 ];
 
