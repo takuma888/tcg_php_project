@@ -1,21 +1,21 @@
 <template>
   <div class="users-view">
-    <div class="aside">
-      <el-menu :default-active="$store.state.static.path" style="height: 100%;"
-               :unique-opened="uniqueOpened"
-               @select="handleSelect"
-               :collapse="$store.state.static.asideCollapsed"
-               :collapse-transition="collapseTransition">
-        <el-menu-item index="/users/add" class="aside-menu-item">
-          <i class="el-icon-plus"></i>
-          <span slot="title">创建用户</span>
-        </el-menu-item>
-        <!--<el-menu-item index="/users/test" class="aside-menu-item">-->
-          <!--<i class="el-icon-menu"></i>-->
-          <!--<span slot="title">test</span>-->
+    <!--<div class="aside">-->
+      <!--<el-menu :default-active="$store.state.static.path" style="height: 100%;"-->
+               <!--:unique-opened="uniqueOpened"-->
+               <!--@select="handleSelect"-->
+               <!--:collapse="$store.state.static.asideCollapsed"-->
+               <!--:collapse-transition="collapseTransition">-->
+        <!--<el-menu-item index="/users/add" class="aside-menu-item">-->
+          <!--<i class="el-icon-plus"></i>-->
+          <!--<span slot="title">创建用户</span>-->
         <!--</el-menu-item>-->
-      </el-menu>
-    </div>
+        <!--&lt;!&ndash;<el-menu-item index="/users/test" class="aside-menu-item">&ndash;&gt;-->
+          <!--&lt;!&ndash;<i class="el-icon-menu"></i>&ndash;&gt;-->
+          <!--&lt;!&ndash;<span slot="title">test</span>&ndash;&gt;-->
+        <!--&lt;!&ndash;</el-menu-item>&ndash;&gt;-->
+      <!--</el-menu>-->
+    <!--</div>-->
     <el-main class="main">
       <router-view></router-view>
     </el-main>
@@ -35,8 +35,6 @@ export default {
       this.$store.commit('path', key)
       this.$router.push(key)
     }
-  },
-  mounted () {
   }
 }
 </script>

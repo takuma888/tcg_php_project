@@ -240,7 +240,7 @@ class RoleService
 
         return [
             'data' => $data,
-            'total' => $total,
+            'total' => intval($total),
         ];
     }
 

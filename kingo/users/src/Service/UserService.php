@@ -367,7 +367,7 @@ class UserService
 
         return [
             'data' => $data,
-            'total' => $total,
+            'total' => intval($total),
         ];
     }
 

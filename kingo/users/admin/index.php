@@ -103,7 +103,7 @@ $dispatcher->add(function (ServerRequestInterface $request, RequestHandlerInterf
  * 登录检测中间件
  */
 $dispatcher->add(function (ServerRequestInterface $request, RequestHandlerInterface $next) {
-    $noAuth = $request->getHeaderLine('No-Auth');
+    /*$noAuth = $request->getHeaderLine('No-Auth');
     if ($noAuth != '1') {
         $pathInfo = $request->getServerParams()['PATH_INFO'];
         $pathInfo = '/' . trim($pathInfo, '/');
@@ -123,9 +123,8 @@ $dispatcher->add(function (ServerRequestInterface $request, RequestHandlerInterf
                 }
             }
         }
-    }
+    }*/
     return $next->handle($request);
-
 });
 /**
  * 加载路由中间件
