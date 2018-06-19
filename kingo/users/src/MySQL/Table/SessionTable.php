@@ -64,7 +64,7 @@ SQL;
     /**
      * @var int The strategy for locking, see constants
      */
-    private $lockMode = self::LOCK_TRANSACTIONAL;
+    private $lockMode = self::LOCK_NONE;
     /**
      * It's an array to support multiple reads before closing which is manual, non-standard usage.
      *
@@ -198,6 +198,7 @@ SQL;
                 '{@table}' => ['session_id' => $sessionId],
             ]));
             $stmt->execute($query->getParameters());
+            $this->commit();
         } catch (\PDOException $e) {
             $this->rollback();
             throw $e;
@@ -250,6 +251,7 @@ SQL;
             $pdo = $this->getWriteServer()->connect();
             $stmt = $pdo->prepare($sql);
             $stmt->execute($parameters);
+            $this->commit();
         } catch (\PDOException $e) {
             $this->rollback();
             throw $e;

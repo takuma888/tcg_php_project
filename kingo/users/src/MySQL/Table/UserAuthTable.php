@@ -17,9 +17,9 @@ class UserAuthTable extends Table
     protected $createSQL = <<<SQL
 CREATE TABLE IF NOT EXISTS {@table} (
   `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `username` VARCHAR(128) DEFAULT '' COMMENT '用户名',
-  `email` VARCHAR(128) DEFAULT '' COMMENT '邮箱',
-  `mobile` VARCHAR(16) DEFAULT '' COMMENT '手机',
+  `username` VARCHAR(128) DEFAULT NULL COMMENT '用户名',
+  `email` VARCHAR(128) DEFAULT NULL COMMENT '邮箱',
+  `mobile` VARCHAR(16) DEFAULT NULL COMMENT '手机',
   `password` VARCHAR(32) NOT NULL DEFAULT '' COMMENT '密码',
   `session_id` VARBINARY(128) NOT NULL DEFAULT '' COMMENT 'SESSION ID',
   `create_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间戳',

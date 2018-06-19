@@ -17,7 +17,7 @@
       <!--</el-menu>-->
     <!--</div>-->
     <el-main class="main">
-      <router-view></router-view>
+      <router-view add="1" edit="1"></router-view>
     </el-main>
   </div>
 </template>

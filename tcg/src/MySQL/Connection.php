@@ -13,4 +13,32 @@ use PDO;
 class Connection extends PDO
 {
 
+    protected $transactionCount = 0;
+
+    public function beginTransaction()
+    {
+        if (!$this->inTransaction()) {
+            parent::beginTransaction();
+        }
+        $this->transactionCount += 1;
+    }
+
+
+    public function rollBack()
+    {
+        if ($this->inTransaction()) {
+            parent::rollBack();
+        }
+        $this->transactionCount = 0;
+    }
+
+    public function commit()
+    {
+        if ($this->inTransaction()) {
+            $this->transactionCount -= 1;
+        }
+        if ($this->transactionCount <= 0) {
+            parent::commit();
+        }
+    }
 }

@@ -20,7 +20,8 @@ class InitCommand extends Command
     {
         $this
             ->setName('users:mysql.init')
-            ->setDescription('创建使用到的MySQL库和表')->addOption('show-sql', null, InputOption::VALUE_OPTIONAL, '是否显示SQL', 0)
+            ->setDescription('创建使用到的MySQL库和表')
+            ->addOption('show-sql', null, InputOption::VALUE_OPTIONAL, '是否显示SQL', 0)
             ->addOption('drop', null, InputOption::VALUE_OPTIONAL, '是否drop已存在的表', 0);
     }
 

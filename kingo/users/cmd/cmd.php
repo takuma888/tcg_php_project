@@ -30,5 +30,6 @@ $application = new Application('Users Command Line', 'PHP v' . PHP_VERSION);
  * 初始化 mysql
  */
 $application->add(new \Users\Console\MySQL\InitCommand());
+$application->add(new \Users\Console\Account\InitCommand());
 
 $application->run();

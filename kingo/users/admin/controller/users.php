@@ -21,28 +21,52 @@ route()->get('/users', function (ServerRequestInterface $request, ResponseInterf
     $size = $gets['size'] ?? 20;
     // 其他查询条件
     $id = $gets['id'] ?? '';
+    $id = intval($id);
+
     $username = $gets['username'] ?? '';
+    $username = trim($username);
     $email = $gets['email'] ?? '';
+    $email = trim($email);
     $mobile = $gets['mobile'] ?? '';
+    $mobile = trim($mobile);
+
+    $createAt = $gets['create_at'] ?? [];
+    $loginAt = $gets['login_at'] ?? [];
 
     $filterCondition = [];
     $filterParams = [];
 
     if ($id) {
-        $filterCondition []= '`id` = :id';
+        $filterCondition[] = '`id` = :id';
         $filterParams[':id'] = $id;
     }
     if ($username) {
-        $filterCondition []= '`username` = :username';
+        $filterCondition[] = '`username` = :username';
         $filterParams[':username'] = $username;
     }
     if ($email) {
-        $filterCondition []= '`email` = :email';
+        $filterCondition[] = '`email` = :email';
         $filterParams[':email'] = $email;
     }
     if ($mobile) {
-        $filterCondition []= '`mobile` = :mobile';
+        $filterCondition[] = '`mobile` = :mobile';
         $filterParams[':mobile'] = $mobile;
+    }
+    if (isset($createAt[0])) {
+        $filterCondition[] = '(`create_at` >= :create_at_start OR `register_at` >= :create_at_start)';
+        $filterParams[':create_at_start'] = $createAt[0];
+    }
+    if (isset($createAt[1])) {
+        $filterCondition[] = '(`create_at` <= :create_at_end OR `register_at` <= :create_at_end)';
+        $filterParams[':create_at_end'] = $createAt[0];
+    }
+    if (isset($loginAt[0])) {
+        $filterCondition[] = '(`login_at` >= :login_at_start)';
+        $filterParams[':login_at_start'] = $loginAt[0];
+    }
+    if (isset($loginAt[1])) {
+        $filterCondition[] = '(`login_at` <= :login_at_end)';
+        $filterParams[':login_at_end'] = $loginAt[1];
     }
     $limit = max(0, $size);
     $offset = (max(1, $page) - 1) * $limit;
@@ -70,6 +94,11 @@ route()->post('/users/delete', function (ServerRequestInterface $request, Respon
 
     /** @var \Users\Service\UserService $userService */
     $userService = service(\Users\Service\UserService::class);
-    $userService->deleteManyByIds($ids);
+    try {
+        $userService->deleteManyByIds($ids);
+        flash()->success('删除成功');
+    } catch (\Exception $e) {
+        flash()->error($e->getMessage());
+    }
     return json($response, []);
 });

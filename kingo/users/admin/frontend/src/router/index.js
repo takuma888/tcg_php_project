@@ -4,7 +4,6 @@ import Homeview from '@/views/Homeview'
 import TestView from '@/views/home/TestView'
 import UsersView from '@/views/home/UsersView'
 import UsersListComponent from '@/components/users/UsersListComponent'
-import UsersAddComponent from '@/components/users/UsersAddComponent'
 // import UsersTestComponent from '@/components/users/UsersTestComponent'
 
 export default [
@@ -27,10 +26,6 @@ export default [
           {
             path: '/',
             component: UsersListComponent
-          },
-          {
-            path: 'add',
-            component: UsersAddComponent
           }
           // {
           //   path: 'test',

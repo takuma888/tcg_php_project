@@ -133,7 +133,7 @@ $dispatcher->add(function (ServerRequestInterface $request, RequestHandlerInterf
     $response = $next->handle($request);
     $pathInfo = $request->getServerParams()['PATH_INFO'];
     $pathInfo = '/' . trim($pathInfo, '/');
-    $root = __DIR__ . '/backend';
+    $root = __DIR__ . '/controller';
     $items = explode('/', trim($pathInfo, '/'));
     $itemCount = count($items);
     $count = 0;

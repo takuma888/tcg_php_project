@@ -15,9 +15,11 @@ class UserProfileTable extends Table
 {
     protected $tableBaseName = 'user_profile';
 
+    protected $engine = 'InnoDB';
+
     protected $createSQL = <<<SQL
 CREATE TABLE IF NOT EXISTS {@table} (
-  `id` INT(11) UNSIGNED NOT NULL COMMENT '主键',
+  `uid` INT(11) UNSIGNED NOT NULL COMMENT '主键',
   `nickname` VARCHAR(128) DEFAULT '' COMMENT '昵称',
   `qq` VARCHAR(16) DEFAULT '' COMMENT 'QQ号码',
   `wei_xin` VARCHAR(32) DEFAULT '' COMMENT '微信号',
@@ -39,7 +41,7 @@ SQL;
     public function getTableFields()
     {
         return [
-            'id' => 0,
+            'uid' => 0,
             'nickname' => '',
             'qq' => '',
             'wei_xin' => '',
