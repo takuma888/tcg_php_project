@@ -85,7 +85,7 @@ export default {
           {
             validator: (rule, value, callback) => {
               Api.user.validateUsernameUnique(value).then((data) => {
-                if (data.invalid) {
+                if (data && data.invalid) {
                   callback(new Error(data.invalid))
                 } else {
                   callback()
@@ -139,7 +139,7 @@ export default {
           {
             validator: (rule, value, callback) => {
               Api.user.validateEmailUnique(value).then((data) => {
-                if (data.invalid) {
+                if (data && data.invalid) {
                   callback(new Error(data.invalid))
                 } else {
                   callback()
@@ -192,7 +192,7 @@ export default {
           {
             validator: (rule, value, callback) => {
               Api.user.validateMobileUnique(value).then((data) => {
-                if (data.invalid) {
+                if (data && data.invalid) {
                   callback(new Error(data.invalid))
                 } else {
                   callback()

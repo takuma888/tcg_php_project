@@ -316,4 +316,46 @@ class Query
     }
 
 
+
+    /**
+     * @param Table[] $tables
+     * @param array $fieldsAliases
+     * @param string $quote
+     * @return array
+     */
+    public static function duplicateFields(array $tables, array $fieldsAliases = [], $quote = '')
+    {
+        $fields = [];
+        $fieldsArray = [];
+        foreach ($tables as $table) {
+            $fieldsArray[] = array_keys($table->getTableFields());
+        }
+        $intersectFields = [];
+        if (count($fieldsArray) > 1) {
+            $intersectFields = (array) call_user_func_array('array_intersect', $fieldsArray);
+        } elseif (count($fieldsArray) == 1) {
+            $intersectFields = $fieldsArray[0];
+        }
+        foreach ($tables as $tableAlias => $table ) {
+            $tableFields = array_keys($table->getTableFields());
+            foreach ($tableFields as $field) {
+                if (in_array($field, $intersectFields)) {
+                    if (is_string($tableAlias) && !is_numeric($tableAlias) && $tableAlias) {
+                        if (isset($fieldsAliases["{$tableAlias}.{$field}"])) {
+                            $fieldAlias = $fieldsAliases["{$tableAlias}.{$field}"];
+                        } else {
+                            $fieldAlias = "{$tableAlias}_{$field}";
+                        }
+                        $fields[] = "{$quote}{$tableAlias}{$quote}.{$quote}{$field}{$quote} AS {$quote}{$fieldAlias}{$quote}";
+                    } else {
+                        $fields[] = "{$quote}{$field}{$quote}";
+                    }
+                } else {
+                    $fields[] = "{$quote}{$field}{$quote}";
+                }
+            }
+        }
+        return $fields;
+    }
+
 }

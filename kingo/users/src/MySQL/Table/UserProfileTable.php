@@ -19,7 +19,7 @@ class UserProfileTable extends Table
 
     protected $createSQL = <<<SQL
 CREATE TABLE IF NOT EXISTS {@table} (
-  `uid` INT(11) UNSIGNED NOT NULL COMMENT '主键',
+  `id` INT(11) UNSIGNED NOT NULL COMMENT '主键',
   `nickname` VARCHAR(128) DEFAULT '' COMMENT '昵称',
   `qq` VARCHAR(16) DEFAULT '' COMMENT 'QQ号码',
   `wei_xin` VARCHAR(32) DEFAULT '' COMMENT '微信号',
@@ -41,7 +41,7 @@ SQL;
     public function getTableFields()
     {
         return [
-            'uid' => 0,
+            'id' => 0,
             'nickname' => '',
             'qq' => '',
             'wei_xin' => '',
@@ -55,7 +55,7 @@ SQL;
             'city' => '',
             'address' => '',
             'avatar' => '',
-            'update_at' => 0,
+            'update_at' => '',
         ];
     }
 }

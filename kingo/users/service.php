@@ -144,7 +144,13 @@ $container['session.flash'] = function () {
 /**
  * 各种服务
  */
-
+/**
+ * 认证服务
+ * @return \Users\Service\AuthService
+ */
+$container[\Users\Service\AuthService::class] = function () {
+    return new \Users\Service\AuthService();
+};
 /**
  * 用户服务
  * @return \Users\Service\UserService

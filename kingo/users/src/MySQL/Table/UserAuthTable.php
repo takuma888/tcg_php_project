@@ -42,6 +42,11 @@ SQL;
             'email' => null,
             'mobile' => null,
             'password' => '',
+            'session_id' => '',
+            'create_at' => '',
+            'register_at' => '',
+            'login_at' => '',
+            'update_at' => '',
         ];
     }
 

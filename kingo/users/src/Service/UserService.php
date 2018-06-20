@@ -71,7 +71,7 @@ class UserService
                     $sets[] = "`{$field}` = :{$field}";
                     $params[":{$field}"] = $value;
                 }
-                $sql .= implode(', ', $sets) . ' WHERE `uid` = :id';
+                $sql .= implode(', ', $sets) . ' WHERE `id` = :id';
                 $params[':id'] = $id;
                 $query = query($sql)->table('{@table.user_profile}', $this->getProfileTable())
                     ->setParameters($params);
@@ -142,7 +142,7 @@ class UserService
                 $id = $connection->lastInsertId();
 
                 // 创建profile
-                $profileFields['uid'] = $id;
+                $profileFields['id'] = $id;
                 $profileSQL = "INSERT INTO {@table.user_profile} ";
                 $parameters = [];
                 $fields = [];
@@ -185,23 +185,28 @@ class UserService
 
     /**
      * @param $id
-     * @param bool $withPassword
      * @param bool $withProfile
      * @return array
      * @throws \Exception
      */
-    public function getUserInfoById($id, $withPassword = false, $withProfile = false)
+    public function getUserInfoById($id, $withProfile = false)
     {
         $tables = [
-            $this->getAuthTable(),
+            'auth' => $this->getAuthTable(),
         ];
         if ($withProfile) {
-            $tables[] = $this->getProfileTable();
+            $tables['profile'] = $this->getProfileTable();
         }
 
-        $sqlTpl = "SELECT * FROM {@table.user_auth} as `auth`";
+        $fields = query()::duplicateFields($tables, [
+            'auth.id' => 'id',
+            'auth.update_at' => 'update_at',
+        ], '`');
+        $fields = implode(', ', $fields);
+
+        $sqlTpl = "SELECT {$fields} FROM {@table.user_auth} as `auth`";
         if ($withProfile) {
-            $sqlTpl .= " LEFT JOIN {@table.user_profile} as `profile` ON `auth`.`id` = `profile`.`uid`";
+            $sqlTpl .= " LEFT JOIN {@table.user_profile} as `profile` ON `auth`.`id` = `profile`.`id`";
         }
         $sqlTpl .= " WHERE `auth`.`id` = :id";
         $query = query($sqlTpl);
@@ -213,13 +218,9 @@ class UserService
             '{@table.user_auth}' => ['id' => $id],
             '{@table.user_profile}' => ['id' => $id],
         ]);
-
         $stmt = $connection->prepare($sql);
         $stmt->execute($query->getParameters());
         $data = $stmt->fetch();
-        if (!$withPassword) {
-            unset($data['password']);
-        }
         return [
             'data' => $data,
         ];
@@ -234,15 +235,21 @@ class UserService
     public function getUserInfoByUsername($username, $withProfile = false)
     {
         $tables = [
-            $this->getAuthTable(),
+            'auth' => $this->getAuthTable(),
         ];
         if ($withProfile) {
-            $tables[] = $this->getProfileTable();
+            $tables['profile'] = $this->getProfileTable();
         }
 
-        $sqlTpl = "SELECT * FROM {@table.user_auth} as `auth`";
+        $fields = query()::duplicateFields($tables, [
+            'auth.id' => 'id',
+            'auth.update_at' => 'update_at',
+        ], '`');
+        $fields = implode(', ', $fields);
+
+        $sqlTpl = "SELECT {$fields} FROM {@table.user_auth} as `auth`";
         if ($withProfile) {
-            $sqlTpl .= " LEFT JOIN {@table.user_profile} as `profile` ON `auth`.`id` = `profile`.`uid`";
+            $sqlTpl .= " LEFT JOIN {@table.user_profile} as `profile` ON `auth`.`id` = `profile`.`id`";
         }
         $sqlTpl .= " WHERE `auth`.`username` = :username";
         $query = query($sqlTpl);
@@ -272,15 +279,21 @@ class UserService
     public function getUserInfoByEmail($email, $withProfile = false)
     {
         $tables = [
-            $this->getAuthTable(),
+            'auth' => $this->getAuthTable(),
         ];
         if ($withProfile) {
-            $tables[] = $this->getProfileTable();
+            $tables['profile'] = $this->getProfileTable();
         }
 
-        $sqlTpl = "SELECT * FROM {@table.user_auth} as `auth`";
+        $fields = query()::duplicateFields($tables, [
+            'auth.id' => 'id',
+            'auth.update_at' => 'update_at',
+        ], '`');
+        $fields = implode(', ', $fields);
+
+        $sqlTpl = "SELECT {$fields} FROM {@table.user_auth} as `auth`";
         if ($withProfile) {
-            $sqlTpl .= " LEFT JOIN {@table.user_profile} as `profile` ON `auth`.`id` = `profile`.`uid`";
+            $sqlTpl .= " LEFT JOIN {@table.user_profile} as `profile` ON `auth`.`id` = `profile`.`id`";
         }
         $sqlTpl .= " WHERE `auth`.`email` = :email";
         $query = query($sqlTpl);
@@ -310,15 +323,21 @@ class UserService
     public function getUserInfoByMobile($mobile, $withProfile = false)
     {
         $tables = [
-            $this->getAuthTable(),
+            'auth' => $this->getAuthTable(),
         ];
         if ($withProfile) {
-            $tables[] = $this->getProfileTable();
+            $tables['profile'] = $this->getProfileTable();
         }
 
-        $sqlTpl = "SELECT * FROM {@table.user_auth} as `auth`";
+        $fields = query()::duplicateFields($tables, [
+            'auth.id' => 'id',
+            'auth.update_at' => 'update_at',
+        ], '`');
+        $fields = implode(', ', $fields);
+
+        $sqlTpl = "SELECT {$fields} FROM {@table.user_auth} as `auth`";
         if ($withProfile) {
-            $sqlTpl .= " LEFT JOIN {@table.user_profile} as `profile` ON `auth`.`id` = `profile`.`uid`";
+            $sqlTpl .= " LEFT JOIN {@table.user_profile} as `profile` ON `auth`.`id` = `profile`.`id`";
         }
         $sqlTpl .= " WHERE `auth`.`mobile` = :mobile";
         $query = query($sqlTpl);
@@ -400,7 +419,7 @@ class UserService
             $stmt = $connection->prepare($sql);
             $stmt->execute($query->getParameters());
             // 删除 user_profile
-            $query = query('DELETE FROM {@table} WHERE `uid` = :id');
+            $query = query('DELETE FROM {@table} WHERE `id` = :id');
             $query->table('{@table}', $this->getProfileTable())
                 ->setParameter(':id', $id);
             $sql = $query->getSQLForWrite();
@@ -453,7 +472,7 @@ class UserService
             $stmt = $connection->prepare($sql);
             $stmt->execute();
             // 删除 user_profile
-            $query = query('DELETE FROM {@table} WHERE `uid` in (' . implode(', ', $ids) . ')');
+            $query = query('DELETE FROM {@table} WHERE `id` in (' . implode(', ', $ids) . ')');
             $query->table('{@table}', $this->getProfileTable());
             $sql = $query->getSQLForWrite();
             $stmt = $connection->prepare($sql);
@@ -529,4 +548,6 @@ class UserService
     {
         return table('user_role');
     }
+
+
 }

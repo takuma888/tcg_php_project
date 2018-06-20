@@ -40,14 +40,20 @@ export default {
   },
   // 验证用户名合法性
   validateUsernameUnique: (username) => {
-    return axios.post(`/user/validate-username/${username}/unique`)
+    return axios.post(`/user/validate-username/unique`, {
+      username: username
+    })
   },
   // 验证邮箱合法性
   validateEmailUnique: (email) => {
-    return axios.post(`/user/validate-email/${email}/unique`)
+    return axios.post(`/user/validate-email/unique`, {
+      email: email
+    })
   },
   // 验证手机号码合法性
   validateMobileUnique: (mobile) => {
-    return axios.post(`/user/validate-mobile/${mobile}/unique`)
+    return axios.post(`/user/validate-mobile/unique`, {
+      mobile: mobile
+    })
   }
 }

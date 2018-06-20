@@ -49,8 +49,6 @@ export default {
             validator: (rule, value, callback) => {
               if (!this.form.username && !this.form.email && !this.form.mobile) {
                 callback(new Error('用户名、邮箱、手机不能全部为空'))
-                this.$refs.form.validateField('email')
-                this.$refs.form.validateField('mobile')
               } else {
                 callback()
               }
@@ -60,7 +58,7 @@ export default {
           {
             validator: (rule, value, callback) => {
               Api.user.validateUsernameUnique(value).then((data) => {
-                if (data.invalid) {
+                if (data && data.invalid) {
                   callback(new Error(data.invalid))
                 } else {
                   callback()
@@ -76,7 +74,6 @@ export default {
             validator: (rule, value, callback) => {
               if (!this.form.username && !this.form.email && !this.form.mobile) {
                 callback(new Error('用户名、邮箱、手机不能全部为空'))
-                this.$refs.form.validateField('mobile')
               } else {
                 callback()
               }
@@ -86,7 +83,7 @@ export default {
           {
             validator: (rule, value, callback) => {
               Api.user.validateEmailUnique(value).then((data) => {
-                if (data.invalid) {
+                if (data && data.invalid) {
                   callback(new Error(data.invalid))
                 } else {
                   callback()
@@ -110,7 +107,7 @@ export default {
           {
             validator: (rule, value, callback) => {
               Api.user.validateMobileUnique(value).then((data) => {
-                if (data.invalid) {
+                if (data && data.invalid) {
                   callback(new Error(data.invalid))
                 } else {
                   callback()

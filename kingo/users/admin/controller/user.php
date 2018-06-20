@@ -17,10 +17,11 @@ use Psr\Http\Message\ResponseInterface;
 route()->get('/user/{id:\d+}', function (ServerRequestInterface $request, ResponseInterface $response, $id) {
     /** @var \Users\Service\UserService $userService */
     $userService = service(\Users\Service\UserService::class);
-    $userInfo = $userService->getUserInfoById($id, false, true);
+    $userInfo = $userService->getUserInfoById($id, true);
     if (!$userInfo['data']) {
         throw new \Exception("用户不存在");
     }
+    unset($userInfo['data']['password']);
     return json($response, [
         'user' => $userInfo['data'],
     ]);
@@ -249,19 +250,19 @@ route()->post('/user/password[/{id:\d+}]', function (ServerRequestInterface $req
  * post /user/validate-username
  * 验证用户名合法性
  */
-route()->post('/user/validate-username/{username}/unique', function (ServerRequestInterface $request, ResponseInterface $response, $username) {
-    $username = trim($username);
+route()->post('/user/validate-username/unique', function (ServerRequestInterface $request, ResponseInterface $response) {
+    $posts = $request->getParsedBody();
+    $username = $posts['username'] ?? '';
     try {
-        if (!$username) {
-            throw new \Exception("用户名不能为空");
+        /** @var \Users\Service\AuthService $authService */
+        $authService = service(\Users\Service\AuthService::class);
+        if ($authService->validateUsernameUnique($username)) {
+            return json($response, []);
+        } else {
+            return json($response, [
+                'invalid' => '用户名不合法',
+            ]);
         }
-        /** @var \Users\Service\UserService $userService */
-        $userService = service(\Users\Service\UserService::class);
-        $userInfo = $userService->getUserInfoByUsername($username);
-        if ($userInfo['data']) {
-            throw new \Exception("用户名已被使用");
-        }
-        return json($response, []);
     } catch (\Exception $e) {
         return json($response, [
             'invalid' => $e->getMessage()
@@ -272,19 +273,19 @@ route()->post('/user/validate-username/{username}/unique', function (ServerReque
  * post /user/validate-email
  * 验证邮箱合法性
  */
-route()->post('/user/validate-email/{email}/unique', function (ServerRequestInterface $request, ResponseInterface $response, $email) {
-    $email = trim($email);
+route()->post('/user/validate-email/unique', function (ServerRequestInterface $request, ResponseInterface $response) {
+    $posts = $request->getParsedBody();
+    $email = $posts['email'] ?? '';
     try {
-        if (!$email) {
-            throw new \Exception("邮箱地址不能为空");
+        /** @var \Users\Service\AuthService $authService */
+        $authService = service(\Users\Service\AuthService::class);
+        if ($authService->validateEmailUnique($email)) {
+            return json($response, []);
+        } else {
+            return json($response, [
+                'invalid' => '邮箱不合法',
+            ]);
         }
-        /** @var \Users\Service\UserService $userService */
-        $userService = service(\Users\Service\UserService::class);
-        $userInfo = $userService->getUserInfoByEmail($email);
-        if ($userInfo['data']) {
-            throw new \Exception("邮箱已被使用");
-        }
-        return json($response, []);
     } catch (\Exception $e) {
         return json($response, [
             'invalid' => $e->getMessage()
@@ -295,19 +296,19 @@ route()->post('/user/validate-email/{email}/unique', function (ServerRequestInte
  * post /user/validate-mobile
  * 验证手机号码合法性
  */
-route()->post('/user/validate-mobile/{mobile}/unique', function (ServerRequestInterface $request, ResponseInterface $response, $mobile) {
-    $mobile = trim($mobile);
+route()->post('/user/validate-mobile/unique', function (ServerRequestInterface $request, ResponseInterface $response) {
+    $posts = $request->getParsedBody();
+    $mobile = $posts['mobile'] ?? '';
     try {
-        if (!$mobile) {
-            throw new \Exception("手机号码不能为空");
+        /** @var \Users\Service\AuthService $authService */
+        $authService = service(\Users\Service\AuthService::class);
+        if ($authService->validateMobileUnique($mobile)) {
+            return json($response, []);
+        } else {
+            return json($response, [
+                'invalid' => '手机号不合法',
+            ]);
         }
-        /** @var \Users\Service\UserService $userService */
-        $userService = service(\Users\Service\UserService::class);
-        $userInfo = $userService->getUserInfoByMobile($mobile);
-        if ($userInfo['data']) {
-            throw new \Exception("邮箱已被使用");
-        }
-        return json($response, []);
     } catch (\Exception $e) {
         return json($response, [
             'invalid' => $e->getMessage()
