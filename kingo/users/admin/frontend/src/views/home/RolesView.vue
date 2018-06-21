@@ -1,5 +1,5 @@
 <template>
-  <div class="users-view">
+  <div class="roles-view">
     <el-main class="main">
       <router-view add="1" edit="1"></router-view>
     </el-main>
@@ -24,7 +24,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .users-view {
+  .roles-view {
     width: 100%;
   }
 </style>

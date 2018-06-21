@@ -1,10 +1,10 @@
 import Loginview from '@/views/LoginView'
 import NotFoundview from '@/views/NotFoundView'
 import Homeview from '@/views/Homeview'
-import TestView from '@/views/home/TestView'
 import UsersView from '@/views/home/UsersView'
+import RolesView from '@/views/home/RolesView'
 import UsersListComponent from '@/components/users/UsersListComponent'
-// import UsersTestComponent from '@/components/users/UsersTestComponent'
+import RolesListComponent from '@/components/roles/RolesListComponent'
 
 export default [
   {
@@ -27,15 +27,17 @@ export default [
             path: '/',
             component: UsersListComponent
           }
-          // {
-          //   path: 'test',
-          //   component: UsersTestComponent
-          // }
         ]
       },
       {
-        path: 'test',
-        component: TestView
+        path: 'roles',
+        component: RolesView,
+        children: [
+          {
+            path: '/',
+            component: RolesListComponent
+          }
+        ]
       }
     ]
   },

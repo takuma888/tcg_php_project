@@ -36,8 +36,8 @@ class RoleService
             $sets[] = "`{$field}` = :{$field}";
             $params[":{$field}"] = $value;
         }
-        $sql .= implode(', ', $sets) . ' WHERE `id` = :id';
-        $params[':id'] = $id;
+        $sql .= implode(', ', $sets) . ' WHERE `id` = :old_id';
+        $params[':old_id'] = $id;
         $query = query($sql)->table('{@table.role_permission}', $this->getRolePermissionTable())
             ->setParameters($params);
         $authFields['id'] = $id;
@@ -135,14 +135,14 @@ class RoleService
                 ->setParameter(':id', $id);
             $sql = $query->getSQLForWrite();
             $stmt = $connection->prepare($sql);
-            $stmt->execute();
+            $stmt->execute($query->getParameters());
             // 删除 user_role
             $query = query('DELETE FROM {@table} WHERE `rid` = :id');
             $query->table('{@table}', $this->getUserRoleTable())
                 ->setParameter(':id', $id);
             $sql = $query->getSQLForWrite();
             $stmt = $connection->prepare($sql);
-            $stmt->execute();
+            $stmt->execute($query->getParameters());
             if ($supportTransaction) {
                 $connection->commit();
             }
@@ -188,14 +188,14 @@ class RoleService
                 ->setParameters($params);
             $sql = $query->getSQLForWrite();
             $stmt = $connection->prepare($sql);
-            $stmt->execute();
+            $stmt->execute($query->getParameters());
             // 删除 user_role
             $query = query('DELETE FROM {@table} WHERE `rid` in (' . implode(', ', $quoteIds) . ')');
             $query->table('{@table}', $this->getUserRoleTable())
                 ->setParameters($params);
             $sql = $query->getSQLForWrite();
             $stmt = $connection->prepare($sql);
-            $stmt->execute();
+            $stmt->execute($query->getParameters());
             if ($supportTransaction) {
                 $connection->commit();
             }
@@ -229,7 +229,6 @@ class RoleService
             ->setParameters($params);
         $connection = $query->getConnectionForRead();
         $sql = $query->getSQLForRead();
-
         $stmt = $connection->prepare($sql);
         $stmt->execute($params);
         $data = $stmt->fetchAll();

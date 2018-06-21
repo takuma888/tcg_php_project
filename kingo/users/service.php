@@ -173,8 +173,6 @@ $container[\Users\Service\PermissionService::class] = function () {
     return new \Users\Service\PermissionService();
 };
 
-
-
 /**
  * 辅助方法
  */
@@ -185,7 +183,7 @@ $container[\Users\Service\PermissionService::class] = function () {
  */
 function session()
 {
-    return env()->get('session.main');
+    return env(ENV_USERS)->get('session.main');
 }
 
 /**
@@ -194,7 +192,7 @@ function session()
  */
 function flash()
 {
-    return env()->get('session.flash');
+    return env(ENV_USERS)->get('session.flash');
 }
 
 /**
@@ -207,7 +205,7 @@ function flash()
 function can($uid, $permissionExpr)
 {
     /** @var \Users\Service\PermissionService $permissionService */
-    $permissionService = env()->get(\Users\Service\PermissionService::class);
+    $permissionService = env(ENV_USERS)->get(\Users\Service\PermissionService::class);
     return $permissionService->hasPermission($uid, $permissionExpr);
 }
 
@@ -220,7 +218,7 @@ function can($uid, $permissionExpr)
 function permission($permissionValue, $permissionName, $permissionDesc)
 {
     /** @var \Users\Service\PermissionService $permissionService */
-    $permissionService = env()->get(\Users\Service\PermissionService::class);
+    $permissionService = env(ENV_USERS)->get(\Users\Service\PermissionService::class);
     $permissionService->registerPermission($permissionValue, $permissionName, $permissionDesc);
 }
 

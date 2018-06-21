@@ -31,5 +31,6 @@ $application = new Application('Users Command Line', 'PHP v' . PHP_VERSION);
  */
 $application->add(new \Users\Console\MySQL\InitCommand());
 $application->add(new \Users\Console\Account\InitCommand());
+$application->add(new \Users\Console\Role\InitCommand());
 
 $application->run();

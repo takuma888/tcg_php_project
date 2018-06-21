@@ -39,3 +39,12 @@ require ROOT . '/public.php';
 foreach ($apps as $app) {
     require ROOT . "/{$app}/service.php";
 }
+/**
+ * 加载钩子
+ */
+foreach ($apps as $app) {
+    $hookFile = ROOT . "/{$app}/hook.php";
+    if (file_exists($hookFile)) {
+        include $hookFile;
+    }
+}

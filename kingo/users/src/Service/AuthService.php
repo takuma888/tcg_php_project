@@ -13,10 +13,11 @@ class AuthService
 {
     /**
      * @param $username
+     * @param $id
      * @return bool
      * @throws \Exception
      */
-    public function validateUsernameUnique($username)
+    public function validateUsernameUnique($username, $id = null)
     {
         $username = trim($username);
         if (!$username) {
@@ -25,7 +26,7 @@ class AuthService
         /** @var UserService $userService */
         $userService = service(UserService::class);
         $userInfo = $userService->getUserInfoByUsername($username);
-        if ($userInfo['data']) {
+        if ($userInfo['data'] && $userInfo['data']['id'] != $id) {
             throw new \Exception("用户名已被使用");
         }
         return true;
@@ -33,10 +34,11 @@ class AuthService
 
     /**
      * @param $email
+     * @param $id
      * @return bool
      * @throws \Exception
      */
-    public function validateEmailUnique($email)
+    public function validateEmailUnique($email, $id = null)
     {
         $email = trim($email);
         if (!$email) {
@@ -48,7 +50,7 @@ class AuthService
         /** @var UserService $userService */
         $userService = service(UserService::class);
         $userInfo = $userService->getUserInfoByEmail($email);
-        if ($userInfo['data']) {
+        if ($userInfo['data'] && $userInfo['data']['id'] != $id) {
             throw new \Exception("邮箱已被使用");
         }
         return true;
@@ -56,10 +58,11 @@ class AuthService
 
     /**
      * @param $mobile
+     * @param $id
      * @return bool
      * @throws \Exception
      */
-    public function validateMobileUnique($mobile)
+    public function validateMobileUnique($mobile, $id = null)
     {
         $mobile = trim($mobile);
         if (!$mobile) {
@@ -68,7 +71,7 @@ class AuthService
         /** @var UserService $userService */
         $userService = service(UserService::class);
         $userInfo = $userService->getUserInfoByMobile($mobile);
-        if ($userInfo['data']) {
+        if ($userInfo['data'] && $userInfo['data']['id'] != $id) {
             throw new \Exception("邮箱已被使用");
         }
         return true;

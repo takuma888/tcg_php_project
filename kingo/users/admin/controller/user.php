@@ -186,7 +186,36 @@ route()->post('/user/edit/{id:\d+}', function (ServerRequestInterface $request, 
     if (!$userInfo['data']) {
         throw new \Exception("用户不存在");
     }
+    if ($authFields) {
+        // 验证
+        if (isset($authFields['username']) && !$authFields['username']
+            && isset($authFields['email']) && !$authFields['email']
+            && isset($authFields['mobile']) && !$authFields['mobile']) {
+            throw new \Exception("用户名，邮箱，手机号不能同时为空");
+        }
+        /** @var \Users\Service\AuthService $authService */
+        $authService = service(\Users\Service\AuthService::class);
+        if (isset($authFields['username']) && $authFields['username']) {
+            $authService->validateUsernameUnique($authFields['username'], $id);
+        }
+        if (isset($authFields['email']) && $authFields['email']) {
+            $authService->validateEmailUnique($authFields['email'], $id);
+        }
+        if (isset($authFields['mobile']) && $authFields['mobile']) {
+            $authService->validateMobileUnique($authFields['mobile'], $id);
+        }
+        // 整理
+        $keys = ['username', 'email', 'mobile'];
+        foreach ($keys as $key) {
+            if (isset($authFields[$key])) {
+                if (!$authFields[$key]) {
+                    $authFields[$key] = null;
+                }
+            }
+        }
+    }
     $userInfo = $userService->updateUser($id, $authFields, $profileFields);
+    flash()->success('更新用户成功');
     return json($response, [
         'user' => $userInfo['data'],
     ]);
@@ -253,10 +282,11 @@ route()->post('/user/password[/{id:\d+}]', function (ServerRequestInterface $req
 route()->post('/user/validate-username/unique', function (ServerRequestInterface $request, ResponseInterface $response) {
     $posts = $request->getParsedBody();
     $username = $posts['username'] ?? '';
+    $id = $posts['id'] ?? null;
     try {
         /** @var \Users\Service\AuthService $authService */
         $authService = service(\Users\Service\AuthService::class);
-        if ($authService->validateUsernameUnique($username)) {
+        if ($authService->validateUsernameUnique($username, $id)) {
             return json($response, []);
         } else {
             return json($response, [
@@ -276,10 +306,11 @@ route()->post('/user/validate-username/unique', function (ServerRequestInterface
 route()->post('/user/validate-email/unique', function (ServerRequestInterface $request, ResponseInterface $response) {
     $posts = $request->getParsedBody();
     $email = $posts['email'] ?? '';
+    $id = $posts['id'] ?? null;
     try {
         /** @var \Users\Service\AuthService $authService */
         $authService = service(\Users\Service\AuthService::class);
-        if ($authService->validateEmailUnique($email)) {
+        if ($authService->validateEmailUnique($email, $id)) {
             return json($response, []);
         } else {
             return json($response, [
@@ -299,10 +330,11 @@ route()->post('/user/validate-email/unique', function (ServerRequestInterface $r
 route()->post('/user/validate-mobile/unique', function (ServerRequestInterface $request, ResponseInterface $response) {
     $posts = $request->getParsedBody();
     $mobile = $posts['mobile'] ?? '';
+    $id = $posts['id'] ?? null;
     try {
         /** @var \Users\Service\AuthService $authService */
         $authService = service(\Users\Service\AuthService::class);
-        if ($authService->validateMobileUnique($mobile)) {
+        if ($authService->validateMobileUnique($mobile, $id)) {
             return json($response, []);
         } else {
             return json($response, [

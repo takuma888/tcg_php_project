@@ -39,21 +39,24 @@ export default {
     return axios.post(`/user/delete/${id}`)
   },
   // 验证用户名合法性
-  validateUsernameUnique: (username) => {
+  validateUsernameUnique: (username, id) => {
     return axios.post(`/user/validate-username/unique`, {
-      username: username
+      username: username,
+      id: id || 0
     })
   },
   // 验证邮箱合法性
-  validateEmailUnique: (email) => {
+  validateEmailUnique: (email, id) => {
     return axios.post(`/user/validate-email/unique`, {
-      email: email
+      email: email,
+      id: id || 0
     })
   },
   // 验证手机号码合法性
-  validateMobileUnique: (mobile) => {
+  validateMobileUnique: (mobile, id) => {
     return axios.post(`/user/validate-mobile/unique`, {
-      mobile: mobile
+      mobile: mobile,
+      id: id || 0
     })
   }
 }

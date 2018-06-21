@@ -14,6 +14,8 @@ class UserRoleTable extends Table
 {
     protected $tableBaseName = 'user_role';
 
+    protected $engine = 'InnoDB';
+
     protected $createSQL = <<<SQL
 CREATE TABLE IF NOT EXISTS {@table} (
   `uid` INT(11) UNSIGNED NOT NULL COMMENT '用户ID',

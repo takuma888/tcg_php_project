@@ -4,34 +4,12 @@
       <el-form-item label="ID" size="small">
         <el-input type="text" v-model="searchForm.id" placeholder="ID"></el-input>
       </el-form-item>
-      <el-form-item label="用户名" size="small">
-        <el-input type="text" v-model="searchForm.username" placeholder="用户名"></el-input>
-      </el-form-item>
-      <el-form-item label="邮箱" size="small">
-        <el-input type="text" v-model="searchForm.email" placeholder="邮箱地址"></el-input>
-      </el-form-item>
-      <el-form-item label="手机" size="small">
-        <el-input type="text" v-model="searchForm.mobile" placeholder="手机号码"></el-input>
-      </el-form-item>
-      <el-form-item label="创建" size="small">
-        <el-date-picker v-model="searchForm.createAt"
-                        type="daterange"
-                        start-placeholder="开始日期"
-                        end-placeholder="结束日期"
-                        format="yyyy 年 MM 月 dd 日"
-                        value-format="yyyy-MM-dd"></el-date-picker>
-      </el-form-item>
-      <el-form-item label="登录" size="small">
-        <el-date-picker v-model="searchForm.loginAt"
-                        type="daterange"
-                        start-placeholder="开始日期"
-                        end-placeholder="结束日期"
-                        format="yyyy 年 MM 月 dd 日"
-                        value-format="yyyy-MM-dd"></el-date-picker>
+      <el-form-item label="名称" size="small">
+        <el-input type="text" v-model="searchForm.name" placeholder="名称"></el-input>
       </el-form-item>
       <el-form-item size="mini">
         <el-button type="primary" size="small" @click="handleSearch"><i class="fa fa-search"></i>&nbsp;&nbsp;查询</el-button>
-        <UserAddComponent v-if="add" size="small" type="success" @parent="getData"></UserAddComponent>
+        <RoleAddComponent v-if="add" size="small" type="success" @parent="getData"></RoleAddComponent>
       </el-form-item>
     </el-form>
     <el-table :data="tableData"
@@ -39,23 +17,22 @@
               :stripe="stripe"
               :border="border" size="mini" v-loading="tableLoading" @selection-change="selectChange" style="width: 100%;">
       <el-table-column type="selection" width="36"></el-table-column>
-      <el-table-column prop="id" label="ID #" width="60"></el-table-column>
-      <el-table-column prop="username" label="用户名"></el-table-column>
-      <el-table-column prop="email" label="邮箱"></el-table-column>
-      <el-table-column prop="mobile" label="手机"></el-table-column>
+      <el-table-column prop="id" label="ID #" width="100"></el-table-column>
+      <el-table-column prop="name" label="名称" width="150"></el-table-column>
+      <el-table-column prop="priority" label="优先级" width="100"></el-table-column>
+      <el-table-column prop="description" label="描述"></el-table-column>
       <el-table-column prop="create_at" label="创建" width="150"></el-table-column>
-      <el-table-column prop="register_at" label="注册" width="150"></el-table-column>
-      <el-table-column prop="login_at" label="登录" width="150"></el-table-column>
-      <el-table-column label="操作" width="90">
+      <el-table-column label="操作" width="130">
         <template slot-scope="scope">
-          <!--<UserEditComponent v-if="edit" type="text" size="mini" :id="scope.row.id"></UserEditComponent>-->
-          <el-button v-if="edit" type="text" size="mini" @click="$refs.UserEditComponent.showDialog(scope.row.id)">编辑</el-button>
+          <el-button v-if="edit" type="text" size="mini" @click="$refs.RoleEditComponent.showDialog(scope.row.id)">编辑</el-button>
+          <el-button type="text" size="mini" @click="$refs.RolesPermissionsComponent.showDialog([scope.row.id])" style="color: green;">权限</el-button>
           <el-button type="text" size="mini" @click="singleDelete(scope.row)" style="color: red;">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
     <el-row>
       <el-button v-show="multipleSelection.length > 0" type="danger" size="mini" style="margin-top: 10px;" @click="multipleDelete">删除选中项</el-button>
+      <el-button v-show="multipleSelection.length > 0" type="info" size="mini" style="margin-top: 10px;" @click="$refs.RolesPermissionsComponent.showDialog(multipleSelection)">设置选中项权限</el-button>
       <el-col :span="12" style="margin-top: 10px; float: right;">
         <el-pagination @size-change="pageSizeChange"
                        @current-change="pageCurrentChange"
@@ -68,18 +45,21 @@
         </el-pagination>
       </el-col>
     </el-row>
-    <UserEditComponent ref="UserEditComponent" v-if="edit" @parent="getData"></UserEditComponent>
+    <RoleEditComponent ref="RoleEditComponent" v-if="edit" @parent="getData"></RoleEditComponent>
+    <RolesPermissionsComponent ref="RolesPermissionsComponent" @parent="getData"></RolesPermissionsComponent>
   </section>
 </template>
 
 <script>
+import RoleAddComponent from '@/components/roles/RoleAddComponent'
+import RoleEditComponent from '@/components/roles/RoleEditComponent'
+import RolesPermissionsComponent from '@/components/roles/RolesPermissionsComponent'
 import Api from '@/api'
-import UserAddComponent from '@/components/users/UserAddComponent'
-import UserEditComponent from '@/components/users/UserEditComponent'
 export default {
   components: {
-    UserAddComponent: UserAddComponent,
-    UserEditComponent: UserEditComponent
+    RoleAddComponent: RoleAddComponent,
+    RoleEditComponent: RoleEditComponent,
+    RolesPermissionsComponent: RolesPermissionsComponent
   },
   props: {
     add: {
@@ -103,36 +83,13 @@ export default {
       multipleSelection: [],
       searchForm: {
         id: '',
-        username: '',
-        email: '',
-        mobile: '',
-        createAt: [],
-        loginAt: []
+        name: ''
       }
     }
   },
   methods: {
-    getData () {
-      this.tableLoading = true
-      Api.users.list({
-        page: this.page,
-        size: this.size,
-        id: this.searchForm.id,
-        username: this.searchForm.username,
-        email: this.searchForm.email,
-        mobile: this.searchForm.mobile,
-        create_at: this.searchForm.createAt,
-        login_at: this.searchForm.loginAt
-      }).then((data) => {
-        this.tableLoading = false
-        this.tableData = data.data
-        this.dataTotal = data.total
-      }).catch(() => {
-        this.tableLoading = false
-      })
-    },
     selectChange (val) {
-      this.multipleSelection = val.map(item => parseInt(item.id))
+      this.multipleSelection = val.map(item => item.id)
     },
     pageSizeChange (val) {
       this.size = val
@@ -145,6 +102,21 @@ export default {
     handleSearch () {
       this.getData()
     },
+    getData () {
+      this.tableLoading = true
+      Api.roles.list({
+        page: this.page,
+        size: this.size,
+        id: this.searchForm.id,
+        name: this.searchForm.name
+      }).then((data) => {
+        this.tableLoading = false
+        this.tableData = data.data
+        this.dataTotal = data.total
+      }).catch(() => {
+        this.tableLoading = false
+      })
+    },
     singleDelete (row) {
       if (row.id) {
         this.$confirm('确认删除选中的 ID # ' + row.id + ' 吗？', '提示', {
@@ -152,7 +124,7 @@ export default {
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          Api.user.delete(row.id).then(() => {
+          Api.role.delete(row.id).then(() => {
             this.getData()
           })
         }).catch(() => {})
@@ -165,7 +137,7 @@ export default {
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          Api.users.delete(this.multipleSelection).then(() => {
+          Api.roles.delete(this.multipleSelection).then(() => {
             this.getData()
           })
         }).catch(() => {})
@@ -182,3 +154,5 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped></style>

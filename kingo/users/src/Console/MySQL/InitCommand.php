@@ -22,13 +22,15 @@ class InitCommand extends Command
             ->setName('users:mysql.init')
             ->setDescription('创建使用到的MySQL库和表')
             ->addOption('show-sql', null, InputOption::VALUE_OPTIONAL, '是否显示SQL', 0)
-            ->addOption('drop', null, InputOption::VALUE_OPTIONAL, '是否drop已存在的表', 0);
+            ->addOption('drop', null, InputOption::VALUE_OPTIONAL, '是否drop已存在的表', 0)
+            ->addOption('table', null, InputOption::VALUE_OPTIONAL, '指定表');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $showSQL = $input->getOption('show-sql');
         $drop = $input->getOption('drop');
+        $table = $input->getOption('table');
 
         $tableNames = [
             'user_auth',
@@ -39,11 +41,13 @@ class InitCommand extends Command
         ];
 
         foreach ($tableNames as $tableBaseName) {
-            $output->writeln("<question>创建 {$tableBaseName} 表</question>");
-            $table = \table($tableBaseName);
-            $sql = $table->create($drop);
-            if ($showSQL) {
-                $output->writeln("<comment>{$sql}</comment>");
+            if (!$table || ($table && $table == $tableBaseName)) {
+                $output->writeln("<question>创建 {$tableBaseName} 表</question>");
+                $table = \table($tableBaseName);
+                $sql = $table->create($drop);
+                if ($showSQL) {
+                    $output->writeln("<comment>{$sql}</comment>");
+                }
             }
         }
     }

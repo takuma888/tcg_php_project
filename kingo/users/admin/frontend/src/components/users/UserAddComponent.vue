@@ -5,21 +5,21 @@
         <i class="fa fa-plus"></i>&nbsp;&nbsp;添加<i class="el-icon-arrow-down el-icon--right"></i>
       </el-button>
       <el-dropdown-menu slot="dropdown">
-        <el-dropdown-item @click.native="dialogUsernameVisible = true">用户名方式添加</el-dropdown-item>
-        <el-dropdown-item @click.native="dialogEmailVisible = true">邮箱方式添加</el-dropdown-item>
-        <el-dropdown-item @click.native="dialogMobileVisible = true">手机方式添加</el-dropdown-item>
+        <el-dropdown-item @click.native="showUsernameDialog">用户名方式添加</el-dropdown-item>
+        <el-dropdown-item @click.native="showEmailDialog = true">邮箱方式添加</el-dropdown-item>
+        <el-dropdown-item @click.native="showMobileDialog = true">手机方式添加</el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
     <!-- dialogs -->
     <el-dialog title="通过用户名方式添加用户" append-to-body :visible.sync="dialogUsernameVisible">
       <el-form :model="addUsernameForm" ref="addUsernameForm" status-icon :rules="addUsernameRules" >
-        <el-form-item label="用户名" prop="username">
+        <el-form-item label="用户名" prop="username" size="small">
           <el-input type="text" v-model="addUsernameForm.username"></el-input>
         </el-form-item>
-        <el-form-item label="密码" prop="password">
+        <el-form-item label="密码" prop="password" size="small">
           <el-input type="password" v-model="addUsernameForm.password" auto-complete="off"></el-input>
         </el-form-item>
-        <el-form-item label="确认密码" prop="confirmPassword">
+        <el-form-item label="确认密码" prop="confirmPassword" size="small">
           <el-input type="password" v-model="addUsernameForm.confirmPassword" auto-complete="off"></el-input>
         </el-form-item>
       </el-form>
@@ -30,13 +30,13 @@
     </el-dialog>
     <el-dialog title="通过邮箱方式添加用户" append-to-body :visible.sync="dialogEmailVisible">
       <el-form :model="addEmailForm" ref="addEmailForm" status-icon :rules="addEmailRules" >
-        <el-form-item label="邮箱" prop="email">
+        <el-form-item label="邮箱" prop="email" size="small">
           <el-input type="text" v-model="addEmailForm.email"></el-input>
         </el-form-item>
-        <el-form-item label="密码" prop="password">
+        <el-form-item label="密码" prop="password" size="small">
           <el-input type="password" v-model="addEmailForm.password" auto-complete="off"></el-input>
         </el-form-item>
-        <el-form-item label="确认密码" prop="confirmPassword">
+        <el-form-item label="确认密码" prop="confirmPassword" size="small">
           <el-input type="password" v-model="addEmailForm.confirmPassword" auto-complete="off"></el-input>
         </el-form-item>
       </el-form>
@@ -47,13 +47,13 @@
     </el-dialog>
     <el-dialog title="通过手机号方式添加用户" append-to-body :visible.sync="dialogMobileVisible">
       <el-form :model="addMobileForm" ref="addMobileForm" status-icon :rules="addMobileRules" >
-        <el-form-item label="手机号" prop="mobile">
+        <el-form-item label="手机号" prop="mobile" size="small">
           <el-input type="text" v-model="addMobileForm.mobile"></el-input>
         </el-form-item>
-        <el-form-item label="密码" prop="password">
+        <el-form-item label="密码" prop="password" size="small">
           <el-input type="password" v-model="addMobileForm.password" auto-complete="off"></el-input>
         </el-form-item>
-        <el-form-item label="确认密码" prop="confirmPassword">
+        <el-form-item label="确认密码" prop="confirmPassword" size="small">
           <el-input type="password" v-model="addMobileForm.confirmPassword" auto-complete="off"></el-input>
         </el-form-item>
       </el-form>
@@ -237,6 +237,24 @@ export default {
     }
   },
   methods: {
+    showUsernameDialog () {
+      this.dialogUsernameVisible = true
+      if (this.$refs.addUsernameForm) {
+        this.$refs.addUsernameForm.resetFields()
+      }
+    },
+    showEmailDialog () {
+      this.dialogEmailVisible = true
+      if (this.$refs.addEmailForm) {
+        this.$refs.addEmailForm.resetFields()
+      }
+    },
+    showMobileDialog () {
+      this.dialogMobileVisible = true
+      if (this.$refs.addMobileForm) {
+        this.$refs.addMobileForm.resetFields()
+      }
+    },
     submitUsernameDialogForm () {
       this.$refs.addUsernameForm.validate((valid) => {
         if (valid) {
@@ -246,11 +264,12 @@ export default {
             this.addUsernameForm.confirmPassword
           ).then(() => {
             this.dialogUsernameVisible = false
+            this.$refs.addUsernameForm.resetFields()
             this.$emit('parent')
           })
         } else {
           this.$message({
-            message: '验证出错，请刷新重试',
+            message: '验证出错',
             type: 'error'
           })
           return false
@@ -266,11 +285,12 @@ export default {
             this.addEmailForm.confirmPassword
           ).then(() => {
             this.dialogEmailVisible = false
+            this.$refs.addMobileForm.resetFields()
             this.$emit('parent')
           })
         } else {
           this.$message({
-            message: '验证出错，请刷新重试',
+            message: '验证出错',
             type: 'error'
           })
           return false
@@ -286,11 +306,12 @@ export default {
             this.addMobileForm.confirmPassword
           ).then(() => {
             this.dialogMobileVisible = false
+            this.$refs.addMobileForm.resetFields()
             this.$emit('parent')
           })
         } else {
           this.$message({
-            message: '验证出错，请刷新重试',
+            message: '验证出错',
             type: 'error'
           })
           return false

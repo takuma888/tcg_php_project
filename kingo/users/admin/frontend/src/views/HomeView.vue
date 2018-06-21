@@ -15,7 +15,7 @@
                      active-text-color="#ffd04b" background-color="#20a0ff">
               <el-menu-item class="top-menu-item" index="/">首页</el-menu-item>
               <el-menu-item class="top-menu-item" index="/users">用户管理</el-menu-item>
-              <el-menu-item class="top-menu-item" index="/test">测试</el-menu-item>
+              <el-menu-item class="top-menu-item" index="/roles">角色管理</el-menu-item>
             </el-menu>
           </el-col>
           <el-col :span="4" class="userinfo">

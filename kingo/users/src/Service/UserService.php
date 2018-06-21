@@ -63,16 +63,27 @@ class UserService
             }
 
             if ($profileFields) {
-                $sql = "UPDATE {@table.user_profile} SET ";
-                $sets = [];
-                $params = [];
+                $sql = "INSERT INTO {@table.user_profile} (";
+                $fields = [
+                    "`id`"
+                ];
+                $values = [
+                    ":id"
+                ];
+                $params = [
+                    ':id' => $id,
+                ];
+                $updates = [];
                 foreach ($profileFields as $field => $value) {
                     $field = trim($field, '`');
-                    $sets[] = "`{$field}` = :{$field}";
+                    $fields[] = "`{$field}`";
+                    $values[] = ":{$field}";
                     $params[":{$field}"] = $value;
+                    $updates[] = "`{$field}` = VALUES(`{$field}`)";
                 }
-                $sql .= implode(', ', $sets) . ' WHERE `id` = :id';
-                $params[':id'] = $id;
+                $sql .= implode(', ', $fields) . ') VALUES (' . implode(', ', $values) . ')';
+                $sql .= " ON DUPLICATE KEY UPDATE " . implode(', ', $updates);
+
                 $query = query($sql)->table('{@table.user_profile}', $this->getProfileTable())
                     ->setParameters($params);
                 $authFields['id'] = $id;
