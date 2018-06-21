@@ -87,7 +87,7 @@ route()->post('/roles/permissions', function (ServerRequestInterface $request, R
             $quoteIds[] = ':id_' . $i;
             $params[':id_' . $i] = $id;
         }
-        $clauseExpr = "`id` IN (" . implode(', ', $quoteIds) . ')';
+        $clauseExpr = "`id` IN (" . implode(', ', $quoteIds) . ') ORDER BY `priority` DESC';
         $rolesResult = $roleService->selectMany($clauseExpr, $params);
         foreach ($rolesResult['data'] as $role) {
             $roles[$role['id']] = $role;
@@ -96,6 +96,14 @@ route()->post('/roles/permissions', function (ServerRequestInterface $request, R
     /** @var \Users\Service\PermissionService $permissionService */
     $permissionService = service(\Users\Service\PermissionService::class);
     $permissions = $permissionService->getPermissions();
+
+    foreach ($roles as $roleId => $role) {
+        $rolePermissions = [];
+        foreach (array_keys($permissions) as $permissionId) {
+            $rolePermissions[$permissionId] = ($role['permissions'] & $permissionId) == $permissionId;
+        }
+        $roles[$roleId]['role_permissions'] = $rolePermissions;
+    }
 
     return json($response, [
         'roles' => $roles,
