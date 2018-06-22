@@ -1,4 +1,4 @@
 .idea
 vendor
-kingo/users/admin/frontend/node_modules
-kingo/users/admin/frontend/.idea
+kingo/users/admin/vue/node_modules
+kingo/users/admin/vue/.idea
