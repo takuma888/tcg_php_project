@@ -9,6 +9,7 @@
 namespace Users\Service;
 
 
+use Users\MySQL\Table\RolePermissionTable;
 use Users\MySQL\Table\UserAuthTable;
 use Users\MySQL\Table\UserProfileTable;
 use Users\MySQL\Table\UserRoleTable;
@@ -373,6 +374,60 @@ class UserService
     /**
      * @param $clauseExpr
      * @param array $params
+     * @param bool $withProfile
+     * @return array
+     * @throws \Exception
+     */
+    public function selectMany($clauseExpr, array $params = [], $withProfile = false)
+    {
+        $clauseExpr = trim($clauseExpr);
+        if (!$clauseExpr) {
+            $clauseExpr = 'WHERE 1';
+        }
+        if (strtoupper(substr($clauseExpr, 0, 6)) !== 'WHERE ') {
+            $clauseExpr = 'WHERE ' . $clauseExpr;
+        }
+        $tables = [
+            'auth' => $this->getAuthTable(),
+        ];
+        if ($withProfile) {
+            $tables['profile'] = $this->getProfileTable();
+        }
+
+        $fields = query()::duplicateFields($tables, [
+            'auth.id' => 'id',
+            'auth.update_at' => 'update_at',
+        ], '`');
+        $fields = implode(', ', $fields);
+        $sqlTpl = "SELECT SQL_CALC_FOUND_ROWS {$fields} FROM {@table.user_auth} as `auth`";
+        if ($withProfile) {
+            $sqlTpl .= " LEFT JOIN {@table.user_profile} as `profile` ON `auth`.`id` = `profile`.`id`";
+        }
+        $sqlTpl .= $clauseExpr;
+        $query = query($sqlTpl);
+        $query->table('{@table.user_auth}', $this->getAuthTable())
+            ->table('{@table.user_profile}', $this->getProfileTable());
+        $connection = query()::connectionForRead($tables);
+        $sql = $query->getSQLForRead();
+
+        $stmt = $connection->prepare($sql);
+        $stmt->execute($params);
+        $data = $stmt->fetchAll();
+
+        $stmt = $connection->prepare("SELECT FOUND_ROWS()");
+        $stmt->execute();
+        $total = $stmt->fetch()['FOUND_ROWS()'];
+
+        return [
+            'data' => $data,
+            'total' => intval($total),
+        ];
+    }
+
+
+    /**
+     * @param $clauseExpr
+     * @param array $params
      * @return array
      * @throws \Exception
      */
@@ -415,6 +470,7 @@ class UserService
         $tables = [
             $this->getAuthTable(),
             $this->getProfileTable(),
+            $this->getUserRoleTable(),
         ];
         $supportTransaction = query()::supportTransaction($tables);
         $connection = query()::connectionForWrite($tables);
@@ -469,6 +525,7 @@ class UserService
         $tables = [
             $this->getAuthTable(),
             $this->getProfileTable(),
+            $this->getUserRoleTable(),
         ];
         $supportTransaction = query()::supportTransaction($tables);
         $connection = query()::connectionForWrite($tables);
@@ -537,6 +594,58 @@ class UserService
     }
 
     /**
+     * @param $uid
+     * @param array $roleIds
+     * @throws \Exception
+     */
+    public function editRole($uid, array $roleIds)
+    {
+        $tables = [
+            $this->getUserRoleTable(),
+        ];
+        $supportTransaction = query()::supportTransaction($tables);
+        $conn = query()::connectionForWrite($tables);
+        if ($supportTransaction) {
+            $conn->beginTransaction();
+        }
+        try {
+            // 删除原有角色
+            $sql = "DELETE FROM {@table.user_role} WHERE `uid` = :uid";
+            $query = query($sql)
+                ->table('{@table.user_role}', $this->getUserRoleTable())
+                ->setParameter(':uid', $uid);
+            $sql = $query->getSQLForWrite();
+            $params = $query->getParameters();
+
+            $stmt = $conn->prepare($sql);
+            $stmt->execute($params);
+
+            // 创建新角色
+            foreach ($roleIds as $roleId) {
+                $sql = "INSERT INTO {@table.user_role} (`uid`, `rid`) VALUES (:uid, :rid)";
+                $query = query($sql)
+                    ->table('{@table.user_role}', $this->getUserRoleTable())
+                    ->setParameter(':uid', $uid)
+                    ->setParameter(':rid', $roleId);
+                $sql = $query->getSQLForWrite();
+                $params = $query->getParameters();
+
+                $stmt = $conn->prepare($sql);
+                $stmt->execute($params);
+            }
+
+            if ($supportTransaction) {
+                $conn->commit();
+            }
+        } catch (\Exception $e) {
+            if ($supportTransaction) {
+                $conn->rollBack();
+            }
+            throw $e;
+        }
+    }
+
+    /**
      * @return UserAuthTable
      */
     private function getAuthTable()
@@ -559,6 +668,4 @@ class UserService
     {
         return table('user_role');
     }
-
-
 }

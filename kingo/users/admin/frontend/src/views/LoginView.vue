@@ -50,6 +50,8 @@ export default {
               type: 'success'
             })
             this.$router.push('/')
+          }).catch(() => {
+            this.logining = false
           })
         } else {
           console.log('error submit!!')

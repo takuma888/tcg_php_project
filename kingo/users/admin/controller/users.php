@@ -71,15 +71,31 @@ route()->get('/users', function (ServerRequestInterface $request, ResponseInterf
     $limit = max(0, $size);
     $offset = (max(1, $page) - 1) * $limit;
     $filterCondition = implode(' AND ', $filterCondition);
-    if (strlen($filterCondition)) {
-        $filterCondition .= ' LIMIT ' . $offset . ', ' . $limit;
-    } else {
-        $filterCondition = 'WHERE 1 LIMIT ' . $offset . ', ' . $limit;
+    if (!strlen($filterCondition)) {
+        $filterCondition = 'WHERE 1';
     }
+    $filterCondition .= ' ORDER BY `id` DESC LIMIT ' . $offset . ', ' . $limit;
     // 进行查询
     /** @var \Users\Service\UserService $userService */
     $userService = service(\Users\Service\UserService::class);
-    $result = $userService->authSelectMany($filterCondition, $filterParams);
+    $result = $userService->selectMany($filterCondition, $filterParams, true);
+    /** @var \Users\Service\PermissionService $permissionService */
+    $permissionService = service(\Users\Service\PermissionService::class);
+    // 查询出角色权限
+    foreach ($result['data'] as $k => $row) {
+        $id = $row['id'];
+        $row['roles'] = [];
+        $rolePermissionResult = $permissionService->getRolePermissionsByUserId($id);
+        if ($rolePermissionResult['data']) {
+            foreach ($rolePermissionResult['data'] as $rolePermissionInfo) {
+                $row['roles'][] = [
+                    'id' => $rolePermissionInfo['id'],
+                    'name' => $rolePermissionInfo['name'],
+                ];
+            }
+        }
+        $result['data'][$k] = $row;
+    }
     return json($response, $result);
 });
 

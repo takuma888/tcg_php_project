@@ -348,4 +348,63 @@ route()->post('/user/validate-mobile/unique', function (ServerRequestInterface $
     }
 });
 
+/**
+ * get /user/roles
+ * 获取用户角色
+ */
+route()->get('/user/roles/{uid:\d+}', function (ServerRequestInterface $request, ResponseInterface $response, $uid) {
+    $userId = $uid;
+    /** @var \Users\Service\UserService $userService */
+    $userService = service(\Users\Service\UserService::class);
+    $userInfo = $userService->getUserInfoById($userId);
+    if (!$userInfo['data']) {
+        throw new \Exception('用户不存在');
+    }
+    $userRoles = [];
+    /** @var \Users\Service\PermissionService $permissionService */
+    $permissionService = service(\Users\Service\PermissionService::class);
+    $rolePermissionResult = $permissionService->getRolePermissionsByUserId($userId);
+    if ($rolePermissionResult['data']) {
+        foreach ($rolePermissionResult['data'] as $rolePermissionInfo) {
+            $userRoles[] = $rolePermissionInfo['id'];
+        }
+    }
+    $roles = [];
+    /** @var \Users\Service\RoleService $roleService */
+    $roleService = service(\Users\Service\RoleService::class);
+    $rolesResult = $roleService->selectMany('', []);
+    foreach ($rolesResult['data'] as $role) {
+        $roles[] = [
+            'id' => $role['id'],
+            'name' => $role['name'],
+        ];
+    }
+    $return = [
+        'user_roles' => $userRoles,
+        'roles' => $roles,
+    ];
+
+    return json($response, $return);
+});
+
+/**
+ * post /user/roles
+ * 编辑用户角色
+ */
+route()->post('/user/roles/{uid:\d+}', function (ServerRequestInterface $request, ResponseInterface $response, $uid) {
+    $posts = $request->getParsedBody();
+    $roles = $posts['roles'] ?? [];
+
+    $userId = $uid;
+    /** @var \Users\Service\UserService $userService */
+    $userService = service(\Users\Service\UserService::class);
+    $userInfo = $userService->getUserInfoById($userId);
+    if (!$userInfo['data']) {
+        throw new \Exception('用户不存在');
+    }
+
+    $userService->editRole($uid, $roles);
+    flash()->success('编辑用户角色成功');
+    return json($response, []);
+});
 

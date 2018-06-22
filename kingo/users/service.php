@@ -211,15 +211,16 @@ function can($uid, $permissionExpr)
 
 /**
  * 注册权限
+ * @param string $scope
  * @param string $permissionValue
  * @param string $permissionName
  * @param string $permissionDesc
  */
-function permission($permissionValue, $permissionName, $permissionDesc)
+function permission($scope, $permissionValue, $permissionName, $permissionDesc)
 {
     /** @var \Users\Service\PermissionService $permissionService */
     $permissionService = env(ENV_USERS)->get(\Users\Service\PermissionService::class);
-    $permissionService->registerPermission($permissionValue, $permissionName, $permissionDesc);
+    $permissionService->registerPermission($scope, $permissionValue, $permissionName, $permissionDesc);
 }
 
 

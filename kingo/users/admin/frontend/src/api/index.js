@@ -5,6 +5,8 @@ import UserApi from '@/api/user'
 import RolesApi from '@/api/roles'
 import RoleApi from '@/api/role'
 
+import PermissionsApi from '@/api/permissions'
+
 export default {
   // session
   session: () => {
@@ -28,5 +30,7 @@ export default {
   // roles 相关API
   roles: RolesApi,
   // role 相关API
-  role: RoleApi
+  role: RoleApi,
+  // permissions 相关API
+  permissions: PermissionsApi
 }

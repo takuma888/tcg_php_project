@@ -64,9 +64,12 @@ export default {
                   } else {
                     callback()
                   }
+                }).catch(() => {
+                  callback()
                 })
+              } else {
+                callback()
               }
-              callback()
             },
             trigger: 'blur'
           }
@@ -92,9 +95,12 @@ export default {
                   } else {
                     callback()
                   }
+                }).catch(() => {
+                  callback()
                 })
+              } else {
+                callback()
               }
-              callback()
             },
             trigger: 'blur'
           }
@@ -119,9 +125,12 @@ export default {
                   } else {
                     callback()
                   }
+                }).catch(() => {
+                  callback()
                 })
+              } else {
+                callback()
               }
-              callback()
             },
             trigger: 'blur'
           }
@@ -148,7 +157,7 @@ export default {
             this.dialogEditVisible = false
             this.$refs.form.resetFields()
             this.$emit('parent')
-          })
+          }).catch(() => {})
         } else {
           this.$message({
             message: '验证出错',
@@ -161,6 +170,9 @@ export default {
     showDialog (id) {
       this.id = id
       Api.user.get(id).then((data) => {
+        if (this.$refs.form) {
+          this.$refs.form.resetFields()
+        }
         let user = data.user
         this.form.username = user.username
         this.form.email = user.email

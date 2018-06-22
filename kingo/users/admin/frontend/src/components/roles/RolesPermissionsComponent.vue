@@ -4,15 +4,19 @@
               :highlight-current-row="highlightCurrentRow"
               :stripe="stripe"
               :border="border" size="mini" v-loading="tableLoading" max-height="500">
-      <el-table-column type="expand">
+      <el-table-column type="expand" label="#">
         <template slot-scope="props">
           <p v-html="props.row.desc"></p>
         </template>
       </el-table-column>
-      <el-table-column prop="name" label="权限名称"></el-table-column>
+      <el-table-column prop="name" label="权限名称" :filters="tableFilters" :filter-method="filterHandler">
+        <template slot-scope="props">
+          <span v-html="props.row.name"></span>
+        </template>
+      </el-table-column>
       <el-table-column v-for="(role, roleId) in roles" :key="roleId" width="100" :label="role.name" header-align="center" align="center">
         <template slot-scope="scope">
-          <el-checkbox v-model="checkboxes[roleId][scope.row.permission_id]" :checked="checkboxes[roleId][scope.row.permission_id]"></el-checkbox>
+          <el-checkbox v-model="rolesPermissions[roleId][scope.row.permission_id]" :checked="rolesPermissions[roleId][scope.row.permission_id]"></el-checkbox>
         </template>
       </el-table-column>
     </el-table>
@@ -36,7 +40,8 @@ export default {
       roles: {},
       permissions: {},
       tableData: [],
-      checkboxes: {}
+      rolesPermissions: {},
+      tableFilters: []
     }
   },
   methods: {
@@ -45,30 +50,46 @@ export default {
       this.permissions = {}
       this.tableData = []
       this.tableLoading = true
-      Api.roles.permissions(ids).then((data) => {
+      this.rolesPermissions = {}
+      this.tableFilters = []
+      Api.permissions.list(ids).then((data) => {
         this.tableLoading = false
-        this.roles = data.roles
-        this.permissions = data.permissions
+        this.roles = data.roles || {}
+        this.permissions = data.permissions || {}
         let permissionId
         for (permissionId in this.permissions) {
-          let val = this.permissions[permissionId]
-          let row = {
+          const val = this.permissions[permissionId]
+          const row = {
             permission_id: permissionId,
             name: val.name,
-            desc: val.desc
+            desc: val.desc,
+            scope: val.scope
           }
           this.tableData.push(row)
         }
         for (let roleId in this.roles) {
-          let role = this.roles[roleId]
-          this.checkboxes[roleId] = role['role_permissions']
+          const role = this.roles[roleId]
+          this.rolesPermissions[roleId] = role['role_permissions']
         }
-        console.log(this.checkboxes)
+        const scopes = data.scopes || []
+        for (let index in scopes) {
+          const scope = scopes[index]
+          this.tableFilters.push({
+            text: scope,
+            value: scope
+          })
+        }
         this.dialogVisible = true
       }).catch(() => {})
     },
     submitDialogForm () {
-      console.log(this.checkboxes)
+      Api.permissions.edit(this.rolesPermissions).then(() => {
+        this.$emit('parent')
+        this.dialogVisible = false
+      }).catch(() => {})
+    },
+    filterHandler (value, row, column) {
+      return row['scope'] === value
     }
   }
 }

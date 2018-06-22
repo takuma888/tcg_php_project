@@ -72,7 +72,7 @@ class AuthService
         $userService = service(UserService::class);
         $userInfo = $userService->getUserInfoByMobile($mobile);
         if ($userInfo['data'] && $userInfo['data']['id'] != $id) {
-            throw new \Exception("邮箱已被使用");
+            throw new \Exception("手机号已被使用");
         }
         return true;
     }

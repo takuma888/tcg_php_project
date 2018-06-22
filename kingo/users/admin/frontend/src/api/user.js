@@ -58,5 +58,15 @@ export default {
       mobile: mobile,
       id: id || 0
     })
+  },
+  // 获取用户角色
+  roles: (uid) => {
+    return axios.get(`/user/roles/${uid}`)
+  },
+  // 编辑用户橘色
+  editRoles: (uid, roles) => {
+    return axios.post(`/user/roles/${uid}`, {
+      roles: roles
+    })
   }
 }

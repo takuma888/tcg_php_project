@@ -26,14 +26,19 @@ class PermissionService
 
     /**
      * 注册权限
+     * @param string $scope
      * @param string $permissionValue
      * @param string $permissionName
      * @param string $permissionDesc
      * @return $this
      */
-    public function registerPermission($permissionValue, $permissionName, $permissionDesc)
+    public function registerPermission($scope, $permissionValue, $permissionName, $permissionDesc)
     {
+        if (substr($permissionValue, 0, 2) != '0b') {
+            $permissionValue = '0b' . $permissionValue;
+        }
         self::$permissions[$permissionValue] = [
+            'scope' => $scope,
             'name' => $permissionName,
             'desc' => $permissionDesc,
         ];
@@ -57,7 +62,12 @@ class PermissionService
     public function hasPermission($uid, $permissionExpr)
     {
         $userPermission = $this->getPermissionsByUserId($uid);
-        return $userPermission & $permissionExpr;
+        $userPermission = gmp_init($userPermission, 2);
+        $permissionExpr = gmp_init($permissionExpr, 2);
+        $calc = gmp_and($userPermission, $permissionExpr);
+        $calc = '0b' . gmp_strval($calc, 2);
+        $permissionExpr = '0b' . gmp_strval($permissionExpr, 2);
+        return $calc == $permissionExpr;
     }
 
     /**
@@ -69,13 +79,13 @@ class PermissionService
     {
         if (!isset(self::$userPermissionCache[$uid])) {
             $rolePermissions = $this->getRolePermissionsByUserId($uid);
-            $permissionExpr = decbin(0);
+            $permissionExpr = gmp_init('0b0', 2);
             if ($rolePermissions['data']) {
                 foreach ($rolePermissions['data'] as $rolePermission) {
-                    $permissionExpr |= $rolePermission['permission'];
+                    $permissionExpr = gmp_or($rolePermission, gmp_init($rolePermission['permission'], 2));
                 }
             }
-            self::$userPermissionCache[$uid] = $permissionExpr;
+            self::$userPermissionCache[$uid] = '0b' . gmp_strval($permissionExpr, 2);
         }
         return self::$userPermissionCache[$uid];
     }

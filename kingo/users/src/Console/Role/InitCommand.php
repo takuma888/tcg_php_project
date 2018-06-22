@@ -25,7 +25,7 @@ class InitCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $permissions = str_repeat('1', 9999);
+        $permissions ='0b' . str_repeat('1', 9999);
         $roles = [
             [
                 'id' => 'root',

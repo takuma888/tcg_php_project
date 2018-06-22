@@ -16,16 +16,30 @@ use Psr\Http\Message\ResponseInterface;
 route()->post('/login', function (ServerRequestInterface $request, ResponseInterface $response) {
     $requestBody = $request->getParsedBody();
     $username = $requestBody['username'];
+    $username = trim($username);
     $password = $requestBody['password'];
+    $password = trim($password);
 
-    // 使用dao获取数据
+    /** @var \Users\Service\UserService $userService */
+    $userService = service(\Users\Service\UserService::class);
+    $userInfo = $userService->getUserInfoByUsername($username, true);
+    if (!$userInfo['data']) {
+        throw new \Exception("用户名不存在");
+    }
+    if ($userInfo['data']['password'] != md5($password)) {
+        throw new \Exception("密码错误");
+    }
 
+    // 记录登录时间
+    $userService->updateUser($userInfo['data']['id'], [
+        'login_at' => date('Y-m-d H:i:s'),
+    ]);
+    session()->set('uid', $userInfo['data']['id']);
     return json($response, [
         'user' => [
-            'uid' => 1,
-            'username' => 'test_user',
+            'uid' => $userInfo['data']['id'],
+            'username' => $userInfo['data']['username'],
             'avatar' => '',
-            'permissions' => [],
         ],
     ]);
 });
@@ -48,21 +62,21 @@ route()->get('/logout', function (ServerRequestInterface $request, ResponseInter
 route()->get('/session', function (ServerRequestInterface $request, ResponseInterface $response) {
     $uid = session()->get('uid', null);
     if ($uid) {
+        /** @var \Users\Service\UserService $userService */
+        $userService = service(\Users\Service\UserService::class);
+        $userInfo = $userService->getUserInfoById($uid, true);
+        if (!$userInfo['data']) {
+            throw new \Exception("用户名不存在");
+        }
+        session()->set('uid', $userInfo['data']['id']);
         return json($response, [
             'user' => [
-                'uid' => 1,
-                'username' => 'test_user',
+                'uid' => $userInfo['data']['id'],
+                'username' => $userInfo['data']['username'],
                 'avatar' => '',
-                'permissions' => [],
             ],
         ]);
+    } else {
+        return json($response, []);
     }
-    return json($response, [
-        'user' => [
-            'uid' => 1,
-            'username' => 'test_user',
-            'avatar' => '',
-            'permissions' => [],
-        ],
-    ]);
 });

@@ -32,6 +32,8 @@ $apps = [
 $autoloader = require ROOT . '/../vendor/autoload.php';
 loader($autoloader);
 
+
+date_default_timezone_set('Asia/Shanghai');
 /**
  * 启动环境
  */

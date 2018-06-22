@@ -38,17 +38,40 @@
               :highlight-current-row="highlightCurrentRow"
               :stripe="stripe"
               :border="border" size="mini" v-loading="tableLoading" @selection-change="selectChange" style="width: 100%;">
-      <el-table-column type="selection" width="36"></el-table-column>
-      <el-table-column prop="id" label="ID #" width="60"></el-table-column>
+      <el-table-column type="expand" label="#">
+        <template slot-scope="props">
+          <el-form label-position="left" inline class="demo-table-expand">
+            <el-form-item label="昵称:">
+              <span>{{ props.row.nickname }}</span>
+            </el-form-item>
+            <el-form-item label="QQ:">
+              <span>{{ props.row.qq }}</span>
+            </el-form-item>
+            <el-form-item label="微信:">
+              <span>{{ props.row.wei_xin }}</span>
+            </el-form-item>
+            <el-form-item label="更新:">
+              <span>{{ props.row.profile_update_at }}</span>
+            </el-form-item>
+            <!--<el-form-item label="头像:">-->
+              <!--<span></span>-->
+            <!--</el-form-item>-->
+            <el-form-item label="角色:">
+              <strong v-for="(role, key) in props.row.roles" :key="key" style="color: blue;">&nbsp;{{ role.name }}&nbsp;</strong>
+              <el-button type="text" size="mini" @click="$refs.UserEditRoleComponent.showDialog(props.row.id)" style="color: red;">修改</el-button>
+            </el-form-item>
+          </el-form>
+        </template>
+      </el-table-column>
+      <el-table-column type="selection" width="42"></el-table-column>
+      <el-table-column prop="id" label="ID" width="60"></el-table-column>
       <el-table-column prop="username" label="用户名"></el-table-column>
       <el-table-column prop="email" label="邮箱"></el-table-column>
       <el-table-column prop="mobile" label="手机"></el-table-column>
       <el-table-column prop="create_at" label="创建" width="150"></el-table-column>
-      <el-table-column prop="register_at" label="注册" width="150"></el-table-column>
       <el-table-column prop="login_at" label="登录" width="150"></el-table-column>
       <el-table-column label="操作" width="90">
         <template slot-scope="scope">
-          <!--<UserEditComponent v-if="edit" type="text" size="mini" :id="scope.row.id"></UserEditComponent>-->
           <el-button v-if="edit" type="text" size="mini" @click="$refs.UserEditComponent.showDialog(scope.row.id)">编辑</el-button>
           <el-button type="text" size="mini" @click="singleDelete(scope.row)" style="color: red;">删除</el-button>
         </template>
@@ -69,6 +92,7 @@
       </el-col>
     </el-row>
     <UserEditComponent ref="UserEditComponent" v-if="edit" @parent="getData"></UserEditComponent>
+    <UserEditRoleComponent ref="UserEditRoleComponent" @parent="getData"></UserEditRoleComponent>
   </section>
 </template>
 
@@ -76,10 +100,12 @@
 import Api from '@/api'
 import UserAddComponent from '@/components/users/UserAddComponent'
 import UserEditComponent from '@/components/users/UserEditComponent'
+import UserEditRoleComponent from '@/components/users/UserEditRoleComponent'
 export default {
   components: {
     UserAddComponent: UserAddComponent,
-    UserEditComponent: UserEditComponent
+    UserEditComponent: UserEditComponent,
+    UserEditRoleComponent: UserEditRoleComponent
   },
   props: {
     add: {
@@ -182,3 +208,18 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+  .demo-table-expand {
+    .el-form-item {
+      margin-right: 0;
+      margin-bottom: 0;
+      width: 50%;
+      float: left;
+    }
+    label {
+      width: 50px;
+      color: #99a9bf;
+    }
+  }
+</style>

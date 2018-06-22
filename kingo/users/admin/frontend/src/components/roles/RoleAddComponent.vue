@@ -15,7 +15,7 @@
         <el-form-item label="优先级" size="small">
           <el-input type="text" v-model="form.priority"></el-input>
         </el-form-item>
-        <el-form-item label="描述" size="small">
+        <el-form-item label="描述" size="small" :autosize="{ minRows: 2 }">
           <el-input type="textarea" v-model="form.desc"></el-input>
         </el-form-item>
       </el-form>

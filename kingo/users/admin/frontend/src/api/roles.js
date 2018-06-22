@@ -12,11 +12,5 @@ export default {
     return axios.post('/roles/delete', {
       ids: ids
     })
-  },
-  // 获取角色权限
-  permissions: (ids) => {
-    return axios.post('/roles/permissions', {
-      ids: ids
-    })
   }
 }
