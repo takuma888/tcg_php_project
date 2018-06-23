@@ -54,13 +54,87 @@ app(ENV_USERS);
 /** @var \TCG\Middleware\Dispatcher $app */
 $dispatcher = env()->get('middleware.dispatcher');
 /**
+ * 加载session中间件
+ */
+$dispatcher->add(function (ServerRequestInterface $request, RequestHandlerInterface $next) {
+    env()->get('session')->start();
+    /** @var ResponseInterface $response */
+    $response = $next->handle($request);
+    return $response;
+});
+/**
+ * 接口返回格式化中间件
+ */
+$dispatcher->add(function (ServerRequestInterface $request, RequestHandlerInterface $next) {
+    if ($request->getHeaderLine('X-Requested-With') === 'XMLHttpRequest') {
+        $json = [
+            'msg' => '',
+            'code' => 0,
+            'data' => [],
+            'flash' => [],
+        ];
+        // ajax 需要返回json
+        try {
+            $response = $next->handle($request);
+            $string = strval($response->getBody());
+            $arr = json_decode($string, true);
+            $json['data'] = $arr;
+        } catch (\Exception $e) {
+            $json['msg'] = $e->getMessage();
+            $json['code'] = $e->getCode() ? : \TCG\Http\StatusCode::HTTP_INTERNAL_SERVER_ERROR;
+        }
+        $flashTypes = [
+            'error', 'warning', 'info', 'success'
+        ];
+        foreach ($flashTypes as $flashType) {
+            if (!isset($json['flash'][$flashType])) {
+                $json['flash'][$flashType] = [];
+            }
+            $flashMessages = flash()->get($flashType);
+            $json['flash'][$flashType] = $flashMessages;
+        }
+        $response = env()->get('http.response');
+        return json($response, $json, \TCG\Http\StatusCode::HTTP_OK);
+    } else {
+        return $next->handle($request);
+    }
+});
+/**
+ * 登录检测中间件
+ */
+$dispatcher->add(function (ServerRequestInterface $request, RequestHandlerInterface $next) {
+    $noAuth = $request->getHeaderLine('No-Auth');
+    if ($noAuth != '1') {
+        $pathInfo = $request->getServerParams()['PATH_INFO'];
+        $pathInfo = '/' . trim($pathInfo, '/');
+        // path_info 白名单
+        $noCheckPathInfo = [
+            '/', // 首页
+            '/test', // 测试
+            '/login', // 登录
+            '/logout', // 退出
+            '/session', // 获取session
+        ];
+        if ($noCheckPathInfo) {
+            if (!in_array($pathInfo, $noCheckPathInfo)) {
+                // 不在白名单中
+                if (!session()->get('uid')) {
+                    // 没有登录
+                    throw new \Exception("请登录");
+                }
+            }
+        }
+    }
+    return $next->handle($request);
+});
+/**
  * 加载路由中间件
  */
 $dispatcher->add(function (ServerRequestInterface $request, RequestHandlerInterface $next) {
     $response = $next->handle($request);
     $pathInfo = $request->getServerParams()['PATH_INFO'];
     $pathInfo = '/' . trim($pathInfo, '/');
-    $root = __DIR__;
+    $root = __DIR__ . '/controller';
     $items = explode('/', trim($pathInfo, '/'));
     $itemCount = count($items);
     $count = 0;
@@ -120,7 +194,23 @@ $dispatcher->add(function (ServerRequestInterface $request, RequestHandlerInterf
     }
     return $response;
 });
+/**
+ * route /
+ */
+route()->get('/', function (ServerRequestInterface $request, ResponseInterface $response) {
+    env()->get('twig')->display('@users:admin/index.html.twig', [
+        'app_name' => '用户管理系统',
+        'static_version' => time(),
+        'static_base_url' => 'http://tcg.php.localhost.com/kingo/users/admin/vue/dist/static',
+        'request_base_url' => 'http://tcg.php.localhost.com/kingo/users/admin',
+    ]);
+});
 
+route()->get('/test', function (ServerRequestInterface $request, ResponseInterface $response) {
+    $a = session()->get('a');
+    session()->set('a', $a + 1);
+    return json($response, [session_id(), $_SESSION]);
+});
 /** @var ResponseInterface $response */
 $response = $dispatcher->dispatch(env()->get('http.request'));
 env()->get('http.response_sender')->send($response);

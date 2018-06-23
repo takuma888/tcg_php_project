@@ -4,7 +4,7 @@
       <el-row type="flex" class="row">
         <el-col :span="24">
           <el-col class="logo">
-            <a class="logo-link" href="/">{{ collapsed ? '': '用户管理系统' }}</a>
+            <a class="logo-link" :href="homeURL">{{ collapsed ? '': '用户管理系统' }}</a>
             <i class="fa fa-align-justify aside-toggler" @click.prevent="collapse"></i>
           </el-col>
           <el-col :span="16">
@@ -52,6 +52,7 @@ export default {
     this.$store.commit('path', this.$route.path)
     let path = this.$store.state.static.path.split('/')
     return {
+      homeURL: window['requestBaseUrl'],
       path: '/' + path[1],
       user: {},
       collapsed: false

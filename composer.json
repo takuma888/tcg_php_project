@@ -1,5 +1,6 @@
 {
     "require": {
+        "php": ">=7.0.0",
         "acclimate/container": "2.0.0",
         "monolog/monolog": "1.23.0",
         "twig/twig": "2.4.8",

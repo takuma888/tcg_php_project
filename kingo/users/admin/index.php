@@ -25,7 +25,18 @@ header("Access-Control-Allow-Headers: X-Requested-With, accept, content-type, xx
 /**
  * 检查依赖的服务
  */
-
+/**
+ * 扩展 基础服务
+ */
+/** @var Container $defaultContainer */
+$defaultContainer = container(ENV_DEFAULT);
+/**
+ * 添加路径
+ */
+$defaultContainer->extend('twig.loader.filesystem_loader', function (\Twig_Loader_Filesystem $loader, Container $c) use ($container) {
+    $loader->addPath(__DIR__ . '/template', 'users:admin');
+    return $loader;
+});
 /**
  * 注册私有服务
  */
@@ -64,6 +75,17 @@ $dispatcher->add(function (ServerRequestInterface $request, RequestHandlerInterf
     /** @var ResponseInterface $response */
     $response = $next->handle($request);
     return $response;
+});
+/**
+ * 针对 OPTIONS method 快速返回
+ */
+$dispatcher->add(function (ServerRequestInterface $request, RequestHandlerInterface $next) {
+    $method = $request->getMethod();
+    if (strtoupper($method) == 'OPTIONS') {
+        $response = env()->get('http.response');
+        return $response;
+    }
+    return $next->handle($request);
 });
 /**
  * 接口返回格式化中间件

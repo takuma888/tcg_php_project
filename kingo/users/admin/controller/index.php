@@ -15,27 +15,13 @@ use Psr\Http\Message\ResponseInterface;
  */
 route()->post('/login', function (ServerRequestInterface $request, ResponseInterface $response) {
     $requestBody = $request->getParsedBody();
-    $username = $requestBody['username'];
+    $username = $requestBody['username'] ?? '';
     $username = trim($username);
-    $password = $requestBody['password'];
+    $password = $requestBody['password'] ?? '';
     $password = trim($password);
-
-    /** @var \Users\Service\UserService $userService */
-    $userService = service(\Users\Service\UserService::class);
-    $userInfo = $userService->getUserInfoByUsername($username, true);
-    if (!$userInfo['data']) {
-        throw new \Exception("用户名不存在");
-    }
-    if ($userInfo['data']['password'] != md5($password)) {
-        throw new \Exception("密码错误");
-    }
-
-    // 记录登录时间
-    $userService->updateUser($userInfo['data']['id'], [
-        'login_at' => date('Y-m-d H:i:s'),
-        'session_id' => session_id(),
-    ]);
-    session()->set('uid', $userInfo['data']['id']);
+    /** @var \Users\Service\AuthService $authService */
+    $authService = service(\Users\Service\AuthService::class);
+    $userInfo = $authService->loginByUsername($username, $password);
     return json($response, [
         'user' => [
             'uid' => $userInfo['data']['id'],
@@ -51,7 +37,9 @@ route()->post('/login', function (ServerRequestInterface $request, ResponseInter
  * 退出
  */
 route()->get('/logout', function (ServerRequestInterface $request, ResponseInterface $response) {
-    session()->set('uid', null);
+    /** @var \Users\Service\AuthService $authService */
+    $authService = service(\Users\Service\AuthService::class);
+    $authService->logout();
     return json($response, []);
 });
 
@@ -61,15 +49,10 @@ route()->get('/logout', function (ServerRequestInterface $request, ResponseInter
  * 获取session
  */
 route()->get('/session', function (ServerRequestInterface $request, ResponseInterface $response) {
-    $uid = session()->get('uid', null);
-    if ($uid) {
-        /** @var \Users\Service\UserService $userService */
-        $userService = service(\Users\Service\UserService::class);
-        $userInfo = $userService->getUserInfoById($uid, true);
-        if (!$userInfo['data']) {
-            throw new \Exception("用户名不存在");
-        }
-        session()->set('uid', $userInfo['data']['id']);
+    /** @var \Users\Service\AuthService $authService */
+    $authService = service(\Users\Service\AuthService::class);
+    $userInfo = $authService->session();
+    if ($userInfo) {
         return json($response, [
             'user' => [
                 'uid' => $userInfo['data']['id'],

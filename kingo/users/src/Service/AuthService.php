@@ -76,4 +76,111 @@ class AuthService
         }
         return true;
     }
+
+
+    /**
+     * @param $username
+     * @param $password
+     * @return array
+     * @throws \Exception
+     */
+    public function loginByUsername($username, $password)
+    {
+        /** @var UserService $userService */
+        $userService = service(UserService::class);
+        $userInfo = $userService->getUserInfoByUsername($username, true);
+        if (!$userInfo['data']) {
+            throw new \Exception("用户名不存在");
+        }
+        if ($userInfo['data']['password'] != md5($password)) {
+            throw new \Exception("密码错误");
+        }
+        // 记录登录时间
+        $userService->updateUser($userInfo['data']['id'], [
+            'login_at' => date('Y-m-d H:i:s'),
+            'session_id' => session_id(),
+        ]);
+        session()->set('uid', $userInfo['data']['id']);
+        return $userInfo;
+    }
+
+    /**
+     * @param $email
+     * @param $password
+     * @return array
+     * @throws \Exception
+     */
+    public function loginByEmail($email, $password)
+    {
+        /** @var UserService $userService */
+        $userService = service(UserService::class);
+        $userInfo = $userService->getUserInfoByEmail($email, true);
+        if (!$userInfo['data']) {
+            throw new \Exception("邮箱不存在");
+        }
+        if ($userInfo['data']['password'] != md5($password)) {
+            throw new \Exception("密码错误");
+        }
+        // 记录登录时间
+        $userService->updateUser($userInfo['data']['id'], [
+            'login_at' => date('Y-m-d H:i:s'),
+            'session_id' => session_id(),
+        ]);
+        session()->set('uid', $userInfo['data']['id']);
+        return $userInfo;
+    }
+
+    /**
+     * @param $mobile
+     * @param $password
+     * @return array
+     * @throws \Exception
+     */
+    public function loginByMobile($mobile, $password)
+    {
+        /** @var UserService $userService */
+        $userService = service(UserService::class);
+        $userInfo = $userService->getUserInfoByMobile($mobile, true);
+        if (!$userInfo['data']) {
+            throw new \Exception("手机号不存在");
+        }
+        if ($userInfo['data']['password'] != md5($password)) {
+            throw new \Exception("密码错误");
+        }
+        // 记录登录时间
+        $userService->updateUser($userInfo['data']['id'], [
+            'login_at' => date('Y-m-d H:i:s'),
+            'session_id' => session_id(),
+        ]);
+        session()->set('uid', $userInfo['data']['id']);
+        return $userInfo;
+    }
+
+    /**
+     * 退出登录
+     */
+    public function logout()
+    {
+        session()->set('uid', null);
+    }
+
+    /**
+     * @return array
+     * @throws \Exception
+     */
+    public function session()
+    {
+        $uid = session()->get('uid', null);
+        if ($uid) {
+            /** @var UserService $userService */
+            $userService = service(UserService::class);
+            $userInfo = $userService->getUserInfoById($uid, true);
+            if (!$userInfo['data']) {
+                throw new \Exception("用户不存在");
+            }
+            session()->set('uid', $userInfo['data']['id']);
+            return $userInfo;
+        }
+        return [];
+    }
 }
