@@ -32,8 +32,10 @@ class FlashSegment extends Segment
         if (!isset($_SESSION)) {
             return;
         }
-        if ($val === null && isset($_SESSION[$this->name][$key])) {
-            unset($_SESSION[$this->name][$key]);
+        if ($val === null) {
+            if (isset($_SESSION[$this->name][$key])) {
+                unset($_SESSION[$this->name][$key]);
+            }
         } else {
             if (!isset($_SESSION[$this->name][$key])) {
                 $_SESSION[$this->name][$key] = [];

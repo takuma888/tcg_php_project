@@ -7,6 +7,7 @@
  */
 
 use Pimple\Container;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * 注册容器对象到环境中
@@ -72,3 +73,33 @@ $container['twig'] = function (Container $c) {
     $engine->addExtension($c['twig.extension.string_loader']);
     return $engine;
 };
+
+
+// 定义一些简便方法
+
+function json(ResponseInterface $response, array $data, $status = null, $encodingOptions = 0)
+{
+    $response = $response->withBody(new \TCG\Http\Body(fopen('php://temp', 'r+')));
+    $response->getBody()->write($json = json_encode($data, $encodingOptions));
+    // Ensure that the json encoding passed successfully
+    if ($json === false) {
+        throw new \RuntimeException(json_last_error_msg(), json_last_error());
+    }
+    $responseWithJson = $response->withHeader('Content-Type', 'application/json;charset=utf-8');
+    if (isset($status)) {
+        return $responseWithJson->withStatus($status);
+    }
+    return $responseWithJson;
+}
+
+function redirect(ResponseInterface $response, $url, $status = null)
+{
+    $responseWithRedirect = $response->withHeader('Location', (string)$url);
+    if (is_null($status) && $response->getStatusCode() === \TCG\Http\StatusCode::HTTP_OK) {
+        $status = \TCG\Http\StatusCode::HTTP_FOUND;
+    }
+    if (!is_null($status)) {
+        return $responseWithRedirect->withStatus($status);
+    }
+    return $responseWithRedirect;
+}

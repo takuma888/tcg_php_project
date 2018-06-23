@@ -25,24 +25,24 @@ class InitCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $permissions ='0b' . str_repeat('1', 9999);
+        $permissions = PERMISSION_ALL;
         $roles = [
             [
-                'id' => 'root',
+                'id' => ROLE_ROOT,
                 'name' => '根角色',
                 'description' => '创始人角色，应该拥有所有权限',
                 'priority' => 9999,
                 'permissions' => $permissions,
             ],
             [
-                'id' => 'superadmin',
+                'id' => ROLE_SUPERADMIN,
                 'name' => '超级管理员',
                 'description' => '超级管理员角色，拥有几乎所有权限',
                 'priority' => 999,
                 'permissions' => $permissions,
             ],
             [
-                'id' => 'developer',
+                'id' => ROLE_DEVELOPER,
                 'name' => '开发者',
                 'description' => '开发者角色，基本上拥有所有权限',
                 'priority' => 99,

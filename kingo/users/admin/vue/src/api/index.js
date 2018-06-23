@@ -23,6 +23,10 @@ export default {
   logout: () => {
     return axios.get('/logout')
   },
+  // 测试
+  test: () => {
+    return axios.get('/test')
+  },
   // users相关API
   users: UsersApi,
   // user 相关API

@@ -18,8 +18,9 @@ use FastRoute\RouteCollector;
 /**
  * 跨域问题
  */
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Headers: *");
+header("Access-Control-Allow-Origin: http://localhost:8080");
+header("Access-Control-Allow-Credentials: true");
+header("Access-Control-Allow-Headers: X-Requested-With, accept, content-type, xxxx");
 
 /**
  * 检查依赖的服务
@@ -60,7 +61,9 @@ $dispatcher = env()->get('middleware.dispatcher');
  */
 $dispatcher->add(function (ServerRequestInterface $request, RequestHandlerInterface $next) {
     env()->get('session')->start();
-    return $next->handle($request);
+    /** @var ResponseInterface $response */
+    $response = $next->handle($request);
+    return $response;
 });
 /**
  * 接口返回格式化中间件
@@ -103,13 +106,14 @@ $dispatcher->add(function (ServerRequestInterface $request, RequestHandlerInterf
  * 登录检测中间件
  */
 $dispatcher->add(function (ServerRequestInterface $request, RequestHandlerInterface $next) {
-    /*$noAuth = $request->getHeaderLine('No-Auth');
+    $noAuth = $request->getHeaderLine('No-Auth');
     if ($noAuth != '1') {
         $pathInfo = $request->getServerParams()['PATH_INFO'];
         $pathInfo = '/' . trim($pathInfo, '/');
         // path_info 白名单
         $noCheckPathInfo = [
             '/', // 首页
+            '/test', // 测试
             '/login', // 登录
             '/logout', // 退出
             '/session', // 获取session
@@ -123,7 +127,7 @@ $dispatcher->add(function (ServerRequestInterface $request, RequestHandlerInterf
                 }
             }
         }
-    }*/
+    }
     return $next->handle($request);
 });
 /**
@@ -198,7 +202,18 @@ $dispatcher->add(function (ServerRequestInterface $request, RequestHandlerInterf
  * route /
  */
 route()->get('/', function (ServerRequestInterface $request, ResponseInterface $response) {
-    return redirect($response, 'http://admin.users.kingo.com');
+    env()->get('twig')->display('@users:admin/index.html.twig', [
+        'app_name' => '用户管理系统',
+        'static_version' => time(),
+        'static_base_url' => 'http://tcg.php.localhost.com/kingo/users/admin/vue/dist/static',
+        'request_base_url' => 'http://tcg.php.localhost.com/kingo/users/admin',
+    ]);
+});
+
+route()->get('/test', function (ServerRequestInterface $request, ResponseInterface $response) {
+    $a = session()->get('a');
+    session()->set('a', $a + 1);
+    return json($response, [session_id(), $_SESSION]);
 });
 
 /** @var ResponseInterface $response */

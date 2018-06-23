@@ -12,6 +12,18 @@ define('USERS_MYSQL_DSN_MASTER', 'mysql://root:123456789@mysql:3306/?charset=utf
 define('USERS_MYSQL_DB_USERS', 'users');
 
 /**
+ * 角色
+ */
+define('ROLE_ROOT', 'root');
+define('ROLE_SUPERADMIN', 'superadmin');
+define('ROLE_DEVELOPER', 'developer');
+
+/**
+ * 权限
+ */
+define('PERMISSION_ALL', '0b' . str_repeat('1', 9999));
+
+/**
  * 错误码
  */
 

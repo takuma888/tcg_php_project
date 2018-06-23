@@ -2,10 +2,11 @@ import axios from 'axios'
 import ElementUI from 'element-ui'
 
 let instance = axios.create({
-  baseURL: 'http://tcg.php.localhost.com/kingo/users/admin',
+  baseURL: window['requestBaseUrl'],
   headers: {
     'X-Requested-With': 'XMLHttpRequest'
-  }
+  },
+  withCredentials: true
 })
 
 instance.interceptors.response.use((response) => {

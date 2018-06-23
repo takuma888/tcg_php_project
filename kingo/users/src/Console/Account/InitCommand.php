@@ -50,6 +50,11 @@ class InitCommand extends Command
         if (!$userInfo['data']) {
             throw new \Exception("创建用户失败");
         }
+        // 关联账号角色
+        $userId = $userInfo['data']['id'];
+        $userService->editRole($userId, [
+            ROLE_ROOT, ROLE_SUPERADMIN, ROLE_DEVELOPER
+        ]);
         $output->writeln("创建用户成功! ID:{$userInfo['data']['id']}");
     }
 }

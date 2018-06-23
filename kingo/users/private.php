@@ -6,8 +6,20 @@
  * Time: 下午2:12
  */
 
-use Psr\Http\Message\ResponseInterface;
+use Pimple\Container;
 
+/**
+ * 扩展
+ */
+/** @var Container $defaultContainer */
+$defaultContainer = container(ENV_DEFAULT);
+/**
+ * 添加路径
+ */
+$defaultContainer->extend('twig.loader.filesystem_loader', function (\Twig_Loader_Filesystem $loader, Container $c) use ($container) {
+    $loader->addPath(__DIR__ . '/admin/template', 'users:admin');
+    return $loader;
+});
 /**
  * 定义一些辅助方法
  */
@@ -18,35 +30,6 @@ use Psr\Http\Message\ResponseInterface;
 function route()
 {
     return env()->get('route.collector');
-}
-
-// 定义一些简便方法
-
-function json(ResponseInterface $response, array $data, $status = null, $encodingOptions = 0)
-{
-    $response = $response->withBody(new \TCG\Http\Body(fopen('php://temp', 'r+')));
-    $response->getBody()->write($json = json_encode($data, $encodingOptions));
-    // Ensure that the json encoding passed successfully
-    if ($json === false) {
-        throw new \RuntimeException(json_last_error_msg(), json_last_error());
-    }
-    $responseWithJson = $response->withHeader('Content-Type', 'application/json;charset=utf-8');
-    if (isset($status)) {
-        return $responseWithJson->withStatus($status);
-    }
-    return $responseWithJson;
-}
-
-function redirect(ResponseInterface $response, $url, $status = null)
-{
-    $responseWithRedirect = $response->withHeader('Location', (string)$url);
-    if (is_null($status) && $response->getStatusCode() === \TCG\Http\StatusCode::HTTP_OK) {
-        $status = \TCG\Http\StatusCode::HTTP_FOUND;
-    }
-    if (!is_null($status)) {
-        return $responseWithRedirect->withStatus($status);
-    }
-    return $responseWithRedirect;
 }
 
 /**

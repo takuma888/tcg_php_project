@@ -79,13 +79,22 @@ class PermissionService
     {
         if (!isset(self::$userPermissionCache[$uid])) {
             $rolePermissions = $this->getRolePermissionsByUserId($uid);
-            $permissionExpr = gmp_init('0b0', 2);
-            if ($rolePermissions['data']) {
-                foreach ($rolePermissions['data'] as $rolePermission) {
-                    $permissionExpr = gmp_or($rolePermission, gmp_init($rolePermission['permission'], 2));
-                }
+            // 先优先判断角色
+            $roles = [];
+            foreach ($rolePermissions['data'] as $rolePermission) {
+                $roles[] = $rolePermission['id'];
             }
-            self::$userPermissionCache[$uid] = '0b' . gmp_strval($permissionExpr, 2);
+            if (array_intersect($roles, [ROLE_ROOT, ROLE_SUPERADMIN, ROLE_DEVELOPER])) {
+                self::$userPermissionCache[$uid] = PERMISSION_ALL;
+            } else {
+                $permissionExpr = gmp_init('0b0', 2);
+                if ($rolePermissions['data']) {
+                    foreach ($rolePermissions['data'] as $rolePermission) {
+                        $permissionExpr = gmp_or($rolePermission, gmp_init($rolePermission['permission'], 2));
+                    }
+                }
+                self::$userPermissionCache[$uid] = '0b' . gmp_strval($permissionExpr, 2);
+            }
         }
         return self::$userPermissionCache[$uid];
     }

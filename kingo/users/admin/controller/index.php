@@ -33,6 +33,7 @@ route()->post('/login', function (ServerRequestInterface $request, ResponseInter
     // 记录登录时间
     $userService->updateUser($userInfo['data']['id'], [
         'login_at' => date('Y-m-d H:i:s'),
+        'session_id' => session_id(),
     ]);
     session()->set('uid', $userInfo['data']['id']);
     return json($response, [

@@ -30,7 +30,7 @@ class InitCommand extends Command
     {
         $showSQL = $input->getOption('show-sql');
         $drop = $input->getOption('drop');
-        $table = $input->getOption('table');
+        $tableName = $input->getOption('table');
 
         $tableNames = [
             'user_auth',
@@ -41,7 +41,7 @@ class InitCommand extends Command
         ];
 
         foreach ($tableNames as $tableBaseName) {
-            if (!$table || ($table && $table == $tableBaseName)) {
+            if (!$tableName || ($tableName && $tableName == $tableBaseName)) {
                 $output->writeln("<question>创建 {$tableBaseName} 表</question>");
                 $table = \table($tableBaseName);
                 $sql = $table->create($drop);
