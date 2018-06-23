@@ -72,7 +72,7 @@ $dispatcher = env()->get('middleware.dispatcher');
  * 加载session中间件
  */
 $dispatcher->add(function (ServerRequestInterface $request, RequestHandlerInterface $next) {
-    env()->get('session')->start();
+    env(ENV_USERS)->get('session')->start();
     /** @var ResponseInterface $response */
     $response = $next->handle($request);
     return $response;
@@ -228,8 +228,9 @@ route()->get('/', function (ServerRequestInterface $request, ResponseInterface $
     env()->get('twig')->display('@offers:admin/index.html.twig', [
         'app_name' => 'OFFER 总库',
         'static_version' => time(),
-        'static_base_url' => 'http://tcg.php.localhost.com/kingo/offers/admin/react/build/static',
+        'public_base_url' => 'http://tcg.php.localhost.com/kingo/offers/admin/react/build',
         'request_base_url' => 'http://tcg.php.localhost.com/kingo/offers/admin',
+        'request_auth_url' => 'http://tcg.php.localhost.com/kingo/users/api',
     ]);
 });
 

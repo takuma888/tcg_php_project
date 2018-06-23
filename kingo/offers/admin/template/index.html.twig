@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
+    <meta name="theme-color" content="#000000">
+    <link rel="manifest" href="{{ public_base_url }}/manifest.json?v={{ static_version }}">
+    <link rel="shortcut icon" href="{{ public_base_url }}/favicon.ico?v={{ static_version }}">
+    <title>{{ app_name }}</title>
+    <link href="{{ public_base_url }}/static/css/main.css?v={{ static_version }}" rel="stylesheet">
+</head>
+<body>
+<noscript>You need to enable JavaScript to run this app.</noscript>
+<script type="application/javascript">
+    var requestBaseUrl = '{{ request_base_url }}';
+    var requestAuthUrl = '{{ request_auth_url }}';
+</script>
+<div id="root"></div>
+<script type="text/javascript" src="{{ public_base_url }}/static/js/main.js?v={{ static_version }}"></script>
+</body>
+</html>
