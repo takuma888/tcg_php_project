@@ -100,34 +100,6 @@ $dispatcher->add(function (ServerRequestInterface $request, RequestHandlerInterf
     }
 });
 /**
- * 登录检测中间件
- */
-$dispatcher->add(function (ServerRequestInterface $request, RequestHandlerInterface $next) {
-    $noAuth = $request->getHeaderLine('No-Auth');
-    if ($noAuth != '1') {
-        $pathInfo = $request->getServerParams()['PATH_INFO'];
-        $pathInfo = '/' . trim($pathInfo, '/');
-        // path_info 白名单
-        $noCheckPathInfo = [
-            '/', // 首页
-            '/test', // 测试
-            '/login', // 登录
-            '/logout', // 退出
-            '/session', // 获取session
-        ];
-        if ($noCheckPathInfo) {
-            if (!in_array($pathInfo, $noCheckPathInfo)) {
-                // 不在白名单中
-                if (!session()->get('uid')) {
-                    // 没有登录
-                    throw new \Exception("请登录");
-                }
-            }
-        }
-    }
-    return $next->handle($request);
-});
-/**
  * 加载路由中间件
  */
 $dispatcher->add(function (ServerRequestInterface $request, RequestHandlerInterface $next) {
@@ -195,14 +167,27 @@ $dispatcher->add(function (ServerRequestInterface $request, RequestHandlerInterf
     return $response;
 });
 /**
- * route /
+ * get /user
+ * 获取用户数据接口
  */
-route()->get('/', function (ServerRequestInterface $request, ResponseInterface $response) {
-    env()->get('twig')->display('@users:admin/index.html.twig', [
-        'app_name' => '用户管理系统',
-        'static_version' => time(),
-        'static_base_url' => 'http://tcg.php.localhost.com/kingo/users/admin/vue/dist/static',
-        'request_base_url' => 'http://tcg.php.localhost.com/kingo/users/admin',
+route()->get('/user[/{id:\d+}]', function (ServerRequestInterface $request, ResponseInterface $response, $id = null) {
+    if (!$id) {
+        $userId = session()->get('uid');
+    } else {
+        $userId = intval($id);
+    }
+    if (!$userId) {
+        throw new \Exception("用户没有登录，请先登录");
+    }
+    /** @var \Users\Service\UserService $userService */
+    $userService = service(\Users\Service\UserService::class);
+    $userInfo = $userService->getUserInfoById($userId, true);
+    if (!$userInfo['data']) {
+        throw new \Exception("用户不存在");
+    }
+    unset($userInfo['data']['password'], $userInfo['data']['session_id']);
+    return json($response, [
+        'user' => $userInfo['data'],
     ]);
 });
 
@@ -211,6 +196,9 @@ route()->get('/test', function (ServerRequestInterface $request, ResponseInterfa
     session()->set('a', $a + 1);
     return json($response, [session_id(), $_SESSION]);
 });
+
+require_once __DIR__ . '/../route_auth.php';
+
 /** @var ResponseInterface $response */
 $response = $dispatcher->dispatch(env()->get('http.request'));
 env()->get('http.response_sender')->send($response);

@@ -238,6 +238,8 @@ route()->get('/test', function (ServerRequestInterface $request, ResponseInterfa
     return json($response, [session_id(), $_SESSION]);
 });
 
+require_once __DIR__ . '/../route_auth.php';
+
 /** @var ResponseInterface $response */
 $response = $dispatcher->dispatch(env()->get('http.request'));
 env()->get('http.response_sender')->send($response);

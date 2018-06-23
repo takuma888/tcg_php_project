@@ -6,9 +6,13 @@
  * Time: 下午1:28
  */
 
-
+/**
+ * users数据库连接字符串
+ */
 define('USERS_MYSQL_DSN_MASTER', 'mysql://root:123456789@mysql:3306/?charset=utf8mb4&collate=utf8mb4_general_ci&timezone=+8:00');
-
+/**
+ * users数据库基础名称
+ */
 define('USERS_MYSQL_DB_USERS', 'users');
 
 /**
