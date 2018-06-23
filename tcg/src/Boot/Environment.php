@@ -86,6 +86,7 @@ class Environment
         if (!$namespace) {
             $namespace = self::getNamespace();
         }
+        $namespace = decbin($namespace);
         self::$containers[$namespace] = $container;
     }
 

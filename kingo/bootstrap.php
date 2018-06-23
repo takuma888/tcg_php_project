@@ -13,8 +13,8 @@ define('ENV_DEFAULT', 0);
 /**
  * 定义各个子项目的环境ID 值需要为2的n次幂 n最好从0开始
  */
-define('ENV_USERS', pow(2, 0)); // users
-define('ENV_OFFERS', pow(2, 1)); // offers
+define('ENV_USERS', pow(2, 0)); // users = 1
+define('ENV_OFFERS', pow(2, 1)); // offers = 10
 
 $apps = [
     'users', // 必须优先加载 users app

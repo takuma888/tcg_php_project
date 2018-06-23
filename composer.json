@@ -23,7 +23,8 @@
     "autoload": {
         "psr-4": {
             "TCG\\": "tcg/src/",
-            "Users\\": "kingo/users/src/"
+            "Users\\": "kingo/users/src/",
+            "Offers\\": "kingo/offers/src/"
         },
         "files": [
             "tcg/src/Boot/helpers.php"

@@ -20,14 +20,12 @@ require __DIR__ . '/../private.php';
 /**
  * 设置当前app
  */
-app(ENV_USERS);
+app(ENV_OFFERS);
 
 Debug::enable();
 
-$application = new Application('Users Command Line', 'PHP v' . PHP_VERSION);
+$application = new Application('Offers Command Line', 'PHP v' . PHP_VERSION);
 
-$application->add(new \Users\Console\MySQL\InitCommand());
-$application->add(new \Users\Console\Account\InitCommand());
-$application->add(new \Users\Console\Role\InitCommand());
+$application->add(new \Offers\Command\MySQL\InitCommand());
 
 $application->run();

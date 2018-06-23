@@ -26,8 +26,8 @@ function table($tableBaseName)
 {
     $idPrefix = 'users.mysql.tables';
     $id = "{$idPrefix}.{$tableBaseName}";
-    if (env()->has($id)) {
-        return env()->get($id);
+    if (env(ENV_USERS)->has($id)) {
+        return env(ENV_USERS)->get($id);
     }
     throw new \RuntimeException("Table {$id} not found");
 }
