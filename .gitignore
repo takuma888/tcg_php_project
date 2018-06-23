@@ -2,3 +2,6 @@
 vendor
 kingo/users/admin/vue/node_modules
 kingo/users/admin/vue/.idea
+
+kingo/offers/admin/react/node_modules
+kingo/offers/admin/react/.idea
