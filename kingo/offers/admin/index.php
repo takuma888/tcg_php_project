@@ -229,8 +229,8 @@ route()->get('/', function (ServerRequestInterface $request, ResponseInterface $
         'app_name' => 'OFFER 总库',
         'static_version' => time(),
         'public_base_url' => 'http://tcg.php.localhost.com/kingo/offers/admin/react/build',
-        'request_base_url' => 'http://tcg.php.localhost.com/kingo/offers/admin',
-        'request_auth_url' => 'http://tcg.php.localhost.com/kingo/users/api',
+        'app_request_base_url' => 'http://tcg.php.localhost.com/kingo/offers/admin',
+        'auth_request_base_url' => 'http://tcg.php.localhost.com/kingo/users/api',
     ]);
 });
 
