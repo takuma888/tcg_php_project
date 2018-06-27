@@ -10,6 +10,16 @@ export const addNotification = (data) => ({
   data
 })
 
+export const removeAlert = (data) => ({
+  type: type.ALERT_REMOVE,
+  data
+})
+
+export const removeNotification = (data) => ({
+  type: type.NOTIFICATION_REMOVE,
+  data
+})
+
 // export const setAppState = (data) => ({
 //   type: type.SET_APP_STATE,
 //   data

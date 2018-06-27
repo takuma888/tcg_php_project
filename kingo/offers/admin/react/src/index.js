@@ -17,6 +17,7 @@ import NotFoundLayout from './layouts/NotFoundLayout'
 
 
 import registerServiceWorker from './registerServiceWorker';
+// import {addAlert} from "./redux/action";
 
 
 const middleware = [thunk]
@@ -26,8 +27,25 @@ ReactDOM.render((
     <Provider store={store}>
       <HashRouter>
         <Switch>
-          <Route exact path="/" render={() => <Redirect to="/home" />} />
-          <Route path="/home" component={App} />
+          <Route exact path="/" render={() => {
+            const json = sessionStorage.getItem('user')
+            if (json === 'undefined' || !json) {
+              return <Redirect to="/login" />
+            } else {
+              console.log(json)
+              const user = JSON.parse(json)
+              return !user ? <Redirect to="/login" /> : <Redirect to="/home" />
+            }
+          }} />
+          <Route path="/home" component={() => {
+            const json = sessionStorage.getItem('user')
+            if (json === 'undefined' || !json) {
+              return <Redirect to="/login" />
+            } else {
+              const user = JSON.parse(json)
+              return !user ? <Redirect to="/login" /> : <App />
+            }
+          }} />
           <Route path="/login" component={LoginLayout} />
           <Route path="/404" component={NotFoundLayout} />
           <Redirect to="/404" />

@@ -106,7 +106,7 @@ class LoginLayout extends React.Component {
           </CardActions>
         </Card>
         {alerts && alerts.map((val, key) => {
-          return <AlertComponent variant={val.type} message={val.message} key={key}/>
+          return <AlertComponent variant={val.type} message={val.message} key={key} id={key}/>
         })}
       </form>
     )

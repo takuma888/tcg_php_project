@@ -12,20 +12,26 @@ const instance = axios.create({
 export default {
   // session
   session: () => dispatch => {
-    init(instance, dispatch)
-    return instance.get('/session')
+    const promise = instance.get('/session')
+    return promise.then((response) => {
+      return init(response, dispatch)
+    })
   },
   // 登录
   login: (username, password) => dispatch => {
-    init(instance, dispatch)
-    return instance.post('/login', {
+    const promise = instance.post('/login', {
       username: username,
       password: password
+    })
+    return promise.then((response) => {
+      return init(response, dispatch)
     })
   },
   // 退出
   logout: () => dispatch => {
-    init(instance, dispatch)
-    return instance.get('/logout')
+    const promise = instance.get('/logout')
+    return promise.then((response) => {
+      return init(response, dispatch)
+    })
   }
 }

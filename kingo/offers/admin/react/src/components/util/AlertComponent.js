@@ -1,6 +1,10 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
+
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
+import {removeAlert} from "../../redux/action";
 // material ui component
 import SuccessIcon from '@material-ui/icons/CheckCircle'
 import ErrorIcon from '@material-ui/icons/Error'
@@ -100,6 +104,7 @@ class AlertComponent extends React.Component {
     }
 
     this.setState({ open: false })
+    this.props.removeAlert(this.props.id)
   }
   render () {
     const { message, onClose, variant, vertical, horizontal } = this.props
@@ -126,9 +131,17 @@ class AlertComponent extends React.Component {
 
 
 AlertComponent.propTypes = {
+  id: PropTypes.node,
   message: PropTypes.node,
   onClose: PropTypes.func,
   variant: PropTypes.oneOf(['success', 'warning', 'error', 'info']).isRequired
 }
 
-export default AlertComponent
+const mapStateToProps = state => {
+  return {}
+}
+const mapDispatchToProps = dispatch => ({
+  removeAlert: bindActionCreators(removeAlert, dispatch)
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(AlertComponent)

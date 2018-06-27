@@ -13,21 +13,21 @@ import Api from './api'
 class App extends React.Component {
 
   componentWillMount () {
+    // sessionStorage.removeItem('user')
     const user = JSON.parse(sessionStorage.getItem('user'))
     if (!user && this.props.location.pathname !== '/login') {
       this.props.apiSession().then((data) => {
         if (!data.user) {
-          this.props.history.push('/login')
           addAlert({
             message: '请重新登录',
             type: 'warning'
           })
+          this.props.history.push('/login')
         } else {
           sessionStorage.setItem('user', JSON.stringify(data.user))
         }
       })
     }
-
   }
   componentDidUpdate (prevProps, prevState, snapshot) {
   }
@@ -40,10 +40,10 @@ class App extends React.Component {
       <div>
         <HomeLayout/>
         {alerts && alerts.map((val, key) => {
-          return <AlertComponent variant={val.type} message={val.message} vertical={val.vertical} horizontal={val.horizontal} key={key}/>
+          return <AlertComponent variant={val.type} message={val.message} vertical={val.vertical} horizontal={val.horizontal} key={key} id={key}/>
         })}
         {notifications && notifications.map((val, key) => {
-          return <NotificationComponent variant={val.type} title={val.title} message={val.message} key={key}/>
+          return <NotificationComponent variant={val.type} title={val.title} message={val.message} key={key} id={key}/>
         })}
       </div>
     )

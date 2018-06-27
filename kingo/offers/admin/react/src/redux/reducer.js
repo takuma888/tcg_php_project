@@ -6,6 +6,9 @@ const getAlertState = (state = {alerts: []}, action) => {
     case type.ALERT_ADD:
       state.alerts.push(action.data)
       return { ...state }
+    case type.ALERT_REMOVE:
+      delete state.alerts[action.data]
+      return { ...state }
     default:
       return { ...state }
   }
@@ -17,6 +20,9 @@ const getNotificationState = (state = { notifications: [] }, action) => {
     case type.NOTIFICATION_ADD:
       state.notifications.push(action.data)
       return { ...state }
+    case type.NOTIFICATION_REMOVE:
+      delete state.notifications[action.data]
+      return {...state}
     default:
       return { ...state }
   }

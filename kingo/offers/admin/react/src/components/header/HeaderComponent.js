@@ -2,17 +2,20 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { withStyles } from '@material-ui/core/styles'
 import {withRouter} from 'react-router-dom'
-
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
+// material ui
 import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
 import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
 import Tabs from '@material-ui/core/Tabs'
 import Tab from '@material-ui/core/Tab'
-
 import IconButton from '@material-ui/core/IconButton'
-// import MenuIcon from '@material-ui/icons/Menu'
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem'
 import AccountCircle from '@material-ui/icons/AccountCircle'
+import Api from "../../api";
 
 
 const styles = theme => ({
@@ -31,7 +34,8 @@ const styles = theme => ({
 class HeaderComponent extends React.Component {
 
   state = {
-    topNav: '/home'
+    topNav: '/home',
+    anchorEl: null
   }
 
   handleTopNavChange = (event, value) => {
@@ -61,9 +65,26 @@ class HeaderComponent extends React.Component {
     }
   }
 
+  handleMenu = event => {
+    this.setState({ anchorEl: event.currentTarget });
+  }
+
+  handleClose = () => {
+    this.setState({ anchorEl: null });
+  }
+
+  handleLogout = () => {
+    this.handleClose()
+    this.props.apiLogout().then(() => {
+      sessionStorage.removeItem('user')
+      this.props.history.push('/login')
+    })
+  }
+
   render () {
     const { classes } = this.props
-    const { topNav } = this.state
+    const { topNav, anchorEl } = this.state
+    const open = Boolean(anchorEl);
     return (
       <div>
         <AppBar position="fixed">
@@ -81,30 +102,29 @@ class HeaderComponent extends React.Component {
             </Tabs>
             <div>
               <IconButton
-                // aria-owns={open ? 'menu-appbar' : null}
-                // aria-haspopup="true"
-                // onClick={this.handleMenu}
+                aria-owns={open ? 'menu-appbar' : null}
+                aria-haspopup="true"
+                onClick={this.handleMenu}
                 color="inherit"
               >
                 <AccountCircle />
               </IconButton>
-              {/*<Menu*/}
-                {/*id="menu-appbar"*/}
-                {/*anchorEl={anchorEl}*/}
-                {/*anchorOrigin={{*/}
-                  {/*vertical: 'top',*/}
-                  {/*horizontal: 'right',*/}
-                {/*}}*/}
-                {/*transformOrigin={{*/}
-                  {/*vertical: 'top',*/}
-                  {/*horizontal: 'right',*/}
-                {/*}}*/}
-                {/*open={open}*/}
-                {/*onClose={this.handleClose}*/}
-              {/*>*/}
-                {/*<MenuItem onClick={this.handleClose}>Profile</MenuItem>*/}
-                {/*<MenuItem onClick={this.handleClose}>My account</MenuItem>*/}
-              {/*</Menu>*/}
+              <Menu
+                id="menu-appbar"
+                anchorEl={anchorEl}
+                anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                open={open}
+                onClose={this.handleClose}
+              >
+                <MenuItem onClick={this.handleLogout}>退出登录</MenuItem>
+              </Menu>
             </div>
           </Toolbar>
         </AppBar>
@@ -118,4 +138,11 @@ HeaderComponent.propTypes = {
   classes: PropTypes.object.isRequired
 }
 
-export default withRouter(withStyles(styles)(HeaderComponent))
+const mapStateToProps = state => {
+  return {}
+}
+const mapDispatchToProps = dispatch => ({
+  apiLogout: bindActionCreators(Api.auth.logout, dispatch)
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(withStyles(styles)(HeaderComponent)))

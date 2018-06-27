@@ -1,8 +1,8 @@
 import {addAlert, addNotification} from "../redux/action";
 
-export const init = (axios, dispatch) => {
-  axios.interceptors.response.use((response) => {
-    let res = response.data
+export const init = (response, dispatch) => {
+  let res = response.data
+  if (res) {
     let { msg, code, data, flash } = res
     if (flash.error && flash.error.length > 0) {
       flash.error.forEach((val) => {
@@ -48,5 +48,7 @@ export const init = (axios, dispatch) => {
       return Promise.reject(new Error(msg))
     }
     return data
-  })
+  } else {
+    return {}
+  }
 }

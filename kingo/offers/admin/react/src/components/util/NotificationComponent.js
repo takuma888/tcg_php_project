@@ -2,6 +2,9 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import classNames from 'classnames'
 
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
+import { removeNotification } from "../../redux/action";
 // material ui component
 import SuccessIcon from '@material-ui/icons/CheckCircle'
 import ErrorIcon from '@material-ui/icons/Error'
@@ -104,6 +107,7 @@ class NotificationComponent extends React.Component {
     }
 
     this.setState({ open: false })
+    this.props.removeNotification(this.props.id)
   }
 
   render () {
@@ -131,6 +135,7 @@ class NotificationComponent extends React.Component {
 }
 
 NotificationComponent.propTypes = {
+  id: PropTypes.node,
   title: PropTypes.node,
   message: PropTypes.node,
   onClose: PropTypes.func,
@@ -138,4 +143,11 @@ NotificationComponent.propTypes = {
 }
 
 
-export default NotificationComponent
+const mapStateToProps = state => {
+  return {}
+}
+const mapDispatchToProps = dispatch => ({
+  removeNotification: bindActionCreators(removeNotification, dispatch)
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(NotificationComponent)
