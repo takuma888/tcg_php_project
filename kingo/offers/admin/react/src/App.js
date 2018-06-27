@@ -1,0 +1,67 @@
+import React from 'react'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
+import { addAlert } from "./redux/action";
+// custom ui components
+import AlertComponent from './components/util/AlertComponent'
+import NotificationComponent from './components/util/NotificationComponent'
+import HomeLayout from './layouts/HomeLayout'
+// api
+import Api from './api'
+
+
+class App extends React.Component {
+
+  componentWillMount () {
+    const user = JSON.parse(sessionStorage.getItem('user'))
+    if (!user && this.props.location.pathname !== '/login') {
+      this.props.apiSession().then((data) => {
+        if (!data.user) {
+          this.props.history.push('/login')
+          addAlert({
+            message: '请重新登录',
+            type: 'warning'
+          })
+        } else {
+          sessionStorage.setItem('user', JSON.stringify(data.user))
+        }
+      })
+    }
+
+  }
+  componentDidUpdate (prevProps, prevState, snapshot) {
+  }
+  componentDidMount () {
+  }
+  render () {
+    const { alerts } = this.props.alertState
+    const { notifications } = this.props.notificationState
+    return (
+      <div>
+        <HomeLayout/>
+        {alerts && alerts.map((val, key) => {
+          return <AlertComponent variant={val.type} message={val.message} vertical={val.vertical} horizontal={val.horizontal} key={key}/>
+        })}
+        {notifications && notifications.map((val, key) => {
+          return <NotificationComponent variant={val.type} title={val.title} message={val.message} key={key}/>
+        })}
+      </div>
+    )
+  }
+}
+
+
+const mapStateToProps = state => {
+  const { getAlertState, getNotificationState } = state
+  return {
+    alertState: getAlertState,
+    notificationState: getNotificationState
+  }
+}
+const mapDispatchToProps = dispatch => ({
+  apiSession: bindActionCreators(Api.auth.session, dispatch),
+  addAlert: bindActionCreators(addAlert, dispatch)
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(App)
+

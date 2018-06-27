@@ -1,0 +1,2 @@
+export const ALERT_ADD = 'ALERT_ADD'
+export const NOTIFICATION_ADD = 'NOTIFICATION_ADD'

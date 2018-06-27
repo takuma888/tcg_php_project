@@ -1,6 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types';
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
 import {withRouter} from 'react-router-dom'
+// material ui
 import { withStyles } from '@material-ui/core/styles'
 import Card from '@material-ui/core/Card'
 import CardHeader from '@material-ui/core/CardHeader'
@@ -14,6 +17,11 @@ import FormControl from '@material-ui/core/FormControl'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import Checkbox from '@material-ui/core/Checkbox'
 import Button from '@material-ui/core/Button'
+// custom ui components
+import AlertComponent from '../components/util/AlertComponent'
+// api
+import Api from '../api'
+
 
 const styles = theme => ({
   root: {
@@ -53,11 +61,15 @@ class LoginLayout extends React.Component {
   }
 
   handleSubmit = event => {
-    this.props.history.push('/home')
+    this.props.apiLogin(this.state.username, this.state.password).then((data) => {
+      sessionStorage.setItem('user', JSON.stringify(data.user))
+      this.props.history.push('/home')
+    }).catch(() => {})
   }
 
   render () {
     const { classes } = this.props
+    const { alerts } = this.props.alertState
     return (
       <form className={classes.root}>
         <Card>
@@ -93,6 +105,9 @@ class LoginLayout extends React.Component {
             </FormGroup>
           </CardActions>
         </Card>
+        {alerts && alerts.map((val, key) => {
+          return <AlertComponent variant={val.type} message={val.message} key={key}/>
+        })}
       </form>
     )
   }
@@ -102,4 +117,15 @@ LoginLayout.propTypes = {
   classes: PropTypes.object.isRequired,
 }
 
-export default withRouter(withStyles(styles)(LoginLayout))
+const mapStateToProps = state => {
+  const { getAlertState, getNotificationState } = state
+  return {
+    alertState: getAlertState,
+    notificationState: getNotificationState
+  }
+}
+const mapDispatchToProps = dispatch => ({
+  apiLogin: bindActionCreators(Api.auth.login, dispatch)
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(withStyles(styles)(LoginLayout)))

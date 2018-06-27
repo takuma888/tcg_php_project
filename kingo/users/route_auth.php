@@ -22,6 +22,7 @@ route()->post('/login', function (ServerRequestInterface $request, ResponseInter
     /** @var \Users\Service\AuthService $authService */
     $authService = service(\Users\Service\AuthService::class);
     $userInfo = $authService->loginByUsername($username, $password);
+    flash()->success("欢迎回来~{$userInfo['data']['username']}");
     return json($response, [
         'user' => [
             'uid' => $userInfo['data']['id'],

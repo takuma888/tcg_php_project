@@ -1,5 +1,5 @@
-import auth from '@/api/auth'
-import offers from '@/api/offers'
+import auth from './auth'
+import offers from './offers'
 
 export default {
   auth: auth,
