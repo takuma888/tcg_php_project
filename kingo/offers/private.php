@@ -38,6 +38,12 @@ $container['offers.utils.ip2country'] = function () {
 $container['offers.utils.iso3166'] = function () {
     return new \Offers\Utils\ISO3166();
 };
+/**
+ * @return \Offers\Service\OfferImportService
+ */
+$container[\Offers\Service\OfferImportService::class] = function () {
+    return new \Offers\Service\OfferImportService();
+};
 
 
 /**

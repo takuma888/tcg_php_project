@@ -118,20 +118,20 @@
         },
         {
             "name": "middlewares/error-handler",
-            "version": "v1.0.0",
+            "version": "v1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/middlewares/error-handler.git",
-                "reference": "08afe22745b63eeff4d1708dbe44ef5c90ab3022"
+                "reference": "5095bcc4a54bad523c9fa5658779d64e834422be"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://files.phpcomposer.com/files/middlewares/error-handler/08afe22745b63eeff4d1708dbe44ef5c90ab3022.zip",
-                "reference": "08afe22745b63eeff4d1708dbe44ef5c90ab3022",
+                "url": "https://files.phpcomposer.com/files/middlewares/error-handler/5095bcc4a54bad523c9fa5658779d64e834422be.zip",
+                "reference": "5095bcc4a54bad523c9fa5658779d64e834422be",
                 "shasum": ""
             },
             "require": {
-                "middlewares/utils": "^1.0",
+                "middlewares/utils": "^1.1",
                 "php": "^7.0",
                 "psr/http-server-middleware": "^1.0"
             },
@@ -160,7 +160,7 @@
                 "psr-7",
                 "server"
             ],
-            "time": "2018-01-26T18:37:27+00:00"
+            "time": "2018-06-25T18:31:05+00:00"
         },
         {
             "name": "middlewares/fast-route",
@@ -214,16 +214,16 @@
         },
         {
             "name": "middlewares/utils",
-            "version": "v1.0.0",
+            "version": "v1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/middlewares/utils.git",
-                "reference": "d36b0b8bee8548c45b34e64891b084742a640cf0"
+                "reference": "9d619ead96066717e5e040814c6aad846facde58"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/middlewares/utils/zipball/d36b0b8bee8548c45b34e64891b084742a640cf0",
-                "reference": "d36b0b8bee8548c45b34e64891b084742a640cf0",
+                "url": "https://files.phpcomposer.com/files/middlewares/utils/9d619ead96066717e5e040814c6aad846facde58.zip",
+                "reference": "9d619ead96066717e5e040814c6aad846facde58",
                 "shasum": ""
             },
             "require": {
@@ -260,7 +260,7 @@
                 "psr-15",
                 "psr-7"
             ],
-            "time": "2018-01-24T09:54:56+00:00"
+            "time": "2018-06-25T18:06:18+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -764,16 +764,16 @@
         },
         {
             "name": "symfony/debug",
-            "version": "v3.4.11",
+            "version": "v3.4.12",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/debug.git",
-                "reference": "b28fd73fefbac341f673f5efd707d539d6a19f68"
+                "reference": "47e6788c5b151cf0cfdf3329116bf33800632d75"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://files.phpcomposer.com/files/symfony/debug/b28fd73fefbac341f673f5efd707d539d6a19f68.zip",
-                "reference": "b28fd73fefbac341f673f5efd707d539d6a19f68",
+                "url": "https://files.phpcomposer.com/files/symfony/debug/47e6788c5b151cf0cfdf3329116bf33800632d75.zip",
+                "reference": "47e6788c5b151cf0cfdf3329116bf33800632d75",
                 "shasum": ""
             },
             "require": {
@@ -816,7 +816,7 @@
             ],
             "description": "Symfony Debug Component",
             "homepage": "https://symfony.com",
-            "time": "2018-05-16T14:03:39+00:00"
+            "time": "2018-06-25T11:10:40+00:00"
         },
         {
             "name": "symfony/polyfill-mbstring",
@@ -1625,7 +1625,7 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v2.8.41",
+            "version": "v2.8.42",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
@@ -1633,7 +1633,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/yaml/zipball/51356b7a2ff7c9fd06b2f1681cc463bb62b5c1ff",
+                "url": "https://files.phpcomposer.com/files/symfony/yaml/51356b7a2ff7c9fd06b2f1681cc463bb62b5c1ff.zip",
                 "reference": "51356b7a2ff7c9fd06b2f1681cc463bb62b5c1ff",
                 "shasum": ""
             },
@@ -1828,16 +1828,16 @@
         },
         {
             "name": "zendframework/zend-servicemanager",
-            "version": "2.7.10",
+            "version": "2.7.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zendframework/zend-servicemanager.git",
-                "reference": "ba7069c94c9af93122be9fa31cddd37f7707d5b4"
+                "reference": "99ec9ed5d0f15aed9876433c74c2709eb933d4c7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zendframework/zend-servicemanager/zipball/ba7069c94c9af93122be9fa31cddd37f7707d5b4",
-                "reference": "ba7069c94c9af93122be9fa31cddd37f7707d5b4",
+                "url": "https://files.phpcomposer.com/files/zendframework/zend-servicemanager/99ec9ed5d0f15aed9876433c74c2709eb933d4c7.zip",
+                "reference": "99ec9ed5d0f15aed9876433c74c2709eb933d4c7",
                 "shasum": ""
             },
             "require": {
@@ -1876,7 +1876,7 @@
                 "servicemanager",
                 "zf2"
             ],
-            "time": "2017-12-05T16:27:36+00:00"
+            "time": "2018-06-22T14:49:54+00:00"
         },
         {
             "name": "zendframework/zend-stdlib",

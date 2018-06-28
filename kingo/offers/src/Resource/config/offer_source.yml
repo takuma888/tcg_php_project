@@ -1,0 +1,80 @@
+mobi_summer:
+    name: Mobi Summer
+    url: http://api.howdoesin.net/api/v1/get
+    method: get
+    parameters:
+        code: f0a39021-3046-4ab8-9f86-372629d3afb1
+        platform: android
+    paging:
+        page_key: page
+        size_key: pageSize
+        size_value: 1000
+    response:
+        type: json
+        status_key: success
+        paging:
+            page_total_key: page_total
+        data_key: offers
+
+pub_native:
+    name: Pub Native
+    url: http://bulk.pubnative.net/api/bulk/v1/promotions
+    method: get
+    parameters:
+        app_token: 43281cad92824697addbd1cd5868c4a4
+        platform: android
+    response:
+        type: json
+        data_key: ~
+
+solo:
+    name: Solo
+    url: http://pspm.pingstart.com/api/v2/campaigns
+    method: get
+    parameters:
+        token: c2dbe53c-9098-4693-bebc-f5074d1fcb1f
+        publisher_id: 1692
+        platform: Android
+    response:
+        type: json
+        status_key: StatusCode
+        success_value: 200
+        data_key: campaigns
+
+mobi_smarter:
+    name: Mobi Smarter
+    url: http://api.mobismarter.com/index.php
+    method: get
+    parameters:
+        m: advert
+        p: getoffer
+        app_id: 121
+        app_key: 1e63cb9316744fd74efd80de1d98b6a9
+        platform: android
+    response:
+        type: json
+        status_key: status
+        success_value: success
+        data_key: offers
+
+inplayable:
+    name: Inplayable
+    url: http://apipull.inplayable.com/index.php
+    method: get
+    parameters:
+        m: server
+        p: getoffer
+        sid: 232
+        secret: 7338c35c2cc17028c8d541641595ca3d
+        platform: android
+    paging:
+        page_key: page
+        size_key: pagesize
+        size_value: 1000
+    response:
+        type: json
+        status_key: status
+        success_value: success
+        paging:
+            total_key: paging.total
+        data_key: datas

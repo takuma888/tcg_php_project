@@ -27,5 +27,6 @@ Debug::enable();
 $application = new Application('Offers Command Line', 'PHP v' . PHP_VERSION);
 
 $application->add(new \Offers\Command\MySQL\InitCommand());
+$application->add(new \Offers\Command\Offer\ImportCommand());
 
 $application->run();

@@ -16,6 +16,7 @@ class Curl
      */
     public function postRequest($url, array $params = [], $timeout = 0)
     {
+        $this->url = $url;
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_HEADER, true);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -37,7 +38,6 @@ class Curl
         $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
         $body = substr($res, $header_size);
         curl_close($ch);
-        $this->url = $url;
         return $body;
     }
 
@@ -54,6 +54,7 @@ class Curl
             $url .= (strpos($url, '?') === false) ? '?' : '&';
             $url .= http_build_query($params);
         }
+        $this->url = $url;
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_HEADER, true);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -74,7 +75,6 @@ class Curl
         $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
         $body = substr($res, $header_size);
         curl_close($ch);
-        $this->url = $url;
         return $body;
     }
 }
