@@ -10,6 +10,7 @@
 namespace Offers\Command\Offer;
 
 use Offers\Service\OfferImportService;
+use Offers\Utils\Curl;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -25,7 +26,12 @@ class ImportCommand extends Command
             ->addOption('source', null, InputOption::VALUE_OPTIONAL, '来源', 0);
     }
 
-
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return int|null|void
+     * @throws \Exception
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $source = $input->getOption('source');
@@ -35,5 +41,8 @@ class ImportCommand extends Command
         /** @var OfferImportService $offerImportService */
         $offerImportService = service(OfferImportService::class);
         $offerImportService->import($source);
+        /** @var Curl $curl */
+        $curl = env()->get('offers.utils.curl');
+        $output->writeln($curl->url);
     }
 }

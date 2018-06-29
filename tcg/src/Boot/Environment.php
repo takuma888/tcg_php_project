@@ -97,6 +97,7 @@ class Environment
      */
     public static function getContainer($namespace)
     {
+        $namespace = decbin($namespace);
         return isset(self::$containers[$namespace]) ? self::$containers[$namespace] : null;
     }
 

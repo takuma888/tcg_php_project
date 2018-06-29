@@ -157,7 +157,7 @@ class OfferImportService
             $records = $this->getOfferRecords($source, $offer);
             foreach ($records as $record) {
                 $baseRecord = $record['base'];
-                $extRecord = $records['ext'];
+                $extRecord = $record['ext'];
                 // base
                 $fields = [];
                 $placeholders = [];
@@ -170,7 +170,7 @@ class OfferImportService
                     $values[":{$k}"] = $v;
                     $updates[] = "`{$k}` = VALUES(`{$k}`)";
                 }
-                $sql = 'INSERT INTO {@table} ({@fields}) VALUES (@values) ON DUPLICATE KEY UPDATE {@updates}';
+                $sql = 'INSERT INTO {@table} ({@fields}) VALUES ({@values}) ON DUPLICATE KEY UPDATE {@updates}';
                 $sql = strtr($sql, [
                     '{@fields}' => implode(', ', $fields),
                     '{@values}' => implode(', ', $placeholders),
@@ -183,6 +183,7 @@ class OfferImportService
                     '{@table}' => $baseRecord,
                 ]);
                 $stmt = $conn->prepare($sql);
+
                 $stmt->execute($query->getParameters());
                 // ext
                 $fields = [];
@@ -196,7 +197,7 @@ class OfferImportService
                     $values[":{$k}"] = $v;
                     $updates[] = "`{$k}` = VALUES(`{$k}`)";
                 }
-                $sql = 'INSERT INTO {@table} ({@fields}) VALUES (@values) ON DUPLICATE KEY UPDATE {@updates}';
+                $sql = 'INSERT INTO {@table} ({@fields}) VALUES ({@values}) ON DUPLICATE KEY UPDATE {@updates}';
                 $sql = strtr($sql, [
                     '{@fields}' => implode(', ', $fields),
                     '{@values}' => implode(', ', $placeholders),
@@ -292,6 +293,7 @@ class OfferImportService
                         ];
                         $ext = [
                             'id' => $id,
+                            'source' => $source,
                             'info' => json_encode($offer)
                         ];
                         $return[] = [
@@ -337,8 +339,10 @@ class OfferImportService
                             $info['creatives'] = $offer['creatives'];
                             $ext = [
                                 'id' => $id,
+                                'source' => $source,
                                 'info' => json_encode($info)
-                            ];$return[] = [
+                            ];
+                            $return[] = [
                                 'base' => $base,
                                 'ext' => $ext,
                             ];
@@ -398,6 +402,7 @@ class OfferImportService
                         ];
                         $ext = [
                             'id' => $id,
+                            'source' => $source,
                             'info' => json_encode($offer),
                         ];
                         $return[] = [
@@ -439,6 +444,7 @@ class OfferImportService
                         ];
                         $ext = [
                             'id' => $id,
+                            'source' => $source,
                             'info' => json_encode($offer),
                         ];
                         $return[] = [
@@ -480,6 +486,7 @@ class OfferImportService
                         ];
                         $ext = [
                             'id' => $id,
+                            'source' => $source,
                             'info' => json_encode($offer),
                         ];
                         $return[] = [

@@ -37,7 +37,7 @@ solo:
         platform: Android
     response:
         type: json
-        status_key: StatusCode
+        status_key: Statuscode
         success_value: 200
         data_key: campaigns
 

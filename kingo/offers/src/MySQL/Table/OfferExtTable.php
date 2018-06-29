@@ -17,6 +17,7 @@ class OfferExtTable extends Table
     protected $createSQL = <<<SQL
 CREATE TABLE IF NOT EXISTS {@table} (
   `id` VARCHAR(32) NOT NULL DEFAULT '' COMMENT '唯一ID',
+  `source` VARCHAR(32) NOT NULL DEFAULT '' COMMENT '来源',
   `info` MEDIUMTEXT NOT NULL COMMENT 'offer的具体内容',
   PRIMARY KEY (`id`)
 ) ENGINE InnoDB DEFAULT CHARSET utf8mb4 COLLATE utf8mb4_general_ci;
@@ -28,7 +29,8 @@ SQL;
     {
         return [
             'id' => '',
-            'info' => [],
+            'source' => '',
+            'info' => '',
         ];
     }
 }

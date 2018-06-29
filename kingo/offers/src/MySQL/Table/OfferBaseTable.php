@@ -27,12 +27,10 @@ CREATE TABLE IF NOT EXISTS {@table} (
   `payout_type` VARCHAR(8) NOT NULL DEFAULT '' COMMENT '支付的单位',
   `payout` DECIMAL(14, 6) NOT NULL DEFAULT 0.000000 COMMENT '支付的值',
   `category` VARCHAR(256) NOT NULL DEFAULT '' COMMENT 'offer的分类',
-  `status` SMALLINT(5) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'offer的状态',
+  `status` TINYINT(3) UNSIGNED NOT NULL DEFAULT 0 COMMENT 'offer的状态',
   PRIMARY KEY (`id`, `country`),
-  KEY `offer` (`source`, `offer_id`),
   KEY `country` (`country`),
   KEY `platform` (`platform`),
-  KEY `category` (`category`),
   KEY `status` (`status`)
 ) ENGINE InnoDB DEFAULT CHARSET utf8mb4 COLLATE utf8mb4_general_ci PARTITION BY KEY(`country`);
 SQL;
