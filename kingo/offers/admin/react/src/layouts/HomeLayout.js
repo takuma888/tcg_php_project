@@ -9,7 +9,7 @@ import HeaderComponent from '../components/header/HeaderComponent'
 import HomeComponent from '../components/home/HomeComponent'
 import OffersComponent from '../components/offers/OffersComponent'
 import StatisticsComponent from '../components/statistics/StatisticsComponent'
-import StrategyComponent from '../components/strategy/StrategyComponent'
+import StrategiesComponent from '../components/strategies/StrategiesComponent'
 
 
 class HomeLayout extends React.Component
@@ -18,13 +18,13 @@ class HomeLayout extends React.Component
     return (
       <div>
         <HeaderComponent/>
-        <div style={{marginTop: '50px'}}>
+        <div style={{marginTop: '70px'}}>
           <HashRouter>
             <Switch>
               <Route exact path="/home" component={HomeComponent}/>
               <Route path="/home/offers" component={OffersComponent}/>
               <Route path="/home/statistics" component={StatisticsComponent} />
-              <Route path="/home/strategy" component={StrategyComponent} />
+              <Route path="/home/strategies" component={StrategiesComponent} />
               <Redirect to="/404" />
             </Switch>
           </HashRouter>

@@ -94,11 +94,15 @@ class HeaderComponent extends React.Component {
                 OFFER 总库
               </Typography>
             </Button>
-            <Tabs value={topNav} className={classes.tabs} onChange={this.handleTopNavChange}>
+            <Tabs value={topNav}
+                  className={classes.tabs}
+                  onChange={this.handleTopNavChange}
+                  scrollable
+                  scrollButtons="auto" >
               <Tab value="/home" style={{display: 'none'}}/>
               <Tab value="/home/offers" label="OFFER 库" />
+              <Tab value="/home/strategies" label="策略" />
               <Tab value="/home/statistics" label="统计" />
-              <Tab value="/home/strategy" label="策略" />
             </Tabs>
             <div>
               <IconButton

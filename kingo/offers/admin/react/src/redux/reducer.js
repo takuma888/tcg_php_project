@@ -29,6 +29,31 @@ const getNotificationState = (state = { notifications: [] }, action) => {
 }
 
 
+const getStrategyAddDialogState = (state = { open: false }, action) => {
+  switch (action.type) {
+    case type.SHOW_STRATEGY_ADD_DIALOG:
+      state.open = true
+      return { ...state }
+    case type.HIDE_STRATEGY_ADD_DIALOG:
+      state.open = false
+      return { ...state }
+    default:
+      return { ...state }
+  }
+}
+
+
+const getStrategiesTableState = (state = { refresh: 1 }, action) => {
+  switch (action.type) {
+    case type.REFRESH_STRATEGIES_TABLE:
+      state.refresh += 1
+      return { ...state }
+    default:
+      return { ...state }
+  }
+}
+
+
 // const getAppState = (state = {}, action) => {
 //   switch (action.type) {
 //     case type.SET_APP_STATE:
@@ -52,7 +77,9 @@ const getNotificationState = (state = { notifications: [] }, action) => {
 
 export default combineReducers({
   getAlertState,
-  getNotificationState
+  getNotificationState,
+  getStrategyAddDialogState,
+  getStrategiesTableState
   // getAppState,
   // getTestState
 })

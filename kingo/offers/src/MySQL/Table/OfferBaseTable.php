@@ -31,6 +31,7 @@ CREATE TABLE IF NOT EXISTS {@table} (
   PRIMARY KEY (`id`, `country`),
   KEY `country` (`country`),
   KEY `platform` (`platform`),
+  KEY `package_name` (`package_name`(192)),
   KEY `status` (`status`)
 ) ENGINE InnoDB DEFAULT CHARSET utf8mb4 COLLATE utf8mb4_general_ci PARTITION BY KEY(`country`);
 SQL;

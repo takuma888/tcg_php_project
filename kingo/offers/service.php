@@ -68,3 +68,29 @@ $container['offers.mysql.tables.offer_base'] = function (Container $c) {
 $container['offers.mysql.tables.offer_ext'] = function (Container $c) {
     return new Offers\MySQL\Table\OfferExtTable($c['offers.mysql.servers.master'], [], $c['offers.mysql.database.offers']);
 };
+/**
+ * @param Container $c
+ * @return \Offers\MySQL\Table\StrategyBaseTable
+ */
+$container['offers.mysql.tables.strategy_base'] = function (Container $c) {
+    return new \Offers\MySQL\Table\StrategyBaseTable($c['offers.mysql.servers.master'], [], $c['offers.mysql.database.offers']);
+};
+/**
+ * @param Container $c
+ * @return \Offers\MySQL\Table\StrategyExtTable
+ */
+$container['offers.mysql.tables.strategy_ext'] = function (Container $c) {
+    return new \Offers\MySQL\Table\StrategyExtTable($c['offers.mysql.servers.master'], [], $c['offers.mysql.database.offers']);
+};
+/**
+ * @return \Offers\Service\OfferService
+ */
+$container[\Offers\Service\OfferService::class] = function () {
+    return new \Offers\Service\OfferService();
+};
+/**
+ * @return \Offers\Service\StrategyService
+ */
+$container[\Offers\Service\StrategyService::class] = function () {
+    return new \Offers\Service\StrategyService();
+};

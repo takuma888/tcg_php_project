@@ -20,6 +20,21 @@ export const removeNotification = (data) => ({
   data
 })
 
+
+export const showAddStrategyDialog = () => ({
+  type: type.SHOW_STRATEGY_ADD_DIALOG,
+  open: true
+})
+
+export const hideAddStrategyDialog = () => ({
+  type: type.HIDE_STRATEGY_ADD_DIALOG,
+  open: false
+})
+
+export const refreshStrategiesTable = () => ({
+  type: type.REFRESH_STRATEGIES_TABLE
+})
+
 // export const setAppState = (data) => ({
 //   type: type.SET_APP_STATE,
 //   data

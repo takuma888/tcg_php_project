@@ -35,6 +35,8 @@ class InitCommand extends Command
         $tableNames = [
             'offer_base',
             'offer_ext',
+            'strategy_base',
+            'strategy_ext',
         ];
 
         foreach ($tableNames as $tableBaseName) {
