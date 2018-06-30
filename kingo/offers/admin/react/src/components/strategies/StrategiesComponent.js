@@ -41,7 +41,7 @@ const styles = theme => ({
 function getData(originalData) {
   return originalData.map(item => {
     return {
-      _id: item.id,
+      _id: item.base.id,
       ...item
     };
   });
@@ -180,32 +180,32 @@ class StrategiesComponent extends React.Component
           columns={[
             {
               Header: 'ID',
-              accessor: 'id',
+              accessor: 'base.id',
               id: 'id',
               width: 200
             },
             {
               Header: '名称',
               id: 'name',
-              accessor: 'name',
+              accessor: 'base.name',
               width: 200
             },
             {
               Header: '描述',
-              accessor: 'description',
+              accessor: 'base.description',
               id: 'description',
               Filter: ({ filter, onChange }) => {}
             },
             {
               Header: '创建',
-              accessor: 'create_at',
+              accessor: 'base.create_at',
               id: 'create_at',
               Filter: ({ filter, onChange }) => {},
               width: 200
             },
             {
               Header: '更新',
-              accessor: 'update_at',
+              accessor: 'base.update_at',
               id: 'update_at',
               Filter: ({ filter, onChange }) => {},
               width: 200
@@ -239,15 +239,90 @@ class StrategiesComponent extends React.Component
           className="-striped -highlight"
           style={{maxHeight: '700px'}}
           SubComponent={(row) => {
-            const id = row.original.id
-            let html = this.props.apiGetStrategy(id).then((data) => {
-              let html = <div>
-                aaaaaaaaaaaa<h1>bbbbbbb</h1>
+            let subData = []
+            const renderOperation = (cellInfo) => {
+              console.log(cellInfo)
+              return <div style={{marginTop: '-7px', marginBottom: '-7px'}}>
+                <Button size="small" color="secondary">编辑包含</Button> <Button size="small" color="secondary">编辑排除</Button>
               </div>
-              return html
-            }).catch(() => {})
-            console.log(html)
-            return <div>aaaa</div>
+            }
+            const subColumns = [
+              {
+                Header: '类别',
+                accessor: 'category',
+                width: 60
+              },
+              {
+                Header: '配置',
+                accessor: 'values'
+              },
+              {
+                Header: '操作',
+                width: 150,
+                Cell: renderOperation
+              }
+            ]
+            const categories = [
+              {
+                key: 'country',
+                name: '国家'
+              },
+              {
+                key: 'source',
+                name: '来源'
+              },
+              {
+                key: 'package',
+                name: '包名'
+              },
+              {
+                key: 'id',
+                name: 'ID'
+              },
+              {
+                key: 'period',
+                name: '时间段'
+              }
+            ]
+            for (let i in categories) {
+              const category = categories[i]
+              let item = {
+                id: row.original.base.id,
+                category: category.name,
+                values: ''
+              }
+              item.values += '包含: '
+              if (row.original.ext[category.key]) {
+                const ext = row.original.ext[category.key]
+                if (ext['in']) {
+                  item.values += ext['in'].join(', ') + '; '
+                } else {
+                  item.values += '- N/A -; '
+                }
+              } else {
+                item.values += '- N/A -; '
+              }
+              item.values += '排除: '
+              if (row.original.ext[category.key]) {
+                const ext = row.original.ext[category.key]
+                if (ext['not']) {
+                  item.values += ext['not'].join(', ') + ';'
+                } else {
+                  item.values += '- N/A -; '
+                }
+              } else {
+                item.values += '- N/A -; '
+              }
+              // 操作
+              subData.push(item)
+            }
+            return <ReactTable
+              style={{margin: '10px'}}
+              data={subData}
+              defaultPageSize={5}
+              columns={subColumns}
+              showPagination={false}
+            />
           }}
           {...checkboxProps}
         />
@@ -273,8 +348,7 @@ const mapStateToProps = state => {
 }
 const mapDispatchToProps = dispatch => ({
   apiListStrategies: bindActionCreators(Api.strategies.list, dispatch),
-  apiGetStrategy: bindActionCreators(Api.strategy.get, dispatch),
-  showAddStrategyDialog: bindActionCreators(showAddStrategyDialog, dispatch),
+  showAddStrategyDialog: bindActionCreators(showAddStrategyDialog, dispatch)
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(StrategiesComponent))

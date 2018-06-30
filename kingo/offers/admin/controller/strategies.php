@@ -121,8 +121,33 @@ route()->get('/strategies', function (ServerRequestInterface $request, ResponseI
     /** @var \Offers\Service\StrategyService $strategyService */
     $strategyService = service(\Offers\Service\StrategyService::class);
     $baseStrategies = $strategyService->baseSelectMany($filterCondition, $filterParams);
+    $data = [
+        'data' => [],
+        'total' => $baseStrategies['total'],
+    ];
+    foreach ($baseStrategies['data'] as $baseStrategy) {
+        $extResult = $strategyService->extSelectMany('`strategy_id` = :strategy_id', [
+            ':strategy_id' => $baseStrategy['id'],
+        ]);
+        $extData = [];
+        foreach ($extResult['data'] as $extItem) {
+            $category = $extItem['category'];
+            $type = $extItem['type'];
+            if (!isset($extData[$category])) {
+                $extData[$category] = [];
+            }
+            if (!isset($extData[$category][$type])) {
+                $extData[$category][$type] = [];
+            }
+            $extData[$category][$type][] = $extItem;
+        }
+        $data['data'][] = [
+            'base' => $baseStrategy,
+            'ext' => $extData,
+        ];
+    }
 
-    return json($response, $baseStrategies);
+    return json($response, $data);
 });
 
 /**
