@@ -18,7 +18,7 @@ class HomeLayout extends React.Component
     return (
       <div>
         <HeaderComponent/>
-        <div style={{marginTop: '70px'}}>
+        <div style={{marginTop: '70px', paddingLeft: '20px', paddingRight: '20px'}}>
           <HashRouter>
             <Switch>
               <Route exact path="/home" component={HomeComponent}/>

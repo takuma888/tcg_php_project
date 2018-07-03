@@ -27,6 +27,13 @@ define('ROLE_DEVELOPER', 'developer');
  */
 define('PERMISSION_ALL', '0b' . str_repeat('1', 9999));
 
+
+/**
+ * 跨域
+ */
+define('USERS_ADMIN_ALLOW_ORIGIN', 'http://localhost:8080');
+define('USERS_API_ALLOW_ORIGIN', 'http://localhost:3000');
+
 /**
  * 错误码
  */

@@ -18,7 +18,7 @@ use FastRoute\RouteCollector;
 /**
  * 跨域问题
  */
-header("Access-Control-Allow-Origin: http://localhost:8080");
+header("Access-Control-Allow-Origin: " . USERS_ADMIN_ALLOW_ORIGIN);
 header("Access-Control-Allow-Credentials: true");
 header("Access-Control-Allow-Headers: X-Requested-With, accept, content-type, xxxx");
 

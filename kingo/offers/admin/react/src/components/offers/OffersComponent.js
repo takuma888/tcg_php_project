@@ -95,7 +95,7 @@ class OffersComponent extends React.Component {
             filterable
             defaultPageSize={50}
             className="-striped -highlight"
-            style={{maxHeight: '900px'}}
+            style={{maxHeight: '800px'}}
           />
         </section>
     )

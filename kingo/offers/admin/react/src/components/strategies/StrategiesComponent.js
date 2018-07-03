@@ -1,22 +1,30 @@
 import React from 'react'
+import classNames from 'classnames'
+import PropTypes from 'prop-types'
+import { withStyles} from '@material-ui/core/styles'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import PropTypes from 'prop-types'
-import { withStyles } from '@material-ui/core/styles'
 
-// ui component
-import ReactTable from 'react-table'
-import "react-table/react-table.css";
-import checkboxHOC from "react-table/lib/hoc/selectTable"
+// material ui component
+import Table from '@material-ui/core/Table'
+import TableHead from '@material-ui/core/TableHead'
+import TableBody from '@material-ui/core/TableBody'
+import TableRow from '@material-ui/core/TableRow'
+import TableCell from '@material-ui/core/TableCell'
+import TablePagination from '@material-ui/core/TablePagination'
 
-
-// meterial ui component
 import Toolbar from '@material-ui/core/Toolbar'
+import Typography from '@material-ui/core/Typography'
+import Paper from '@material-ui/core/Paper'
+import Checkbox from '@material-ui/core/Checkbox'
+import IconButton from '@material-ui/core/IconButton'
+import Tooltip from '@material-ui/core/Tooltip'
+import DeleteIcon from '@material-ui/icons/Delete'
+import { lighten} from '@material-ui/core/styles/colorManipulator'
+
 import Button from '@material-ui/core/Button'
 import Add from '@material-ui/icons/Add'
-import Clear from '@material-ui/icons/Clear'
-import ExpandLess from '@material-ui/icons/ExpandLess'
-import ExpandMore from '@material-ui/icons/ExpandMore'
+
 
 // self component
 import AddStrategyComponent  from './AddStrategyComponent'
@@ -27,40 +35,99 @@ import Api from '../../api'
 // redux
 import { showAddStrategyDialog } from "../../redux/action"
 
-const CheckboxTable = checkboxHOC(ReactTable);
 
-const styles = theme => ({
-  toolbar: {
-    minHeight: "auto",
-    marginBottom: "20px",
-    padding: "0"
-  },
-})
+// table head
+class EnhancedTableHead extends React.Component
+{
+  render () {
+    const { onSelectAllClick, numSelected, rowCount } = this.props
 
-
-function getData(originalData) {
-  return originalData.map(item => {
-    return {
-      _id: item.base.id,
-      ...item
-    };
-  });
+    return (
+      <TableHead>
+        <TableRow>
+          <TableCell padding="checkbox">
+            <Checkbox
+              indeterminate={numSelected > 0 && numSelected < rowCount}
+              checked={numSelected === rowCount && rowCount !== 0}
+              onChange={onSelectAllClick}
+            />
+          </TableCell>
+          <TableCell>ID</TableCell>
+          <TableCell>名称</TableCell>
+          <TableCell>描述</TableCell>
+          <TableCell>创建</TableCell>
+          <TableCell>更新</TableCell>
+          <TableCell>操作</TableCell>
+        </TableRow>
+      </TableHead>
+    )
+  }
 }
 
 
-class StrategiesComponent extends React.Component
+EnhancedTableHead.propTypes = {
+  numSelected: PropTypes.number.isRequired,
+  onRequestSort: PropTypes.func.isRequired,
+  onSelectAllClick: PropTypes.func.isRequired,
+  // order: PropTypes.string.isRequired,
+  // orderBy: PropTypes.string.isRequired,
+  rowCount: PropTypes.number.isRequired,
+}
+
+// table
+const styles = theme => ({
+  root: {
+    width: '100%',
+    marginTop: theme.spacing.unit * 3,
+  },
+  table: {
+    minWidth: 1020,
+  },
+  tableWrapper: {
+    overflowX: 'auto',
+  },
+  toolbar: {
+    paddingRight: theme.spacing.unit,
+  },
+  highlight:
+    theme.palette.type === 'light'
+      ? {
+        color: theme.palette.secondary.main,
+        backgroundColor: lighten(theme.palette.secondary.light, 0.85),
+      }
+      : {
+        color: theme.palette.text.primary,
+        backgroundColor: theme.palette.secondary.dark,
+      },
+  spacer: {
+    flex: '1 1 100%',
+  },
+  actions: {
+    color: theme.palette.text.secondary,
+  },
+  title: {
+    flex: '0 0 auto',
+  }
+})
+
+class EnhancedTable extends React.Component
 {
-  
+
   state = {
+    selected: [],
     data: [],
-    pages: null,
-    loading: false,
+    page: 0,
+    pageSize: 25,
     lastRefresh: 1,
     tableState: {},
-    selection: [],
-    selectAll: false
   }
-  
+
+
+
+  componentWillMount () {
+    this.fetchData(this.state)
+  }
+
   fetchData = (state) => {
     if (!state) {
       state = this.state.tableState
@@ -69,271 +136,186 @@ class StrategiesComponent extends React.Component
         tableState: state
       })
     }
-    
-    this.setState({
-      loading: true
-    })
+
     this.props.apiListStrategies({
       page: state.page,
       size: state.pageSize,
       sort: state.sorted,
       filter: state.filtered
     }).then((data) => {
-      this.setState({
-        loading: false,
-      })
       if (data) {
         this.setState({
-          pages: Math.ceil(data.total / state.pageSize),
-          data: getData(data.data)
+          data: data.data
         })
       }
     })
   }
-  
-  
-  toggleSelection = (key, shift, row) => {
-    // start off with the existing state
-    let selection = [...this.state.selection]
-    const keyIndex = selection.indexOf(key)
-    // check to see if the key exists
-    if (keyIndex >= 0) {
-      // it does exist so we will remove it using destructing
-      selection = [
-        ...selection.slice(0, keyIndex),
-        ...selection.slice(keyIndex + 1)
-      ]
-    } else {
-      // it does not exist so add it
-      selection.push(key)
-    }
-    // update the state
-    this.setState({ selection })
-  }
-  
-  toggleAll = () => {
-    const selectAll = !this.state.selectAll
-    const selection = []
-    if (selectAll) {
-      // we need to get at the internals of ReactTable
-      const wrappedInstance = this.checkboxTable.getWrappedInstance()
-      // the 'sortedData' property contains the currently accessible records based on the filter and sort
-      const currentRecords = wrappedInstance.getResolvedState().sortedData
-      // we just push all the IDs onto the selection array
-      currentRecords.forEach(item => {
-        selection.push(item._original._id)
-      });
-    }
-    this.setState({ selectAll, selection })
-  };
-  
-  isSelected = key => {
-    return this.state.selection.includes(key)
-  };
-  
-  
+
   showAddStrategyDialog = () => {
     this.props.showAddStrategyDialog()
   }
-  
+
   showRemoveStrategyDialog = () => {
-  
+
   }
-  
-  
-  componentDidUpdate (prevProps, prevState, snapshot) {
-    if (this.props.tableState.refresh !== this.state.lastRefresh) {
-      this.setState({
-        lastRefresh: this.props.tableState.refresh
-      })
-      this.fetchData()
+
+  handleRequestSort = (event, property) => {
+    const orderBy = property;
+    let order = 'desc';
+
+    if (this.state.orderBy === property && this.state.order === 'desc') {
+      order = 'asc';
     }
+
+    this.setState({ order, orderBy });
   }
-  
+
+  handleSelectAllClick = (event, checked) => {
+    if (checked) {
+      this.setState(state => ({ selected: state.data.map(n => n.base.id) }));
+      return;
+    }
+    this.setState({ selected: [] });
+  }
+
+  handleClick = (event, id) => {
+    const { selected } = this.state;
+    const selectedIndex = selected.indexOf(id);
+    let newSelected = [];
+
+    if (selectedIndex === -1) {
+      newSelected = newSelected.concat(selected, id);
+    } else if (selectedIndex === 0) {
+      newSelected = newSelected.concat(selected.slice(1));
+    } else if (selectedIndex === selected.length - 1) {
+      newSelected = newSelected.concat(selected.slice(0, -1));
+    } else if (selectedIndex > 0) {
+      newSelected = newSelected.concat(
+        selected.slice(0, selectedIndex),
+        selected.slice(selectedIndex + 1),
+      );
+    }
+
+    this.setState({ selected: newSelected });
+  }
+
+  handleChangePage = (event, page) => {
+    this.setState({ page });
+  }
+
+  handleChangeRowsPerPage = event => {
+    this.setState({ pageSize: event.target.value });
+  }
+
+  isSelected = id => this.state.selected.indexOf(id) !== -1
+
   render () {
     const { classes } = this.props
-    const { data, pages, loading, selectAll } = this.state
-    const { toggleSelection, toggleAll, isSelected } = this
-    const checkboxProps = {
-      selectAll,
-      isSelected,
-      toggleSelection,
-      toggleAll,
-      selectType: "checkbox"
-    }
-    
+    const { data, selected, pageSize, page } = this.state
+
     return (
-      <section style={{margin: '0 20px'}}>
-        <Toolbar className={classes.toolbar}>
-          {this.state.selection.length > 0 ? <Button variant="contained" color="secondary" style={{marginRight: '20px'}} onClick={this.showRemoveStrategyDialog}>
-            <Clear/>
-            批量删除
-          </Button> : ''}
-          <Button variant="contained" color="primary" onClick={this.showAddStrategyDialog}>
-            <Add />
-            添加策略
-          </Button>
+      <Paper className={classes.root}>
+        <Toolbar
+          className={classNames(classes.toolbar, {
+            [classes.highlight]: selected.length > 0,
+          })}
+        >
+          <div className={classes.title}>
+            {selected.length > 0 ? (
+              <Typography color="inherit" variant="subheading">
+                选择了 {selected.length} 行
+              </Typography>
+            ) : (
+              <Button variant="contained" color="primary" onClick={this.showAddStrategyDialog}>
+                <Add />
+                添加策略
+              </Button>
+            )}
+          </div>
+          <div className={classes.spacer} />
+          <div className={classes.actions}>
+            {selected.length > 0 ? (
+              <Tooltip title="删除">
+                <IconButton aria-label="删除">
+                  <DeleteIcon />
+                </IconButton>
+              </Tooltip>
+            ) : ''}
+          </div>
         </Toolbar>
-        <CheckboxTable
-          ref={r => (this.checkboxTable = r)}
-          noDataText='没有数据'
-          columns={[
-            {
-              Header: 'ID',
-              accessor: 'base.id',
-              id: 'id',
-              width: 200
-            },
-            {
-              Header: '名称',
-              id: 'name',
-              accessor: 'base.name',
-              width: 200
-            },
-            {
-              Header: '描述',
-              accessor: 'base.description',
-              id: 'description',
-              Filter: ({ filter, onChange }) => {}
-            },
-            {
-              Header: '创建',
-              accessor: 'base.create_at',
-              id: 'create_at',
-              Filter: ({ filter, onChange }) => {},
-              width: 200
-            },
-            {
-              Header: '更新',
-              accessor: 'base.update_at',
-              id: 'update_at',
-              Filter: ({ filter, onChange }) => {},
-              width: 200
-            },
-            {
-              Header: '详细',
-              expander: true,
-              width: 65,
-              Expander: ({ isExpanded, ...rest }) =>
-                <div>
-                  {isExpanded
-                    ? <ExpandLess style={{marginTop: '3px'}} />
-                    : <ExpandMore style={{marginTop: '3px'}} />}
-                </div>,
-              style: {
-                cursor: "pointer",
-                fontSize: 25,
-                padding: "0",
-                textAlign: "center",
-                userSelect: "none"
-              },
-            }
-          ]}
-          manual
-          data={data}
-          pages={pages}
-          loading={loading}
-          onFetchData={this.fetchData}
-          filterable
-          defaultPageSize={20}
-          className="-striped -highlight"
-          style={{maxHeight: '700px'}}
-          SubComponent={(row) => {
-            let subData = []
-            const renderOperation = (cellInfo) => {
-              console.log(cellInfo)
-              return <div style={{marginTop: '-7px', marginBottom: '-7px'}}>
-                <Button size="small" color="secondary">编辑包含</Button> <Button size="small" color="secondary">编辑排除</Button>
-              </div>
-            }
-            const subColumns = [
-              {
-                Header: '类别',
-                accessor: 'category',
-                width: 60
-              },
-              {
-                Header: '配置',
-                accessor: 'values'
-              },
-              {
-                Header: '操作',
-                width: 150,
-                Cell: renderOperation
-              }
-            ]
-            const categories = [
-              {
-                key: 'country',
-                name: '国家'
-              },
-              {
-                key: 'source',
-                name: '来源'
-              },
-              {
-                key: 'package',
-                name: '包名'
-              },
-              {
-                key: 'id',
-                name: 'ID'
-              },
-              {
-                key: 'period',
-                name: '时间段'
-              }
-            ]
-            for (let i in categories) {
-              const category = categories[i]
-              let item = {
-                id: row.original.base.id,
-                category: category.name,
-                values: ''
-              }
-              item.values += '包含: '
-              if (row.original.ext[category.key]) {
-                const ext = row.original.ext[category.key]
-                if (ext['in']) {
-                  item.values += ext['in'].join(', ') + '; '
-                } else {
-                  item.values += '- N/A -; '
-                }
-              } else {
-                item.values += '- N/A -; '
-              }
-              item.values += '排除: '
-              if (row.original.ext[category.key]) {
-                const ext = row.original.ext[category.key]
-                if (ext['not']) {
-                  item.values += ext['not'].join(', ') + ';'
-                } else {
-                  item.values += '- N/A -; '
-                }
-              } else {
-                item.values += '- N/A -; '
-              }
-              // 操作
-              subData.push(item)
-            }
-            return <ReactTable
-              style={{margin: '10px'}}
-              data={subData}
-              defaultPageSize={5}
-              columns={subColumns}
-              showPagination={false}
-            />
+        <div className={classes.tableWrapper}>
+          <Table className={classes.table} aria-labelledby="tableTitle">
+            <TableHead>
+              <TableRow>
+                <TableCell padding="checkbox">
+                  <Checkbox
+                    indeterminate={selected.length > 0 && selected.length < data.length}
+                    checked={selected.length === data.length && data.length !== 0}
+                    onChange={this.handleSelectAllClick}
+                  />
+                </TableCell>
+                <TableCell>ID</TableCell>
+                <TableCell>名称</TableCell>
+                <TableCell>描述</TableCell>
+                <TableCell>创建</TableCell>
+                <TableCell>更新</TableCell>
+                <TableCell>操作</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {data.map(n => {
+                const isSelected = this.isSelected(n.base.id)
+                return (
+                  <TableRow
+                    hover
+                    onClick={event => this.handleClick(event, n.base.id)}
+                    role="checkbox"
+                    aria-checked={isSelected}
+                    tabIndex={-1}
+                    key={n.base.id}
+                    selected={isSelected}>
+                    <TableCell padding="checkbox">
+                      <Checkbox checked={isSelected} />
+                    </TableCell>
+                    <TableCell component="th">{n.base.id}</TableCell>
+                    <TableCell>{n.base.name}</TableCell>
+                    <TableCell>{n.base.description}</TableCell>
+                    <TableCell>{n.base.create_at}</TableCell>
+                    <TableCell>{n.base.update_at}</TableCell>
+                    <TableCell>{''}</TableCell>
+                  </TableRow>
+                )
+              })}
+              {data.length === 0 && (
+                <TableRow style={{ padding: '10px' }}>
+                  <TableCell colSpan={7} style={{textAlign: 'center'}}>没有数据</TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
+        <TablePagination
+          component="div"
+          count={data.length}
+          rowsPerPage={pageSize}
+          page={page}
+          backIconButtonProps={{
+            'aria-label': 'Previous Page',
           }}
-          {...checkboxProps}
+          nextIconButtonProps={{
+            'aria-label': 'Next Page',
+          }}
+          onChangePage={this.handleChangePage}
+          onChangeRowsPerPage={this.handleChangeRowsPerPage}
         />
         <AddStrategyComponent/>
-      </section>
+      </Paper>
     )
   }
 }
 
-StrategiesComponent.propTypes = {
-  classes: PropTypes.object.isRequired
+EnhancedTable.propTypes = {
+  classes: PropTypes.object.isRequired,
 }
 
 
@@ -351,4 +333,4 @@ const mapDispatchToProps = dispatch => ({
   showAddStrategyDialog: bindActionCreators(showAddStrategyDialog, dispatch)
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(StrategiesComponent))
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(EnhancedTable))

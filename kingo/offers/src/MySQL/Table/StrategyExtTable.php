@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS {@table} (
   `type` VARCHAR(32) NOT NULL DEFAULT '' COMMENT '逻辑类型',
   `value` VARCHAR(256) NOT NULL DEFAULT '' COMMENT '逻辑值',
   PRIMARY KEY (`id`),
-  KEY `strategy` (`category`, `type`, `value`)
+  KEY `strategy` (`category`, `type`, `value`(100))
 ) ENGINE InnoDB DEFAULT CHARSET utf8mb4 COLLATE utf8mb4_general_ci;
 SQL;
 
