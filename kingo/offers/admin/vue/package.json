@@ -2,7 +2,7 @@
   "name": "vue",
   "version": "1.0.0",
   "description": "A Vue.js project",
-  "author": "",
+  "author": "tachigo <641979199@qq.com>",
   "private": true,
   "scripts": {
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
@@ -12,7 +12,9 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "element-ui": "^2.4.3",
     "font-awesome": "^4.7.0",
+    "material-design-icons": "^3.0.1",
     "muse-ui": "^3.0.0-rc.4",
     "node-sass": "^4.9.0",
     "normalize.css": "^8.0.0",
