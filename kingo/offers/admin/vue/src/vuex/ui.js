@@ -1,6 +1,7 @@
 export default {
   state: {
-    path: '/'
+    path: '/',
+    htmlTitle: 'OFFER 总库'
   },
   mutations: {
     path (state, path) {

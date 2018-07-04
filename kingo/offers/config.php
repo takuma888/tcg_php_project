@@ -19,7 +19,7 @@ define('OFFERS_MYSQL_DB_OFFERS', 'offers');
 /**
  * 跨域
  */
-define('OFFERS_ADMIN_ALLOW_ORIGIN', 'http://localhost:3000');
+define('OFFERS_ADMIN_ALLOW_ORIGIN', 'http://localhost:8080');
 /**
  * 错误码
  */

@@ -28,6 +28,27 @@ const router = new VueRouter({
   routes: routes
 })
 
+router.beforeEach((to, from, next) => {
+  router.app.$store.commit('path', to.path)
+  let user = JSON.parse(sessionStorage.getItem('user'))
+  if (!user && to.path !== '/login') {
+    Api.session().then((data) => {
+      if (!data.user) {
+        next('/login')
+        ElementUI.Message({
+          message: '请重新登录',
+          type: 'warning'
+        })
+      } else {
+        sessionStorage.setItem('user', JSON.stringify(data.user))
+        next()
+      }
+    })
+  } else {
+    next()
+  }
+})
+
 new Vue({
   router,
   store,

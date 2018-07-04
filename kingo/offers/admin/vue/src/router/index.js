@@ -1,6 +1,7 @@
 import LoginComponent from '@/components/LoginComponent'
 import NotFoundComponent from '@/components/NotFoundComponent'
 import HomeComponent from '@/components/HomeComponent'
+import OffersComponent from '@/components/offers/ListComponent'
 
 export default [
   {
@@ -13,7 +14,13 @@ export default [
   },
   {
     path: '/',
-    component: HomeComponent
+    component: HomeComponent,
+    children: [
+      {
+        path: 'offers',
+        component: OffersComponent
+      }
+    ]
   },
   {
     path: '*',

@@ -16,7 +16,7 @@ use Psr\Http\Message\ResponseInterface;
 route()->get('/offers', function (ServerRequestInterface $request, ResponseInterface $response) {
     $gets = $request->getQueryParams();
 
-    $page = $gets['page'] ?? 0;
+    $page = $gets['page'] ?? 1;
     $size = $gets['size'] ?? 25;
 
     $filter = $gets['filter'] ?? [];

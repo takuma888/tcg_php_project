@@ -1,6 +1,6 @@
 <template>
-  <mu-container>
-    <mu-form :model="form" label-position="left" ref="form" label-width="0px" class="login-form login-container">
+  <mu-container class="login-container">
+    <mu-form :model="form" label-position="left" ref="form" label-width="0px" class="login-form">
       <h3 class="title">管理员登录</h3>
       <mu-form-item prop="username" :rules="rules.username">
         <mu-text-field v-model="form.username" prop="username" auto-complete="off" placeholder="用户名"></mu-text-field>
