@@ -6,7 +6,7 @@
           <mu-button icon slot="left" @click.native="drawerToggle">
             <mu-icon value="menu"></mu-icon>
           </mu-button>
-          {{$store.state.ui.htmlTitle}}
+          <router-link to="/" style="color: inherit;">{{$store.state.ui.htmlTitle}}</router-link>
           <mu-menu slot="right">
             <mu-button flat><mu-icon value="account_circle" left></mu-icon>&nbsp;{{user.username}}</mu-button>
             <mu-list slot="content">

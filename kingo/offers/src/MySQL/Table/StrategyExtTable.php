@@ -24,7 +24,8 @@ CREATE TABLE IF NOT EXISTS {@table} (
   `strategy_id` INT(11) UNSIGNED NOT NULL DEFAULT 0 COMMENT '策略ID',
   `category` VARCHAR(32) NOT NULL DEFAULT '' COMMENT '分类',
   `type` VARCHAR(32) NOT NULL DEFAULT '' COMMENT '逻辑类型',
-  `value` VARCHAR(256) NOT NULL DEFAULT '' COMMENT '逻辑值',
+  `value1` VARCHAR(256) NOT NULL DEFAULT '' COMMENT '逻辑值1',
+  `value2` VARCHAR(256) NOT NULL DEFAULT '' COMMENT '逻辑值2',
   PRIMARY KEY (`id`),
   KEY `strategy` (`category`, `type`, `value`(100))
 ) ENGINE InnoDB DEFAULT CHARSET utf8mb4 COLLATE utf8mb4_general_ci;
@@ -36,8 +37,9 @@ SQL;
             'id' => 0,
             'strategy_id' => 0,
             'category' => '',
-            'type' => 0,
-            'value' => '',
+            'type' => '',
+            'value1' => '',
+            'value2' => '',
         ];
     }
 

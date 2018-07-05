@@ -15,19 +15,49 @@ use Psr\Http\Message\ResponseInterface;
  */
 route()->get('/offers', function (ServerRequestInterface $request, ResponseInterface $response) {
     $gets = $request->getQueryParams();
-
+    // 分页
     $page = $gets['page'] ?? 1;
     $size = $gets['size'] ?? 25;
 
-    $filter = $gets['filter'] ?? [];
+    // 其他查询条件
+    $id = $gets['id'] ?? '';
+    $id = trim($id);
+    $source = $gets['source'] ?? '';
+    $source = trim($source);
+    $offerName = $gets['name'] ?? '';
+    $offerName = trim($offerName);
+    $packageName = $gets['package'] ?? '';
+    $packageName = trim($packageName);
+    $country = $gets['country'] ?? '';
+    $country = trim(strtoupper($country));
+
+
     $filterCondition = [];
     $filterParams = [];
-    foreach ($filter as $item) {
-        $item = json_decode($item, true);
-        $key = $item['id'];
-        $value = $item['value'];
-        $filterCondition[] = "`{$key}` = :{$key}";
-        $filterParams[":{$key}"] = $value;
+
+    if ($id) {
+        $filterCondition[] = '`id` = :id';
+        $filterParams[':id'] = $id;
+    }
+
+    if ($source) {
+        $filterCondition[] = '`source` = :source';
+        $filterParams[':source'] = $id;
+    }
+
+    if ($offerName) {
+        $filterCondition[] = '`offer_name` LIKE :offer_name';
+        $filterParams[':offer_name'] = "%{$offerName}%";
+    }
+
+    if ($packageName) {
+        $filterCondition[] = '`package_name` LIKE :package_name';
+        $filterParams[':package_name'] = "%{$packageName}%";
+    }
+
+    if ($country) {
+        $filterCondition[] = '`country` LIKE :country';
+        $filterParams[':country'] = "%{$country}%";
     }
 
     $filterCondition = implode(' AND ', $filterCondition);
@@ -35,26 +65,9 @@ route()->get('/offers', function (ServerRequestInterface $request, ResponseInter
         $filterCondition = 'WHERE 1';
     }
 
-    $sort = $gets['sort'] ?? [];
-    $sortCondition = [];
-    foreach ($sort as $item) {
-        $item = json_decode($item, true);
-        $key = $item['id'];
-        $desc = $item['desc'];
-        if ($desc) {
-            $sortCondition[] = "`{$key}` DESC";
-        } else {
-            $sortCondition[] = "`{$key}` ASC";
-        }
-    }
-    if ($sortCondition) {
-        $filterCondition .= " ORDER BY " . implode(', ', $sortCondition);
-    }
-
     $limit = max(0, $size);
     $offset = (max(1, $page) - 1) * $limit;
     $filterCondition .= " LIMIT {$offset}, {$limit}";
-
 
 
     /** @var \Offers\Service\OfferService $offerService */

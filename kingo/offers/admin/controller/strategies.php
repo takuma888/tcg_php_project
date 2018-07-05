@@ -125,21 +125,43 @@ route()->get('/strategies', function (ServerRequestInterface $request, ResponseI
         'data' => [],
         'total' => $baseStrategies['total'],
     ];
+    $extCategories = [
+        'country', 'source', 'package_name', 'id', 'datetime'
+    ];
+    $extTypes = [
+        'include', 'exclude'
+    ];
     foreach ($baseStrategies['data'] as $baseStrategy) {
         $extResult = $strategyService->extSelectMany('`strategy_id` = :strategy_id', [
             ':strategy_id' => $baseStrategy['id'],
         ]);
-        $extData = [];
+        $tmp = [];
         foreach ($extResult['data'] as $extItem) {
             $category = $extItem['category'];
             $type = $extItem['type'];
-            if (!isset($extData[$category])) {
-                $extData[$category] = [];
+            if (!isset($tmp[$category])) {
+                $tmp[$category] = [];
             }
-            if (!isset($extData[$category][$type])) {
-                $extData[$category][$type] = [];
+            if (!isset($tmp[$category][$type])) {
+                $tmp[$category][$type] = [];
             }
-            $extData[$category][$type][] = $extItem;
+            $tmp[$category][$type][] = $extItem;
+        }
+        $extData = [];
+        foreach ($extCategories as $category) {
+            foreach ($extTypes as $type) {
+                $row = [
+                    'category' => $category,
+                    'type' => $type,
+                    'values' => [],
+                ];
+                if (isset($tmp[$category])) {
+                    if (isset($tmp[$category][$type])) {
+                        $row['values'] = $tmp[$category][$type];
+                    }
+                }
+                $extData[] = $row;
+            }
         }
         $data['data'][] = [
             'base' => $baseStrategy,

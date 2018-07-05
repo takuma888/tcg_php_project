@@ -88,8 +88,137 @@ class StrategyService
         $sql = $query->getSQLForWrite([
             '{@table.strategy_base}' => $baseFields
         ]);
-        $id = null;
         $connection = query()::connectionForWrite([$this->getStrategyBaseTable()]);
+        $stmt = $connection->prepare($sql);
+        $stmt->execute($parameters);
+    }
+
+    /**
+     * @param $id
+     * @param $baseFields
+     * @throws \Exception
+     */
+    public function baseUpdate($id, $baseFields)
+    {
+        $sql = "UPDATE {@table.strategy_base} SET ";
+        $parameters = [
+            ':id' => $id,
+        ];
+        $sets = [];
+        foreach ($baseFields as $field => $value) {
+            $field = trim($field, '`');
+            $parameters[":{$field}"] = $value;
+            $sets[] = "`{$field}` = :{$field}";
+        }
+        $sql .= implode(', ', $sets) . ' WHERE `id` = :id';
+        $query = query($sql)
+            ->table('{@table.strategy_base}', $this->getStrategyBaseTable())
+            ->setParameters($parameters);
+
+        $sql = $query->getSQLForWrite([
+            '{@table.strategy_base}' => $baseFields
+        ]);
+        $connection = query()::connectionForWrite([$this->getStrategyBaseTable()]);
+        $stmt = $connection->prepare($sql);
+        $stmt->execute($parameters);
+    }
+
+    /**
+     * @param $id
+     * @throws \Exception
+     */
+    public function removeStrategyById($id)
+    {
+        $tables = [
+            $this->getStrategyBaseTable(),
+            $this->getStrategyExtTable()
+        ];
+        $conn = query()::connectionForWrite($tables);
+        $supportTransaction = query()::supportTransaction($tables);
+        if ($supportTransaction) {
+            $conn->beginTransaction();
+        }
+        try {
+            // delete base
+            $sql = "DELETE FROM {@table.base} WHERE `id` = :id";
+            $query = query($sql)->table('{@table.base}', $this->getStrategyBaseTable())
+                ->setParameter(':id', $id);
+            $sql = $query->getSQLForWrite([
+                '{@table.base}' => [
+                    'id' => $id,
+                ]
+            ]);
+            $stmt = $conn->prepare($sql);
+            $stmt->execute($query->getParameters());
+            // delete ext
+            $sql = "DELETE FROM {@table.ext} WHERE `strategy_id` = :id";
+            $query = query($sql)->table('{@table.ext}', $this->getStrategyExtTable())
+                ->setParameter(':id', $id);
+            $sql = $query->getSQLForWrite([
+                '{@table.ext}' => [
+                    'strategy_id' => $id,
+                ]
+            ]);
+            $stmt = $conn->prepare($sql);
+            $stmt->execute($query->getParameters());
+            if ($supportTransaction) {
+                $conn->commit();
+            }
+        } catch (\Exception $e) {
+            if ($supportTransaction) {
+                $conn->rollBack();
+            }
+            throw $e;
+        }
+    }
+
+    /**
+     * @param $id
+     * @throws \Exception
+     */
+    public function removeStrategyExtById($id)
+    {
+        $tables = [
+            $this->getStrategyExtTable(),
+        ];
+        $conn = query()::connectionForWrite($tables);
+        // delete ext
+        $sql = "DELETE FROM {@table.ext} WHERE `id` = :id";
+        $query = query($sql)->table('{@table.ext}', $this->getStrategyExtTable())
+            ->setParameter(':id', $id);
+        $sql = $query->getSQLForWrite([
+            '{@table.ext}' => [
+                'id' => $id,
+            ]
+        ]);
+        $stmt = $conn->prepare($sql);
+        $stmt->execute($query->getParameters());
+    }
+
+
+    /**
+     * @param $extFields
+     * @throws \Exception
+     */
+    public function extCreate($extFields)
+    {
+        $sql = "INSERT INTO {@table.ext} ";
+        $parameters = [];
+        $fields = [];
+        foreach ($extFields as $field => $value) {
+            $field = trim($field, '`');
+            $parameters[":{$field}"] = $value;
+            $fields[] = "`{$field}`";
+        }
+        $sql .= '(' . implode(', ', $fields) . ') VALUES (' . implode(', ', array_keys($parameters)) . ')';
+        $query = query($sql)
+            ->table('{@table.ext}', $this->getStrategyExtTable())
+            ->setParameters($parameters);
+
+        $sql = $query->getSQLForWrite([
+            '{@table.ext}' => $extFields
+        ]);
+        $connection = query()::connectionForWrite([$this->getStrategyExtTable()]);
         $stmt = $connection->prepare($sql);
         $stmt->execute($parameters);
     }

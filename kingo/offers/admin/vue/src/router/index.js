@@ -2,6 +2,7 @@ import LoginComponent from '@/components/LoginComponent'
 import NotFoundComponent from '@/components/NotFoundComponent'
 import HomeComponent from '@/components/HomeComponent'
 import OffersComponent from '@/components/offers/ListComponent'
+import StrategiesComponent from '@/components/strategies/ListComponent'
 
 export default [
   {
@@ -19,6 +20,10 @@ export default [
       {
         path: 'offers',
         component: OffersComponent
+      },
+      {
+        path: 'strategies',
+        component: StrategiesComponent
       }
     ]
   },

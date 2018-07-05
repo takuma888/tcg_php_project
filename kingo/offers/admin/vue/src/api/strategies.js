@@ -1,3 +1,9 @@
-// import axios from '@/api/axios'
+import axios from '@/api/axios'
 
-export default {}
+export default {
+  list: (params) => {
+    return axios.get('/strategies', {
+      params: params
+    })
+  }
+}
