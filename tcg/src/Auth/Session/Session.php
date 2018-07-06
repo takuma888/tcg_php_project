@@ -61,9 +61,10 @@ class Session
     }
 
     /**
+     * @param array $config
      * @return bool
      */
-    public function start()
+    public function start(array $config = [])
     {
         if (!$this->started) {
             $this->started = true;

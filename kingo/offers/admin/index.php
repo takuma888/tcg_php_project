@@ -226,11 +226,11 @@ $dispatcher->add(function (ServerRequestInterface $request, RequestHandlerInterf
  */
 route()->get('/', function (ServerRequestInterface $request, ResponseInterface $response) {
     env()->get('twig')->display('@offers:admin/index.html.twig', [
-        'app_name' => 'OFFER 总库',
+        'app_name' => OFFERS_ADMIN_APP_NAME,
         'static_version' => time(),
-        'public_base_url' => 'http://tcg.php.localhost.com/kingo/offers/admin/react/build',
-        'app_request_base_url' => 'http://tcg.php.localhost.com/kingo/offers/admin',
-        'auth_request_base_url' => 'http://tcg.php.localhost.com/kingo/users/api',
+        'public_base_url' => OFFERS_ADMIN_PUBLIC_BASE_URL,
+        'app_request_base_url' => OFFERS_APP_REQUEST_BASE_URL,
+        'auth_request_base_url' => OFFERS_AUTH_REQUEST_BASE_URL,
     ]);
 });
 

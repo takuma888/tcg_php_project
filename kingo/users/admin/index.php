@@ -225,10 +225,10 @@ $dispatcher->add(function (ServerRequestInterface $request, RequestHandlerInterf
  */
 route()->get('/', function (ServerRequestInterface $request, ResponseInterface $response) {
     env()->get('twig')->display('@users:admin/index.html.twig', [
-        'app_name' => '用户管理系统',
+        'app_name' => USERS_ADMIN_APP_NAME,
         'static_version' => time(),
-        'static_base_url' => 'http://tcg.php.localhost.com/kingo/users/admin/vue/dist/static',
-        'request_base_url' => 'http://tcg.php.localhost.com/kingo/users/admin',
+        'static_base_url' => USERS_ADMIN_STATIC_BASE_URL,
+        'request_base_url' => USERS_ADMIN_REQUEST_BASE_URL,
     ]);
 });
 
