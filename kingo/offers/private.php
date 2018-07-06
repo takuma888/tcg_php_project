@@ -44,7 +44,12 @@ $container['offers.utils.iso3166'] = function () {
 $container[\Offers\Service\OfferImportService::class] = function () {
     return new \Offers\Service\OfferImportService();
 };
-
+/**
+ * @return \Offers\Service\OfferExportService
+ */
+$container[\Offers\Service\OfferExportService::class] = function () {
+    return new \Offers\Service\OfferExportService();
+};
 
 /**
  * 定义一些辅助方法
