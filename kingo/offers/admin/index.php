@@ -228,7 +228,7 @@ route()->get('/', function (ServerRequestInterface $request, ResponseInterface $
     env()->get('twig')->display('@offers:admin/index.html.twig', [
         'app_name' => OFFERS_ADMIN_APP_NAME,
         'static_version' => time(),
-        'public_base_url' => OFFERS_ADMIN_PUBLIC_BASE_URL,
+        'static_base_url' => OFFERS_ADMIN_STATIC_BASE_URL,
         'app_request_base_url' => OFFERS_APP_REQUEST_BASE_URL,
         'auth_request_base_url' => OFFERS_AUTH_REQUEST_BASE_URL,
     ]);

@@ -4,18 +4,17 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
     <meta name="theme-color" content="#000000">
-    <link rel="manifest" href="{{ public_base_url }}/manifest.json?v={{ static_version }}">
-    <link rel="shortcut icon" href="{{ public_base_url }}/favicon.ico?v={{ static_version }}">
     <title>{{ app_name }}</title>
-    <link href="{{ public_base_url }}/static/css/main.css?v={{ static_version }}" rel="stylesheet">
+    <link href={{ static_base_url }}/css/app.css?v={{ static_version }} rel=stylesheet>
 </head>
 <body>
-<noscript>You need to enable JavaScript to run this app.</noscript>
+<div id=app></div>
 <script type="application/javascript">
-    var appRequestBaseUrl = '{{ app_request_base_url }}';
-    var authRequestBaseUrl = '{{ auth_request_base_url }}';
+    var requestBaseUrl = '{{ app_request_base_url }}';
+    var authBaseUrl = '{{ auth_request_base_url }}';
 </script>
-<div id="root"></div>
-<script type="text/javascript" src="{{ public_base_url }}/static/js/main.js?v={{ static_version }}"></script>
+<script type=text/javascript src={{ static_base_url }}/js/manifest.js?v={{ static_version }}></script>
+<script type=text/javascript src={{ static_base_url }}/js/vendor.js?v={{ static_version }}></script>
+<script type=text/javascript src={{ static_base_url }}/js/app.js?v={{ static_version }}></script>
 </body>
 </html>

@@ -72,7 +72,7 @@ route()->get('/offers', function (ServerRequestInterface $request, ResponseInter
 
     /** @var \Offers\Service\OfferService $offerService */
     $offerService = service(\Offers\Service\OfferService::class);
-    $result = $offerService->selectMany($filterCondition, $filterParams);
+    $result = $offerService->baseSelectMany($filterCondition, $filterParams);
 
     return json($response, $result);
 });

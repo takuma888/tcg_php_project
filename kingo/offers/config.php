@@ -26,7 +26,7 @@ define('OFFERS_ADMIN_ALLOW_ORIGIN', 'http://localhost:8080');
  */
 define('OFFERS_ADMIN_APP_NAME', 'OFFER 总库');
 
-define('OFFERS_ADMIN_PUBLIC_BASE_URL', 'http://tcg.php.localhost.com/kingo/offers/admin/react/build');
+define('OFFERS_ADMIN_STATIC_BASE_URL', 'http://tcg.php.localhost.com/kingo/offers/admin/vue/dist/static');
 
 define('OFFERS_APP_REQUEST_BASE_URL', 'http://tcg.php.localhost.com/kingo/offers/admin');
 
@@ -37,6 +37,14 @@ define('OFFERS_ADMIN_SESSION_COOKIE_PATH', '/');
 define('OFFERS_ADMIN_SESSION_COOKIE_DOMAIN', 'tcg.php.localhost.com');
 define('OFFERS_ADMIN_SESSION_COOKIE_SECURE', false);
 define('OFFERS_ADMIN_SESSION_COOKIE_HTTP_ONLY', true);
+
+
+define('OFFERS_SOURCE_MOBI_SUMMER', 'mobi_summer');
+define('OFFERS_SOURCE_PUB_NATIVE', 'pub_native');
+define('OFFERS_SOURCE_SOLO', 'solo');
+define('OFFERS_SOURCE_MOBI_SMARTER', 'mobi_smarter');
+define('OFFERS_SOURCE_INPLAYABLE', 'inplayable');
+
 
 /**
  * 错误码

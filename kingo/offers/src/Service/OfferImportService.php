@@ -17,12 +17,6 @@ use Symfony\Component\Yaml\Yaml;
 class OfferImportService
 {
 
-    const SOURCE_MOBI_SUMMER = 'mobi_summer';
-    const SOURCE_PUB_NATIVE = 'pub_native';
-    const SOURCE_SOLO = 'solo';
-    const SOURCE_MOBI_SMARTER = 'mobi_smarter';
-    const SOURCE_INPLAYABLE = 'inplayable';
-
     /**
      * @param $source
      * @throws \Exception
@@ -261,7 +255,7 @@ class OfferImportService
     {
         $return = [];
         switch ($source) {
-            case self::SOURCE_MOBI_SUMMER:
+            case OFFERS_SOURCE_MOBI_SUMMER:
                 $countries = [''];
                 if ($offer['country']) {
                     $countries = explode(',', $offer['country']);
@@ -303,7 +297,7 @@ class OfferImportService
                     }
                 }
                 break;
-            case self::SOURCE_PUB_NATIVE:
+            case OFFERS_SOURCE_PUB_NATIVE:
                 $platforms = [''];
                 if ($offer['app_details']['platform']) {
                     $platforms = explode(',', $offer['app_details']['platform']);
@@ -350,7 +344,7 @@ class OfferImportService
                     }
                 }
                 break;
-            case self::SOURCE_SOLO:
+            case OFFERS_SOURCE_SOLO:
                 $countries = [''];
                 $platforms = [''];
                 $targeting = $offer['targeting'];
@@ -412,7 +406,7 @@ class OfferImportService
                     }
                 }
                 break;
-            case self::SOURCE_MOBI_SMARTER:
+            case OFFERS_SOURCE_MOBI_SMARTER:
                 $countries = [''];
                 if ($offer['countries']) {
                     $countries = $offer['countries'];
@@ -454,7 +448,7 @@ class OfferImportService
                     }
                 }
                 break;
-            case self::SOURCE_INPLAYABLE:
+            case OFFERS_SOURCE_INPLAYABLE:
                 $countries = [''];
                 if ($offer['countries']) {
                     $countries = $offer['countries'];

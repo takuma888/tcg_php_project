@@ -13,20 +13,35 @@
         <mu-expansion-panel v-for="(value, key1) in data" :key="key1" :expand="panel === value.base.id" @change="togglePanel(value.base.id)">
           <div slot="header" style="width: 100%">
             <mu-flex justify-content="between" align-items="center">
-              <div style="width: 45%;">
-                <strong>{{ value.base.name }}</strong>&nbsp;
-                <small>{{ value.base.description }}</small>
+              <div style="width: 10%;">
+                <template v-if="value.base.priority > 0">
+                  <strong style="color: red;">{{ value.base.name }}</strong>&nbsp;
+                </template>
+                <template v-else>
+                  <strong style="color: gray;">{{ value.base.name }}</strong>&nbsp;
+                </template>
+              </div>
+              <div>
+                <small><i>国家: <strong>{{ value.base.geo2 ? value.base.geo2 : '全球' }}/{{ value.base.geo3 ? value.base.geo3 : '全球' }}</strong></i></small>
+              </div>
+              <div>
+                <small><i>起始: <strong>{{ value.base.start_at ? value.base.start_at : '无' }}</strong></i></small>&nbsp;
+                <small><i>结束: <strong>{{ value.base.end_at ? value.base.end_at : '无' }}</strong></i></small>
+              </div>
+              <div>
+                <small><i>客户端: <strong>{{ value.base.client ? value.base.client : '不限' }}</strong></i></small>
               </div>
               <div>
                 <small><i>优先级: <strong>{{ value.base.priority }}</strong></i></small>
               </div>
               <div>
-                <small>创建: {{ value.base.create_at }} 更新: {{ value.base.update_at }}</small>
+                <small><i>创建: <strong>{{ value.base.create_at }}</strong>&nbsp;&nbsp;更新: <strong>{{ value.base.update_at }}</strong></i></small>
                 <mu-button small flat color="primary" @click.stop="openEditStrategyModal(value.base.id)"><i class="fa fa-edit"></i>&nbsp;编辑</mu-button>
                 <mu-button small flat color="secondary" @click.stop="deleteStrategy(value.base.id)"><i class="fa fa-remove"></i>&nbsp;删除</mu-button>
               </div>
             </mu-flex>
           </div>
+          <p>{{ value.base.description }}</p>
           <el-table size="small" :show-header="false" border :span-method="tableSpanMethod" :data="value.ext" style="width: 100%">
             <el-table-column prop="category" label="分类" width="50" >
               <strong slot-scope="scope">
@@ -34,7 +49,7 @@
                 {{ scope.row.category === 'source' ? '来源' : '' }}
                 {{ scope.row.category === 'package_name' ? '包名' : '' }}
                 {{ scope.row.category === 'id' ? 'ID' : '' }}
-                {{ scope.row.category === 'datetime' ? '时间' : '' }}
+                {{ scope.row.category === 'package_size' ? '包大小' : '' }}
               </strong>
             </el-table-column>
             <el-table-column prop="type" label="类型" width="50">
@@ -45,7 +60,7 @@
             </el-table-column>
             <el-table-column prop="values" label="值">
               <template slot-scope="scope">
-                <template v-if="scope.row.category === 'datetime'">
+                <template v-if="scope.row.category === 'package_size'">
                   <el-tag
                     size="small"
                     :key="key2"
@@ -55,6 +70,18 @@
                     @close="removeExtTag(item.id)"
                   >
                     {{item.value1}} 至 {{item.value2}}
+                  </el-tag>
+                </template>
+                <template v-else-if="scope.row.category === 'country'">
+                  <el-tag
+                    size="small"
+                    :key="key2"
+                    v-for="(item, key2) in scope.row.values"
+                    closable
+                    :disable-transitions="false"
+                    @close="removeExtTag(item.id)"
+                  >
+                    {{item.value1}} / {{item.value2}}
                   </el-tag>
                 </template>
                 <template v-else>
@@ -78,7 +105,7 @@
         </mu-expansion-panel>
       </mu-col>
     </mu-row>
-    <el-dialog :visible.sync="showCreateStrategyModal" append-to-body>
+    <el-dialog :visible.sync="showCreateStrategyModal" append-to-body top="50px">
       <div slot="title">
         <span class="el-dialog__title"><i class="fa fa-star-o"></i>&nbsp;创建策略</span>
       </div>
@@ -92,15 +119,38 @@
         <el-form-item label="优先级" prop="priority" size="small">
           <el-input type="text" v-model="createForm.priority" auto-complete="off"></el-input>
         </el-form-item>
+        <el-form-item label="客户端" prop="client" size="small">
+          <el-input type="text" v-model="createForm.client" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="国家 ISO3166-alpha-2" prop="geo2" size="small">
+          <el-input type="text" v-model="createForm.geo2" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="国家 ISO3166-alpha-3" prop="geo3" size="small">
+          <el-input type="text" v-model="createForm.geo3" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="起始时间" prop="start_at" size="small">
+          <el-date-picker
+            v-model="createForm.start_at" style="width: 100%;" format="yyyy-MM-dd HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss"
+            type="datetime"
+            placeholder="选择日期时间">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item label="结束时间" prop="end_at" size="small">
+          <el-date-picker
+            v-model="createForm.end_at" style="width: 100%;" format="yyyy-MM-dd HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss"
+            type="datetime"
+            placeholder="选择日期时间">
+          </el-date-picker>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <mu-button @click="showCreateStrategyModal = false">取 消</mu-button>
         <mu-button color="primary" @click="createStrategy">提交</mu-button>
       </div>
     </el-dialog>
-    <el-dialog :visible.sync="showEditStrategyModal" append-to-body>
+    <el-dialog :visible.sync="showEditStrategyModal" append-to-body top="50px">
       <div slot="title">
-        <span class="el-dialog__title"><i class="fa fa-edit"></i>&nbsp;创建策略</span>
+        <span class="el-dialog__title"><i class="fa fa-edit"></i>&nbsp;编辑策略</span>
       </div>
       <el-form :model="editForm" ref="editForm" status-icon :rules="rules" >
         <el-form-item label="名称" prop="name" size="small">
@@ -111,6 +161,29 @@
         </el-form-item>
         <el-form-item label="优先级" prop="priority" size="small">
           <el-input type="text" v-model="editForm.priority" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="客户端" prop="client" size="small">
+          <el-input type="text" v-model="editForm.client" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="国家 ISO3166-alpha-2" prop="geo2" size="small">
+          <el-input type="text" v-model="editForm.geo2" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="国家 ISO3166-alpha-3" prop="geo3" size="small">
+          <el-input type="text" v-model="editForm.geo3" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="起始时间" prop="start_at" size="small">
+          <el-date-picker
+            v-model="editForm.start_at" style="width: 100%;" format="yyyy-MM-dd HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss"
+            type="datetime"
+            placeholder="选择日期时间">
+          </el-date-picker>
+        </el-form-item>
+        <el-form-item label="结束时间" prop="end_at" size="small">
+          <el-date-picker
+            v-model="editForm.end_at" style="width: 100%;" format="yyyy-MM-dd HH:mm:ss" value-format="yyyy-MM-dd HH:mm:ss"
+            type="datetime"
+            placeholder="选择日期时间">
+          </el-date-picker>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -131,7 +204,7 @@
                 { label: '来源', value: 'source' },
                 { label: '包名', value: 'package_name' },
                 { label: 'ID', value: 'id' },
-                { label: '日期', value: 'datetime' }
+                { label: '包大小', value: 'package_size' }
               ]"
               :key="item.value"
               :label="item.label"
@@ -155,7 +228,7 @@
         <el-form-item prop="value1" label="值1" size="small">
           <el-input v-model="createExtForm.value1"></el-input>
         </el-form-item>
-        <el-form-item v-if="createExtForm.category === 'datetime'" prop="value2" label="值2" size="small">
+        <el-form-item v-if="createExtForm.category === 'package_size' || createExtForm.category === 'country'" prop="value2" label="值2" size="small">
           <el-input v-model="createExtForm.value2"></el-input>
         </el-form-item>
       </el-form>
@@ -182,13 +255,23 @@ export default {
       createForm: {
         name: '',
         description: '',
-        priority: 0
+        priority: 0,
+        client: '',
+        geo2: '',
+        geo3: '',
+        start_at: '',
+        end_at: ''
       },
       editForm: {
         id: 0,
         name: '',
         description: '',
-        priority: 0
+        priority: 0,
+        client: '',
+        geo2: '',
+        geo3: '',
+        start_at: '',
+        end_at: ''
       },
       createExtForm: {
         strategyId: 0,
@@ -209,8 +292,10 @@ export default {
         value2: [
           {
             validator: (rule, value, callback) => {
-              if (this.createExtForm.category === 'datetime' && value === '') {
-                callback(new Error('日期必须输入值2'))
+              if (this.createExtForm.category === 'package_size' && value === '') {
+                callback(new Error('包大小必须输入值2'))
+              } else if (this.createExtForm.category === 'country' && value === '') {
+                callback(new Error('国家必须输入值2'))
               } else {
                 callback()
               }
@@ -254,7 +339,12 @@ export default {
         id: 0,
         name: '',
         description: '',
-        priority: 0
+        priority: 0,
+        client: '',
+        geo2: '',
+        geo3: '',
+        start_at: '',
+        end_at: ''
       }
       if (this.$refs.editForm) {
         this.$refs.editForm.resetFields()
@@ -264,7 +354,12 @@ export default {
           id: data.base.id,
           name: data.base.name,
           description: data.base.description,
-          priority: data.base.priority
+          priority: data.base.priority,
+          client: data.base.client,
+          geo2: data.base.geo2,
+          geo3: data.base.geo3,
+          start_at: data.base.start_at,
+          end_at: data.base.end_at
         }
         this.showEditStrategyModal = true
       }).catch(() => {})
@@ -272,7 +367,17 @@ export default {
     editStrategy () {
       this.$refs.editForm.validate((valid) => {
         if (valid) {
-          this.$api.strategy.update(this.editForm.id, this.editForm.name, this.editForm.description, this.editForm.priority).then(() => {
+          this.$api.strategy.update(
+            this.editForm.id,
+            this.editForm.name,
+            this.editForm.description,
+            this.editForm.priority,
+            this.editForm.client,
+            this.editForm.geo2,
+            this.editForm.geo3,
+            this.editForm.start_at,
+            this.editForm.end_at
+          ).then(() => {
             this.getData()
             this.showEditStrategyModal = false
           }).catch(() => {})
@@ -294,7 +399,12 @@ export default {
       this.createForm = {
         name: '',
         description: '',
-        priority: 0
+        priority: 0,
+        client: '',
+        geo2: '',
+        geo3: '',
+        start_at: '',
+        end_at: ''
       }
       if (this.$refs.createForm) {
         this.$refs.createForm.resetFields()
@@ -304,7 +414,16 @@ export default {
     createStrategy () {
       this.$refs.createForm.validate((valid) => {
         if (valid) {
-          this.$api.strategy.add(this.createForm.name, this.createForm.description, this.createForm.priority).then(() => {
+          this.$api.strategy.add(
+            this.createForm.name,
+            this.createForm.description,
+            this.createForm.priority,
+            this.createForm.client,
+            this.createForm.geo2,
+            this.createForm.geo3,
+            this.createForm.start_at,
+            this.createForm.end_at
+          ).then(() => {
             this.getData()
             this.showCreateStrategyModal = false
           }).catch(() => {})

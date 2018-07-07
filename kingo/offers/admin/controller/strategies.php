@@ -47,7 +47,7 @@ route()->get('/strategies/package-names', function (ServerRequestInterface $requ
     $filterCondition = 'WHERE ' . implode(' AND ', $filterCondition);
     /** @var \Offers\Service\OfferService $offerService */
     $offerService = service(\Offers\Service\OfferService::class);
-    $result = $offerService->selectMany($filterCondition, $filterParams);
+    $result = $offerService->baseSelectMany($filterCondition, $filterParams);
     return json($response, $result);
 });
 
@@ -68,7 +68,7 @@ route()->get('/strategies/ids', function (ServerRequestInterface $request, Respo
     $filterCondition = 'WHERE ' . implode(' AND ', $filterCondition);
     /** @var \Offers\Service\OfferService $offerService */
     $offerService = service(\Offers\Service\OfferService::class);
-    $result = $offerService->selectMany($filterCondition, $filterParams);
+    $result = $offerService->baseSelectMany($filterCondition, $filterParams);
     return json($response, $result);
 });
 
@@ -99,18 +99,10 @@ route()->get('/strategies', function (ServerRequestInterface $request, ResponseI
         $filterCondition = 'WHERE 1';
     }
 
-    $sort = $gets['sort'] ?? [];
-    $sortCondition = [];
-    foreach ($sort as $item) {
-        $item = json_decode($item, true);
-        $key = $item['id'];
-        $desc = $item['desc'];
-        if ($desc) {
-            $sortCondition[] = "`{$key}` DESC";
-        } else {
-            $sortCondition[] = "`{$key}` ASC";
-        }
-    }
+    $sortCondition = [
+        '`priority` DESC'
+    ];
+
     if ($sortCondition) {
         $filterCondition .= " ORDER BY " . implode(', ', $sortCondition);
     }
@@ -126,7 +118,7 @@ route()->get('/strategies', function (ServerRequestInterface $request, ResponseI
         'total' => $baseStrategies['total'],
     ];
     $extCategories = [
-        'country', 'source', 'package_name', 'id', 'datetime'
+        'country', 'source', 'package_name', 'id', 'package_size'
     ];
     $extTypes = [
         'include', 'exclude'

@@ -48,21 +48,28 @@ route()->post('/strategy/add', function (ServerRequestInterface $request, Respon
     $name = $posts['name'] ?? '';
     $description = $posts['description'] ?? '';
     $priority = $posts['priority'] ?? 0;
+    $client = $posts['client'] ?? null;
+    $geo2 = $posts['geo2'] ?? null;
+    $geo3 = $posts['geo3'] ?? null;
+    $startAt = $posts['start_at'] ?? null;
+    $endAt = $posts['end_at'] ?? null;
     $name = trim($name);
     if (!$name) {
         throw new \Exception("名称不能为空");
     }
     $description = trim($description);
     $priority = intval($priority);
-    if ($priority < 0) {
-        throw new \Exception("优先级权重不能为负数");
-    }
     /** @var \Offers\Service\StrategyService $strategyService */
     $strategyService = service(\Offers\Service\StrategyService::class);
     $strategyService->baseCreate([
         'name' => $name,
         'description' => $description,
-        'priority' => $priority
+        'priority' => $priority,
+        'client' => $client,
+        'geo2' => $geo2,
+        'geo3' => $geo3,
+        'start_at' => $startAt,
+        'end_at' => $endAt,
     ]);
     flash()->success("添加策略成功");
     return json($response, []);
@@ -83,19 +90,26 @@ route()->post('/strategy/edit/{id:\d+}', function (ServerRequestInterface $reque
     $name = $posts['name'] ?? '';
     $description = $posts['description'] ?? '';
     $priority = $posts['priority'] ?? 0;
+    $client = $posts['client'] ?? null;
+    $geo2 = $posts['geo2'] ?? null;
+    $geo3 = $posts['geo3'] ?? null;
+    $startAt = $posts['start_at'] ?? null;
+    $endAt = $posts['end_at'] ?? null;
     $name = trim($name);
     if (!$name) {
         throw new \Exception("名称不能为空");
     }
     $description = trim($description);
     $priority = intval($priority);
-    if ($priority < 0) {
-        throw new \Exception("优先级权重不能为负数");
-    }
     $strategyService->baseUpdate($id, [
         'name' => $name,
         'description' => $description,
-        'priority' => $priority
+        'priority' => $priority,
+        'client' => $client,
+        'geo2' => $geo2,
+        'geo3' => $geo3,
+        'start_at' => $startAt,
+        'end_at' => $endAt,
     ]);
     flash()->success("更新策略成功");
     return json($response, []);

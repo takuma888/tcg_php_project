@@ -71,7 +71,7 @@ $dispatcher = env()->get('middleware.dispatcher');
  * 加载session中间件
  */
 $dispatcher->add(function (ServerRequestInterface $request, RequestHandlerInterface $next) {
-    env()->get('session')->start();
+    env(ENV_USERS)->get('session')->start();
     /** @var ResponseInterface $response */
     $response = $next->handle($request);
     return $response;

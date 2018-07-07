@@ -45,10 +45,16 @@ $container[\Offers\Service\OfferImportService::class] = function () {
     return new \Offers\Service\OfferImportService();
 };
 /**
- * @return \Offers\Service\OfferExportService
+ * @return \Offers\Service\OfferApiService
  */
-$container[\Offers\Service\OfferExportService::class] = function () {
-    return new \Offers\Service\OfferExportService();
+$container[\Offers\Service\OfferApiService::class] = function () {
+    return new \Offers\Service\OfferApiService();
+};
+/**
+ * @return \Offers\Service\StrategyCalcService
+ */
+$container[\Offers\Service\StrategyCalcService::class] = function () {
+    return new \Offers\Service\StrategyCalcService();
 };
 
 /**

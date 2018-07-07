@@ -17,7 +17,7 @@ class OfferService
      * @return array
      * @throws \Exception
      */
-    public function selectMany($clauseExpr, array $params = [])
+    public function baseSelectMany($clauseExpr, array $params = [])
     {
         $clauseExpr = trim($clauseExpr);
         if (!$clauseExpr) {
@@ -32,7 +32,7 @@ class OfferService
 
         $fields = query()::duplicateFields($tables, [], '`');
         $fields = implode(', ', $fields);
-        $sqlTpl = "SELECT SQL_CALC_FOUND_ROWS {$fields} FROM {@table.offer_base}";
+        $sqlTpl = "SELECT SQL_CALC_FOUND_ROWS {$fields} FROM {@table.offer_base} ";
         $sqlTpl .= $clauseExpr;
         $query = query($sqlTpl);
         $query->table('{@table.offer_base}', $this->getOfferBaseTable());
@@ -54,10 +54,49 @@ class OfferService
     }
 
     /**
+     * @param $id
+     * @return array
+     * @throws \Exception
+     */
+    public function getExtInfoById($id)
+    {
+        $tables = [
+            $this->getOfferExtTable(),
+        ];
+
+        $fields = query()::duplicateFields($tables, [], '`');
+        $fields = implode(', ', $fields);
+        $sqlTpl = "SELECT {$fields} FROM {@table.ext} WHERE `id` = :id";
+        $query = query($sqlTpl);
+        $query->table('{@table.ext}', $this->getOfferExtTable());
+        $connection = query()::connectionForRead($tables);
+        $sql = $query->getSQLForRead();
+
+        $stmt = $connection->prepare($sql);
+        $stmt->execute([
+            ':id' => $id,
+        ]);
+        $data = $stmt->fetch();
+
+        return [
+            'data' => $data,
+        ];
+    }
+
+
+    /**
      * @return \TCG\MySQL\Table
      */
     private function getOfferBaseTable()
     {
         return table('offer_base');
+    }
+
+    /**
+     * @return \TCG\MySQL\Table
+     */
+    private function getOfferExtTable()
+    {
+        return table('offer_ext');
     }
 }

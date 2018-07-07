@@ -34,7 +34,6 @@ class StrategyService
         ];
     }
 
-
     /**
      * @param $id
      * @return array
@@ -250,7 +249,6 @@ class StrategyService
         $query->table('{@table.strategy_ext}', $this->getStrategyExtTable());
         $connection = query()::connectionForRead($tables);
         $sql = $query->getSQLForRead();
-
         $stmt = $connection->prepare($sql);
         $stmt->execute($params);
         $data = $stmt->fetchAll();
@@ -286,7 +284,7 @@ class StrategyService
 
         $fields = query()::duplicateFields($tables, [], '`');
         $fields = implode(', ', $fields);
-        $sqlTpl = "SELECT SQL_CALC_FOUND_ROWS {$fields} FROM {@table.strategy_base}";
+        $sqlTpl = "SELECT SQL_CALC_FOUND_ROWS {$fields} FROM {@table.strategy_base} ";
         $sqlTpl .= $clauseExpr;
         $query = query($sqlTpl);
         $query->table('{@table.strategy_base}', $this->getStrategyBaseTable());
@@ -306,7 +304,6 @@ class StrategyService
             'total' => intval($total),
         ];
     }
-
 
     /**
      * @return \TCG\MySQL\Table

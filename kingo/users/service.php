@@ -179,7 +179,7 @@ $container[\Users\Service\PermissionService::class] = function () {
 
 /**
  * 主SESSION
- * @return \TCG\Auth\Session\Segment
+ * @return \TCG\Auth\Session\Session
  */
 function session()
 {

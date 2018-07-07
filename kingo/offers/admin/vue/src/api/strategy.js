@@ -2,17 +2,31 @@ import axios from '@/api/axios'
 
 export default {
   // 添加
-  add: (name, description, priority) => {
+  add: (name, description, priority, client, geo2, geo3, startAt, endAt) => {
     return axios.post('/strategy/add', {
-      name, description, priority
+      name,
+      description,
+      priority,
+      client,
+      geo2,
+      geo3,
+      start_at: startAt,
+      end_at: endAt
     })
   },
   get: (id) => {
     return axios.get(`/strategy/${id}`)
   },
-  update: (id, name, description, priority) => {
+  update: (id, name, description, priority, client, geo2, geo3, startAt, endAt) => {
     return axios.post(`/strategy/edit/${id}`, {
-      name, description, priority
+      name,
+      description,
+      priority,
+      client,
+      geo2,
+      geo3,
+      start_at: startAt,
+      end_at: endAt
     })
   },
   delete: (id) => {

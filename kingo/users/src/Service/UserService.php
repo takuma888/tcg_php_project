@@ -216,9 +216,9 @@ class UserService
         ], '`');
         $fields = implode(', ', $fields);
 
-        $sqlTpl = "SELECT {$fields} FROM {@table.user_auth} as `auth`";
+        $sqlTpl = "SELECT {$fields} FROM {@table.user_auth} AS `auth`";
         if ($withProfile) {
-            $sqlTpl .= " LEFT JOIN {@table.user_profile} as `profile` ON `auth`.`id` = `profile`.`id`";
+            $sqlTpl .= " LEFT JOIN {@table.user_profile} AS `profile` ON `auth`.`id` = `profile`.`id`";
         }
         $sqlTpl .= " WHERE `auth`.`id` = :id";
         $query = query($sqlTpl);
