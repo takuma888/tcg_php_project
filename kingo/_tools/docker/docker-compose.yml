@@ -1,0 +1,41 @@
+version: '2'
+
+services:
+    php:
+        container_name: php
+        build:
+            context: php
+        expose:
+            - "9000"
+        volumes:
+            - /data0/php:/var/www/html/php
+        links:
+            - mysql:mysql
+    nginx:
+        container_name: nginx
+        build:
+            context: nginx
+        ports:
+            - "80:80"
+            - "443:443"
+        volumes:
+            - /data0/php:/var/www/html/php
+            - /data0/docker-data/nginx:/var/log/nginx
+        links:
+            - php:phpfpm
+    mysql:
+        container_name: mysql
+        image: mysql:5.6
+        expose:
+            - "3306"
+        environment:
+            MYSQL_ROOT_PASSWORD: 123456789
+        volumes:
+            - /data0/docker-data/mysql:/var/lib/mysql
+    phpmyadmin:
+        container_name: phpmyadmin
+        image: phpmyadmin/phpmyadmin
+        ports:
+            - "8083:80"
+        links:
+            - mysql:db

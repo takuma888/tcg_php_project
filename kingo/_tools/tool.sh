@@ -67,7 +67,7 @@ function sync_all {
     # config
     prepare_config
 
-    #push_sync ${deploy_id} ${tmp_code}/ ${to}
+    push_sync ${deploy_id} ${tmp_code}/ ${to}
 }
 
 # 同步配置

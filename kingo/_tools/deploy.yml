@@ -8,4 +8,4 @@ deploy:
         server: ec2-54-249-104-212.ap-northeast-1.compute.amazonaws.com
         username: ubuntu
         ssh_port: 22
-        root_path: /mnt/kingo
+        root_path: /data0/php
