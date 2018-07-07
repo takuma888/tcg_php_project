@@ -25,12 +25,11 @@ define('OFFERS_ADMIN_ALLOW_ORIGIN', 'http://cp.k8abc.com');
  * 其他配置
  */
 define('OFFERS_ADMIN_APP_NAME', 'OFFER 总库');
-
 define('OFFERS_ADMIN_STATIC_BASE_URL', 'http://cp.k8abc.com/offers/admin/public/static');
-
 define('OFFERS_APP_REQUEST_BASE_URL', 'http://cp.k8abc.com/offers/admin');
-
 define('OFFERS_AUTH_REQUEST_BASE_URL', 'http://cp.k8abc.com/users/api');
+define('OFFERS_ADMIN_STATIC_VERSION', 2);
+
 
 define('OFFERS_ADMIN_SESSION_COOKIE_LIFETIME', 24 * 60 * 60);
 define('OFFERS_ADMIN_SESSION_COOKIE_PATH', '/');

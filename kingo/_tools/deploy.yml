@@ -5,7 +5,7 @@ deploy:
         ssh_port: 22
         root_path: /data/kingo
     kingo2:
-        server: ec2-54-249-104-212.ap-northeast-1.compute.amazonaws.com
+        server: ec2-54-199-224-7.ap-northeast-1.compute.amazonaws.com
         username: ubuntu
         ssh_port: 22
         root_path: /data0/php

@@ -96,6 +96,7 @@ function prepare_app_offers {
     cp -a ~/Documents/self/tcg_php_project/kingo/offers/cmd/ ${tmp_dir}/cmd
     cp -a ~/Documents/self/tcg_php_project/kingo/offers/api/ ${tmp_dir}/api
 
+    cp -a ~/Documents/self/tcg_php_project/kingo/offers/admin/*.php ${tmp_dir}/admin
     cp -a ~/Documents/self/tcg_php_project/kingo/offers/admin/controller ${tmp_dir}/admin
     cp -a ~/Documents/self/tcg_php_project/kingo/offers/admin/template ${tmp_dir}/admin
     cp -a ~/Documents/self/tcg_php_project/kingo/offers/admin/vue/dist/ ${tmp_dir}/admin/public
@@ -121,6 +122,7 @@ function prepare_app_users {
     cp -a ~/Documents/self/tcg_php_project/kingo/users/cmd/ ${tmp_dir}/cmd
     cp -a ~/Documents/self/tcg_php_project/kingo/users/api/ ${tmp_dir}/api
 
+    cp -a ~/Documents/self/tcg_php_project/kingo/users/admin/*.php ${tmp_dir}/admin
     cp -a ~/Documents/self/tcg_php_project/kingo/users/admin/controller ${tmp_dir}/admin
     cp -a ~/Documents/self/tcg_php_project/kingo/users/admin/template ${tmp_dir}/admin
     cp -a ~/Documents/self/tcg_php_project/kingo/users/admin/vue/dist/ ${tmp_dir}/admin/public

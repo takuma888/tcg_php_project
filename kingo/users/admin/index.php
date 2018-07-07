@@ -226,7 +226,7 @@ $dispatcher->add(function (ServerRequestInterface $request, RequestHandlerInterf
 route()->get('/', function (ServerRequestInterface $request, ResponseInterface $response) {
     env()->get('twig')->display('@users:admin/index.html.twig', [
         'app_name' => USERS_ADMIN_APP_NAME,
-        'static_version' => time(),
+        'static_version' => USERS_ADMIN_STATIC_VERSION,
         'static_base_url' => USERS_ADMIN_STATIC_BASE_URL,
         'request_base_url' => USERS_ADMIN_REQUEST_BASE_URL,
     ]);

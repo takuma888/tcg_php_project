@@ -39,10 +39,10 @@ define('USERS_API_ALLOW_ORIGIN', 'http://localhost:8080');
  */
 
 define('USERS_ADMIN_APP_NAME', '用户管理系统');
-
 define('USERS_ADMIN_STATIC_BASE_URL', 'http://tcg.php.localhost.com/kingo/users/admin/vue/dist/static');
-
 define('USERS_ADMIN_REQUEST_BASE_URL', 'http://tcg.php.localhost.com/kingo/users/admin');
+define('USERS_ADMIN_STATIC_VERSION', time());
+
 
 define('USERS_ADMIN_SESSION_COOKIE_LIFETIME', 24 * 60 * 60);
 define('USERS_ADMIN_SESSION_COOKIE_PATH', '/');

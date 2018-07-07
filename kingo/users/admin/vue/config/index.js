@@ -50,7 +50,7 @@ module.exports = {
     // Paths
     assetsRoot: path.resolve(__dirname, '../dist'),
     assetsSubDirectory: 'static',
-    assetsPublicPath: '/kingo/users/admin/vue/dist/',
+    assetsPublicPath: '/users/admin/public/',
 
     /**
      * Source Maps

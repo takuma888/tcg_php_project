@@ -16,6 +16,7 @@ use Symfony\Component\Debug\Debug;
  */
 require __DIR__ . '/../private.php';
 
+ini_set('memory_limit', '512M');
 
 /**
  * 设置当前app

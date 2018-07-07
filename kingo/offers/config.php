@@ -25,12 +25,10 @@ define('OFFERS_ADMIN_ALLOW_ORIGIN', 'http://localhost:8080');
  * 其他配置
  */
 define('OFFERS_ADMIN_APP_NAME', 'OFFER 总库');
-
 define('OFFERS_ADMIN_STATIC_BASE_URL', 'http://tcg.php.localhost.com/kingo/offers/admin/vue/dist/static');
-
 define('OFFERS_APP_REQUEST_BASE_URL', 'http://tcg.php.localhost.com/kingo/offers/admin');
-
 define('OFFERS_AUTH_REQUEST_BASE_URL', 'http://tcg.php.localhost.com/kingo/users/api');
+define('OFFERS_ADMIN_STATIC_VERSION', time());
 
 define('OFFERS_ADMIN_SESSION_COOKIE_LIFETIME', 24 * 60 * 60);
 define('OFFERS_ADMIN_SESSION_COOKIE_PATH', '/');
