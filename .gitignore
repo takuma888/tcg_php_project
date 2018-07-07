@@ -6,5 +6,5 @@ kingo/users/admin/vue/.idea
 kingo/offers/admin/vue/node_modules
 kingo/offers/admin/vue/.idea
 
-kingo/offers/_tools/awscp.pem
-kingo/offers/_tools/tmp
+kingo/_tools/awscp.pem
+kingo/_tools/tmp

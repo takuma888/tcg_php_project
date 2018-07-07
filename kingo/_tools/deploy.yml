@@ -1,0 +1,11 @@
+deploy:
+    kingo:
+        server: 47.254.147.135
+        username: root
+        ssh_port: 22
+        root_path: /data/kingo
+    kingo2:
+        server: ec2-54-249-104-212.ap-northeast-1.compute.amazonaws.com
+        username: ubuntu
+        ssh_port: 22
+        root_path: /mnt/kingo
